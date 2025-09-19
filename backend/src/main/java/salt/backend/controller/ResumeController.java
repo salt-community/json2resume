@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
 import salt.backend.dto.TranslationRequestDto;
+import salt.backend.dto.ResumeDto;
 import salt.backend.services.TranslationService;
 
 /**
@@ -27,16 +28,16 @@ public class ResumeController {
     }
 
     @PostMapping(path = "/translate", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> translateResume(@Valid @RequestBody TranslationRequestDto request) {
+    public ResponseEntity<ResumeDto> translateResume(@Valid @RequestBody TranslationRequestDto request) {
         log.info("🚀 Received translation request for language: {}", request.getLanguageCode());
 
         try {
-            translationService.translateResume(request);
-            log.info("📝 Translation completed successfully");
-            return ResponseEntity.ok("translation completed successfully");
+            ResumeDto translatedResume = translationService.translateResume(request);
+            log.info("📝 Translation completed successfully for language: {}", request.getLanguageCode());
+            return ResponseEntity.ok(translatedResume);
 
         } catch (Exception e) {
-            log.error("❌ Error processing translation request", e);
+            log.error("❌ Error processing translation request for language: {}", request.getLanguageCode(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
