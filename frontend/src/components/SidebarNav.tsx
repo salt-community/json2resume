@@ -22,9 +22,9 @@ export default function SidebarNav() {
           <li key={label}>
             <div
               className={[
-                'w-full rounded-sm border border-neutral-700 px-3 py-2 text-sm capitalize',
-                'bg-neutral-800 text-neutral-200',
-                idx === 0 ? 'bg-indigo-600 text-white' : '',
+                'w-full rounded-sm border border-border px-3 py-2 text-sm capitalize',
+                'bg-surface text-text-subtle',
+                idx === 0 ? 'bg-accent text-on-accent' : '',
                 'break-words',
               ].join(' ')}
             >

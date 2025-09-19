@@ -1,5 +1,22 @@
 @import "tailwindcss";
+@import "tailwindcss";
 
+/* App color tokens */
+@theme {
+  /* Surfaces and borders (dark theme) */
+  --color-surface: #262626;         /* Tailwind neutral-800 */
+  --color-surface-strong: #171717;  /* Tailwind neutral-900 */
+  --color-border: #404040;          /* Tailwind neutral-700 */
+
+  /* Text */
+  --color-text-muted: #d4d4d4;      /* Tailwind neutral-300 */
+  --color-text-subtle: #e5e5e5;     /* Tailwind neutral-200 */
+  --color-text-strong: #f5f5f5;     /* Tailwind neutral-100 */
+
+  /* Accent */
+  --color-accent: #4f46e5;          /* Tailwind indigo-600 */
+  --color-on-accent: #ffffff;       /* White on accent */
+}
 :root {}
 
 .dark {}

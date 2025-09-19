@@ -5,7 +5,7 @@ export default function ChipGrid() {
       {chips.map((label, i) => (
         <div
           key={i}
-          className="rounded-sm border border-neutral-700 bg-neutral-800 px-3 py-4 text-center text-sm text-neutral-300"
+          className="rounded-sm border border-border bg-surface px-3 py-4 text-center text-sm text-text-muted"
         >
           {label}
         </div>
