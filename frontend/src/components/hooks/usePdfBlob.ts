@@ -30,7 +30,8 @@ async function ensurePdfPolyfills(): Promise<void> {
 
   // Load polyfills dynamically so they only affect this route/chunk
   const bufferMod: typeof import('buffer') = await import('buffer')
-  const processMod: typeof import('process') = await import('process')
+  // Import process polyfill with any typing to avoid TS issues
+  const processMod = await import('process' as any)
 
   const g = globalThis as unknown as GlobalPolyfillTarget
 
@@ -38,12 +39,10 @@ async function ensurePdfPolyfills(): Promise<void> {
   if (!g.Buffer) g.Buffer = bufferMod.Buffer
 
   // Some bundlers expose process as default, others as the module itself
-  const procCandidate =
-    (processMod as unknown as { default?: ProcessLike }).default ??
-    (processMod as unknown as ProcessLike)
+  const procCandidate = (processMod as any)?.default ?? (processMod as any)
 
-  if (!g.process) g.process = procCandidate
-  if (!g.process.env) g.process.env = {} // a few libs read process.env
+  if (!g.process) g.process = procCandidate || { env: {} }
+  if (g.process && !g.process.env) g.process.env = {} // a few libs read process.env
   if (!g.global) g.global = globalThis // some libs still expect "global"
 
   __pdfPolyfillsReady = true
@@ -60,7 +59,6 @@ export function usePdfBlob(doc: PdfDocElement) {
     let mounted = true
     setLoading(true)
     setError(null)
-
     ;(async () => {
       try {
         // 1) Ensure polyfills exist BEFORE loading react-pdf
