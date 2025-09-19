@@ -12,13 +12,22 @@ import salt.backend.dto.ResumeDto;
 @Slf4j
 @Service
 public class TranslationService {
-    // The client gets the API key from the environment variable `GEMINI_API_KEY`.
+    // The client gets the API key from the environment variable `GOOGLE_API_KEY`.
     private final Client client;
     private final ObjectMapper objectMapper;
 
     public TranslationService() {
+        // Check if API key is available
+        String apiKey = System.getenv("GOOGLE_API_KEY");
+        if (apiKey == null || apiKey.trim().isEmpty()) {
+            throw new IllegalStateException(
+                "Google API key is required. Please set the GOOGLE_API_KEY environment variable."
+            );
+        }
+        
         this.client = new Client();
         this.objectMapper = new ObjectMapper();
+        log.info("🔑 Google Gemini client initialized successfully");
     }
 
     public ResumeDto translateResume(TranslationRequestDto request) throws Exception {
