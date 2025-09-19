@@ -128,14 +128,15 @@ export const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: 'bold',
     color: COLORS.primary,
-    marginBottom: 4,
+    marginBottom: 8,
     letterSpacing: 1,
   },
 
   jobTitle: {
     fontSize: 14,
     color: COLORS.secondary,
-    marginBottom: 12,
+    marginBottom: 16,
+    marginTop: 8,
     letterSpacing: 0.5,
     textTransform: 'uppercase',
   },
