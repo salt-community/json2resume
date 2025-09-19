@@ -106,7 +106,7 @@ export const ResumePdfDocument = ({ resumeData }: ResumePdfDocumentProps) => {
 
           {/* Work Experience */}
           {work.length > 0 && (
-            <View style={styles.section}>
+            <View style={styles.section} wrap={false}>
               <Text style={styles.sectionHeading}>Work Experience</Text>
               <View style={styles.timelineContainer}>
                 {work.map((job, index) => (
@@ -146,7 +146,7 @@ export const ResumePdfDocument = ({ resumeData }: ResumePdfDocumentProps) => {
 
           {/* Education */}
           {education.length > 0 && (
-            <View style={styles.section}>
+            <View style={styles.section} wrap={false}>
               <Text style={styles.sectionHeading}>Education</Text>
               <View style={styles.timelineContainer}>
                 {education.map((edu, index) => (
@@ -184,7 +184,7 @@ export const ResumePdfDocument = ({ resumeData }: ResumePdfDocumentProps) => {
 
           {/* Skills */}
           {skills.length > 0 && (
-            <View style={styles.section}>
+            <View style={styles.section} wrap={false}>
               <Text style={styles.sectionHeading}>Skills</Text>
               <View style={styles.skillsGrid}>
                 <View style={styles.skillColumn}>
@@ -227,7 +227,7 @@ export const ResumePdfDocument = ({ resumeData }: ResumePdfDocumentProps) => {
 
           {/* Languages */}
           {languages.length > 0 && (
-            <View style={styles.section}>
+            <View style={styles.section} wrap={false}>
               <Text style={styles.sectionHeading}>Languages</Text>
               <View style={styles.languagesGrid}>
                 <View style={styles.languageColumn}>
