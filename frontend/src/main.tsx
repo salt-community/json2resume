@@ -8,13 +8,9 @@ import { routeTree } from './routeTree.gen'
 import './styles.css'
 import reportWebVitals from './reportWebVitals.ts'
 import {
-  useQuery,
-  useMutation,
-  useQueryClient,
   QueryClient,
   QueryClientProvider,
 } from '@tanstack/react-query'
-import { getTodos, postTodo } from '../my-api'
 
 // Create a new router instance
 const router = createRouter({
