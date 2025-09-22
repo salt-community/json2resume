@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import StatusHeader from '@/components/StatusHeader.tsx'
-import ResumeEditor from '@/components/ResumeEditor.tsx'
-import { Resume } from '@/components/resume/Resume.tsx'
+import ResumeEditor from '@/components/ResumeEditor/ResumeEditor.tsx'
+import { Resume } from '@/components/Resume.tsx'
 
 export const Route = createFileRoute('/')({
   component: App,

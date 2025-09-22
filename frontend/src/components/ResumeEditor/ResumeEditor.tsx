@@ -1,8 +1,8 @@
-import SidebarNav from '@/components/SidebarNav.tsx'
-import JsonArea from '@/components/JsonArea.tsx'
-import PlaceholderGrid from '@/components/PlaceholderGrid.tsx'
-import ChipGrid from '@/components/ChipGrid.tsx'
 import {useState} from "react";
+import SectionSelector from '@/components/ResumeEditor/SectionSelector.tsx'
+import JsonArea from '@/components/ResumeEditor/JsonArea.tsx'
+import TemplateSelector from '@/components/TemplateSelector.tsx'
+import LanguageSelector from '@/components/ResumeEditor/LanguageSelector.tsx'
 
 export default function ResumeEditor() {
   const originalJson = `{
@@ -117,20 +117,42 @@ export default function ResumeEditor() {
 }`
   const [json, setJson] = useState(originalJson)
 
+  // Original list of sections
+  const originalSections = [
+    'basics',
+    'profiles',
+    'work',
+    'volunteer',
+    'education',
+    'awards',
+    'certificates',
+    'publications',
+    'skills',
+    'languages',
+    'interests',
+    'references',
+    'projects',
+  ]
+
+  // Sections state with selected status (default select the first)
+  const [sections, setSections] = useState<{ id: string; selected: boolean }[]>(
+    () => originalSections.map((id, idx) => ({ id, selected: idx === 0 }))
+  )
+
   return (
     <>
       <div className="grid grid-cols-12 gap-4">
         <div className="col-span-12 md:col-span-2">
-          <SidebarNav />
+          <SectionSelector sections={sections} setSections={setSections} />
         </div>
         <div className="col-span-12 md:col-span-7">
           <JsonArea jsonState={json} onChange={setJson} />
         </div>
         <div className="col-span-12 md:col-span-3">
-          <PlaceholderGrid />
+          <TemplateSelector />
         </div>
       </div>
-      <ChipGrid />
+      <LanguageSelector />
     </>
   )
 }
