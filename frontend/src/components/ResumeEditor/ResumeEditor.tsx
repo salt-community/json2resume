@@ -1,10 +1,10 @@
 import {useState} from "react";
+import { filterResumeData, parseResumeJson } from './utils'
+import type { ResumeData } from '@/components'
 import SectionSelector from '@/components/ResumeEditor/SectionSelector.tsx'
 import JsonArea from '@/components/ResumeEditor/JsonArea.tsx'
 import TemplateSelector from '@/components/TemplateSelector.tsx'
 import LanguageSelector from '@/components/ResumeEditor/LanguageSelector.tsx'
-import { filterResumeData, mockTranslateResumeData, parseResumeJson } from './utils'
-import type { ResumeData } from '../resume/ResumeTypes'
 import { useTranslate } from "@/useTranslate";
 
 interface ResumeEditorProps {
@@ -206,7 +206,7 @@ export default function ResumeEditor({ onGenerate }: ResumeEditorProps) {
 
       // 4. Translate the data using the API
       const translatedData = await translate({ 
-        resumeData: parsedData, 
+        resumeData: filteredData,
         targetLanguage: selectedLanguage?.id || 'en' 
       })
 

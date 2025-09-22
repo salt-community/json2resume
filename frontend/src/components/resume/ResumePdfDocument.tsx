@@ -1,6 +1,6 @@
-import { Document, Page, Text, View, Image } from '@react-pdf/renderer'
-import { styles, getSkillLevel, getLanguageFluency } from './ResumeStyles'
-import type { ResumeData } from './ResumeTypes'
+import { Document, Image, Page, Text, View } from '@react-pdf/renderer'
+import { getLanguageFluency, getSkillLevel, styles } from './ResumeStyles'
+import type { ResumeData } from '@/components'
 
 export interface ResumePdfDocumentProps {
   resumeData: ResumeData
@@ -28,14 +28,14 @@ export const ResumePdfDocument = ({ resumeData }: ResumePdfDocumentProps) => {
         {/* Left Sidebar */}
         <View style={styles.sidebar}>
           {/* Portrait */}
-          {basics?.image && (
+          {basics.image && (
             <View style={styles.sidebarSection}>
               <Image src={basics.image} style={styles.portrait} />
             </View>
           )}
 
           {/* About Me */}
-          {basics?.summary && (
+          {basics.summary && (
             <View style={styles.sidebarSection}>
               <Text style={styles.sidebarHeading}>About Me</Text>
               <Text style={styles.sidebarText}>{basics.summary}</Text>
@@ -43,7 +43,7 @@ export const ResumePdfDocument = ({ resumeData }: ResumePdfDocumentProps) => {
           )}
 
           {/* Links */}
-          {basics?.profiles && basics.profiles.length > 0 && (
+          {basics.profiles && basics.profiles.length > 0 && (
             <View style={styles.sidebarSection}>
               <Text style={styles.sidebarHeading}>Links</Text>
               {basics.profiles.map((profile, index) => (
@@ -56,7 +56,7 @@ export const ResumePdfDocument = ({ resumeData }: ResumePdfDocumentProps) => {
           )}
 
           {/* Reference */}
-          {references.length > 0 && (
+          {references?.length > 0 && (
             <View style={styles.sidebarSection}>
               <Text style={styles.sidebarHeading}>Reference</Text>
               {references.map((ref, index) => (
@@ -71,7 +71,7 @@ export const ResumePdfDocument = ({ resumeData }: ResumePdfDocumentProps) => {
           )}
 
           {/* Interests/Hobbies */}
-          {interests.length > 0 && (
+          {interests?.length > 0 && (
             <View style={styles.sidebarSection}>
               <Text style={styles.sidebarHeading}>Interests</Text>
               {interests.map((interest, index) => (
@@ -84,7 +84,7 @@ export const ResumePdfDocument = ({ resumeData }: ResumePdfDocumentProps) => {
           )}
 
           {/* Awards */}
-          {awards.length > 0 && (
+          {awards?.length > 0 && (
             <View style={styles.sidebarSection}>
               <Text style={styles.sidebarHeading}>Awards</Text>
               {awards.map((award, index) => (
@@ -109,13 +109,13 @@ export const ResumePdfDocument = ({ resumeData }: ResumePdfDocumentProps) => {
         <View style={styles.mainContent}>
           {/* Header */}
           <View style={styles.header}>
-            <Text style={styles.name}>{basics?.name || ''}</Text>
-            {basics?.label && (
+            <Text style={styles.name}>{basics.name || ''}</Text>
+            {basics.label && (
               <Text style={styles.jobTitle}>{basics.label}</Text>
             )}
 
             <View style={styles.contactInfo}>
-              {basics?.location && (
+              {basics.location && (
                 <View style={styles.contactItem}>
                   <Text style={styles.contactText}>
                     {[
@@ -128,17 +128,17 @@ export const ResumePdfDocument = ({ resumeData }: ResumePdfDocumentProps) => {
                   </Text>
                 </View>
               )}
-              {basics?.phone && (
+              {basics.phone && (
                 <View style={styles.contactItem}>
                   <Text style={styles.contactText}>{basics.phone}</Text>
                 </View>
               )}
-              {basics?.email && (
+              {basics.email && (
                 <View style={styles.contactItem}>
                   <Text style={styles.contactText}>{basics.email}</Text>
                 </View>
               )}
-              {basics?.url && (
+              {basics.url && (
                 <View style={styles.contactItem}>
                   <Text style={styles.contactText}>{basics.url}</Text>
                 </View>
@@ -147,7 +147,7 @@ export const ResumePdfDocument = ({ resumeData }: ResumePdfDocumentProps) => {
           </View>
 
           {/* Work Experience */}
-          {work.length > 0 && (
+          {work?.length > 0 && (
             <View style={styles.section} wrap={false}>
               <Text style={styles.sectionHeading}>Work Experience</Text>
               <View style={styles.timelineContainer}>
@@ -194,7 +194,7 @@ export const ResumePdfDocument = ({ resumeData }: ResumePdfDocumentProps) => {
           )}
 
           {/* Volunteer Experience */}
-          {volunteer.length > 0 && (
+          {volunteer?.length > 0 && (
             <View style={styles.section} wrap={false}>
               <Text style={styles.sectionHeading}>Volunteer Experience</Text>
               <View style={styles.timelineContainer}>
@@ -241,7 +241,7 @@ export const ResumePdfDocument = ({ resumeData }: ResumePdfDocumentProps) => {
           )}
 
           {/* Projects */}
-          {projects.length > 0 && (
+          {projects?.length > 0 && (
             <View style={styles.section} wrap={false}>
               <Text style={styles.sectionHeading}>Projects</Text>
               <View style={styles.timelineContainer}>
@@ -285,7 +285,7 @@ export const ResumePdfDocument = ({ resumeData }: ResumePdfDocumentProps) => {
           )}
 
           {/* Education */}
-          {education.length > 0 && (
+          {education?.length > 0 && (
             <View style={styles.section} wrap={false}>
               <Text style={styles.sectionHeading}>Education</Text>
               <View style={styles.timelineContainer}>
@@ -335,7 +335,7 @@ export const ResumePdfDocument = ({ resumeData }: ResumePdfDocumentProps) => {
           )}
 
           {/* Publications */}
-          {publications.length > 0 && (
+          {publications?.length > 0 && (
             <View style={styles.section} wrap={false}>
               <Text style={styles.sectionHeading}>Publications</Text>
               <View style={styles.timelineContainer}>
@@ -369,7 +369,7 @@ export const ResumePdfDocument = ({ resumeData }: ResumePdfDocumentProps) => {
           )}
 
           {/* Certificates */}
-          {certificates.length > 0 && (
+          {certificates?.length > 0 && (
             <View style={styles.section} wrap={false}>
               <Text style={styles.sectionHeading}>Certificates</Text>
               <View style={styles.timelineContainer}>
@@ -400,7 +400,7 @@ export const ResumePdfDocument = ({ resumeData }: ResumePdfDocumentProps) => {
           )}
 
           {/* Skills */}
-          {skills.length > 0 && (
+          {skills?.length > 0 && (
             <View style={styles.section} wrap={false}>
               <Text style={styles.sectionHeading}>Skills</Text>
               <View style={styles.skillsGrid}>
@@ -457,7 +457,7 @@ export const ResumePdfDocument = ({ resumeData }: ResumePdfDocumentProps) => {
           )}
 
           {/* Languages */}
-          {languages.length > 0 && (
+          {languages?.length > 0 && (
             <View style={styles.section} wrap={false}>
               <Text style={styles.sectionHeading}>Languages</Text>
               <View style={styles.languagesGrid}>
