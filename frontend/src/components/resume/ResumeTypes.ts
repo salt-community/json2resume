@@ -130,7 +130,7 @@ export const MOCK_RESUME_DATA: ResumeData = {
   basics: {
     name: "John Doe",
     label: "Programmer",
-    image: "",
+    image: "https://upload.wikimedia.org/wikipedia/commons/6/68/Joe_Biden_presidential_portrait.jpg",
     email: "john@gmail.com",
     phone: "(912) 555-4321",
     url: "https://johndoe.com",
