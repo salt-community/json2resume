@@ -135,7 +135,7 @@ export default function ResumeEditor() {
   ]
 
   // Sections state with selected status (default select the first)
-  const [sections, setSections] = useState<{ id: string; selected: boolean }[]>(
+  const [sections, setSections] = useState<Array<{ id: string; selected: boolean }>>(
     () => originalSections.map((id, idx) => ({ id, selected: idx === 0 }))
   )
 
@@ -148,8 +148,33 @@ export default function ResumeEditor() {
     'template-5',
     'template-6',
   ]
-  const [templates, setTemplates] = useState<{ id: string; selected: boolean }[]>(
+  const [templates, setTemplates] = useState<Array<{ id: string; selected: boolean }>>(
     () => originalTemplates.map((id, idx) => ({ id, selected: idx === 0 }))
+  )
+
+  // Languages state (default select the first)
+  const originalLanguages = [
+    'English',
+    'Spanish',
+    'French',
+    'German',
+    'Chinese',
+    'Japanese',
+    'Korean',
+    'Portuguese',
+    'Italian',
+    'Russian',
+    'Arabic',
+    'Hindi',
+    'Bengali',
+    'Turkish',
+    'Vietnamese',
+    'Polish',
+    'Dutch',
+    'Swedish',
+  ]
+  const [languages, setLanguages] = useState<Array<{ id: string; selected: boolean }>>(
+    () => originalLanguages.map((id, idx) => ({ id, selected: idx === 0 }))
   )
 
   return (
@@ -165,7 +190,7 @@ export default function ResumeEditor() {
           <TemplateSelector templates={templates} setTemplates={setTemplates} />
         </div>
       </div>
-      <LanguageSelector />
+      <LanguageSelector languages={languages} setLanguages={setLanguages} />
     </>
   )
 }
