@@ -3,8 +3,14 @@ import SectionSelector from '@/components/ResumeEditor/SectionSelector.tsx'
 import JsonArea from '@/components/ResumeEditor/JsonArea.tsx'
 import TemplateSelector from '@/components/TemplateSelector.tsx'
 import LanguageSelector from '@/components/ResumeEditor/LanguageSelector.tsx'
+import { filterResumeData, mockTranslateResumeData, parseResumeJson } from './utils'
+import type { ResumeData } from '../resume/ResumeTypes'
 
-export default function ResumeEditor() {
+interface ResumeEditorProps {
+  onGenerate?: (resumeData: ResumeData) => void
+}
+
+export default function ResumeEditor({ onGenerate }: ResumeEditorProps) {
   const originalJson = `{
   "basics": {
     "name": "John Doe",
@@ -134,19 +140,17 @@ export default function ResumeEditor() {
     'projects',
   ]
 
-  // Sections state with selected status (default select the first)
+  // Sections state with selected status (default select key sections)
   const [sections, setSections] = useState<Array<{ id: string; selected: boolean }>>(
-    () => originalSections.map((id, idx) => ({ id, selected: idx === 0 }))
+    () => originalSections.map((id) => ({ 
+      id, 
+      selected: ['basics', 'work', 'education', 'skills'].includes(id) 
+    }))
   )
 
   // Templates state (default select the first)
   const originalTemplates = [
-    'template-1',
-    'template-2',
-    'template-3',
-    'template-4',
-    'template-5',
-    'template-6',
+    'template-1'
   ]
   const [templates, setTemplates] = useState<Array<{ id: string; selected: boolean }>>(
     () => originalTemplates.map((id, idx) => ({ id, selected: idx === 0 }))
@@ -177,6 +181,42 @@ export default function ResumeEditor() {
     () => originalLanguages.map((id, idx) => ({ id, selected: idx === 0 }))
   )
 
+  // Generate button state
+  const [isGenerating, setIsGenerating] = useState(false)
+
+  const handleGenerate = async () => {
+    if (!onGenerate) return
+    
+    setIsGenerating(true)
+    
+    try {
+      // 1. Parse JSON data
+      const parsedData = parseResumeJson(json)
+      if (!parsedData) {
+        alert('Invalid JSON data. Please check your input.')
+        return
+      }
+
+      // 2. Filter data based on selected sections
+      const filteredData = filterResumeData(parsedData, sections)
+
+      // 3. Get selected language
+      const selectedLanguage = languages.find(lang => lang.selected)
+
+      // 4. Mock translate the data (simulates backend API call)
+      const translatedData = await mockTranslateResumeData(filteredData, selectedLanguage || null)
+
+      // 5. Pass the final data to the parent component
+      onGenerate(translatedData)
+      
+    } catch (error) {
+      console.error('Error generating resume:', error)
+      alert('Error generating resume. Please try again.')
+    } finally {
+      setIsGenerating(false)
+    }
+  }
+
   return (
     <>
       <div className="grid grid-cols-12 gap-4">
@@ -190,7 +230,34 @@ export default function ResumeEditor() {
           <TemplateSelector templates={templates} setTemplates={setTemplates} />
         </div>
       </div>
-      <LanguageSelector languages={languages} setLanguages={setLanguages} />
+      
+      <div className="mt-4">
+        <LanguageSelector languages={languages} setLanguages={setLanguages} />
+      </div>
+
+      <div className="mt-6 flex justify-center">
+        <button
+          onClick={handleGenerate}
+          disabled={isGenerating}
+          className={`px-8 py-3 rounded-lg font-medium text-white transition-all duration-200 ${
+            isGenerating 
+              ? 'bg-gray-400 cursor-not-allowed' 
+              : 'bg-blue-600 hover:bg-blue-700 hover:shadow-lg active:transform active:scale-95'
+          }`}
+        >
+          {isGenerating ? (
+            <span className="flex items-center gap-2">
+              <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              Generating Resume...
+            </span>
+          ) : (
+            'Generate Resume'
+          )}
+        </button>
+      </div>
     </>
   )
 }
