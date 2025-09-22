@@ -139,6 +139,19 @@ export default function ResumeEditor() {
     () => originalSections.map((id, idx) => ({ id, selected: idx === 0 }))
   )
 
+  // Templates state (default select the first)
+  const originalTemplates = [
+    'template-1',
+    'template-2',
+    'template-3',
+    'template-4',
+    'template-5',
+    'template-6',
+  ]
+  const [templates, setTemplates] = useState<{ id: string; selected: boolean }[]>(
+    () => originalTemplates.map((id, idx) => ({ id, selected: idx === 0 }))
+  )
+
   return (
     <>
       <div className="grid grid-cols-12 gap-4">
@@ -149,7 +162,7 @@ export default function ResumeEditor() {
           <JsonArea jsonState={json} onChange={setJson} />
         </div>
         <div className="col-span-12 md:col-span-3">
-          <TemplateSelector />
+          <TemplateSelector templates={templates} setTemplates={setTemplates} />
         </div>
       </div>
       <LanguageSelector />
