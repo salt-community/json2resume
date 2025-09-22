@@ -14,7 +14,7 @@ const items = [
   'projects',
 ]
 
-export default function SidebarNav() {
+export default function SectionSelector() {
   return (
     <div className="w-full">
       <ul className="space-y-2">
