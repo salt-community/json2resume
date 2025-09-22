@@ -21,8 +21,8 @@ public class TranslationRequestDto {
 
     @Valid
     @NotNull(message = "Resume data is required")
-    private ResumeDto resume;
+    private ResumeDto resumeData;
 
     @NotBlank(message = "Language code is required")
-    private String languageCode;
+    private String targetLanguage;
 }

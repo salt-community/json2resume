@@ -110,6 +110,7 @@ public class ResumeDto {
         private String endDate;
         private String summary;
         private List<String> highlights;
+        private List<String> keywords;
     }
 
     @Data

@@ -37,8 +37,8 @@ class TranslationServiceTest {
                 .build();
 
         validRequest = TranslationRequestDto.builder()
-                .resume(sampleResume)
-                .languageCode("es")
+                .resumeData(sampleResume)
+                .targetLanguage("es")
                 .build();
     }
 
@@ -87,8 +87,8 @@ class TranslationServiceTest {
                     .build();
 
             TranslationRequestDto minimalRequest = TranslationRequestDto.builder()
-                    .resume(minimalResume)
-                    .languageCode("fr")
+                    .resumeData(minimalResume)
+                    .targetLanguage("fr")
                     .build();
 
             assertThrows(Exception.class, () -> {
@@ -104,8 +104,8 @@ class TranslationServiceTest {
     void translateResume_WithDifferentLanguage_ShouldNotThrowException() {
         if (translationService != null) {
             TranslationRequestDto germanRequest = TranslationRequestDto.builder()
-                    .resume(sampleResume)
-                    .languageCode("de")
+                    .resumeData(sampleResume)
+                    .targetLanguage("de")
                     .build();
 
             assertThrows(Exception.class, () -> {

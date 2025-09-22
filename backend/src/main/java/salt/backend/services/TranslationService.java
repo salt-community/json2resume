@@ -33,12 +33,12 @@ public class TranslationService {
     public ResumeDto translateResume(TranslationRequestDto request) throws Exception {
         try {
             // Convert the resume to JSON string
-            String resumeJson = objectMapper.writeValueAsString(request.getResume());
+            String resumeJson = objectMapper.writeValueAsString(request.getResumeData());
             
             // Create the prompt for Gemini AI
-            String prompt = buildTranslationPrompt(resumeJson, request.getLanguageCode());
+            String prompt = buildTranslationPrompt(resumeJson, request.getTargetLanguage());
             
-            log.info("📤 Sending translation request to Gemini AI for language: {}", request.getLanguageCode());
+            log.info("📤 Sending translation request to Gemini AI for language: {}", request.getTargetLanguage());
             
             // Send request to Gemini AI
             GenerateContentResponse response = client.models.generateContent(
@@ -56,7 +56,7 @@ public class TranslationService {
             // Parse the translated JSON back to ResumeDto
             ResumeDto translatedResume = objectMapper.readValue(translatedJson, ResumeDto.class);
             
-            log.info("✅ Successfully translated resume to {}", request.getLanguageCode());
+            log.info("✅ Successfully translated resume to {}", request.getTargetLanguage());
             return translatedResume;
             
         } catch (JsonProcessingException e) {

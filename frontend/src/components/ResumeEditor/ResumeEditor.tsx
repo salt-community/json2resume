@@ -5,6 +5,7 @@ import TemplateSelector from '@/components/TemplateSelector.tsx'
 import LanguageSelector from '@/components/ResumeEditor/LanguageSelector.tsx'
 import { filterResumeData, mockTranslateResumeData, parseResumeJson } from './utils'
 import type { ResumeData } from '../resume/ResumeTypes'
+import { useTranslate } from "@/useTranslate";
 
 interface ResumeEditorProps {
   onGenerate?: (resumeData: ResumeData) => void
@@ -183,11 +184,11 @@ export default function ResumeEditor({ onGenerate }: ResumeEditorProps) {
 
   // Generate button state
   const [isGenerating, setIsGenerating] = useState(false)
-
+  const { mutateAsync: translate } = useTranslate()
   const handleGenerate = async () => {
     if (!onGenerate) return
     
-    setIsGenerating(true)
+    setIsGenerating(true);
     
     try {
       // 1. Parse JSON data
@@ -203,8 +204,11 @@ export default function ResumeEditor({ onGenerate }: ResumeEditorProps) {
       // 3. Get selected language
       const selectedLanguage = languages.find(lang => lang.selected)
 
-      // 4. Mock translate the data (simulates backend API call)
-      const translatedData = await mockTranslateResumeData(filteredData, selectedLanguage || null)
+      // 4. Translate the data using the API
+      const translatedData = await translate({ 
+        resumeData: parsedData, 
+        targetLanguage: selectedLanguage?.id || 'en' 
+      })
 
       // 5. Pass the final data to the parent component
       onGenerate(translatedData)

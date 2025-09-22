@@ -68,8 +68,8 @@ class ResumeControllerTest {
                 .build();
 
         validRequest = TranslationRequestDto.builder()
-                .resume(sampleResume)
-                .languageCode("es")
+                .resumeData(sampleResume)
+                .targetLanguage("es")
                 .build();
     }
 
@@ -120,8 +120,8 @@ class ResumeControllerTest {
     void translateResume_WithEmptyResume_ShouldReturnBadRequest() throws Exception {
         // Arrange
         TranslationRequestDto invalidRequest = TranslationRequestDto.builder()
-                .resume(null)
-                .languageCode("es")
+                .resumeData(null)
+                .targetLanguage("es")
                 .build();
 
         // Act & Assert
@@ -137,8 +137,8 @@ class ResumeControllerTest {
     void translateResume_WithEmptyLanguageCode_ShouldReturnBadRequest() throws Exception {
         // Arrange
         TranslationRequestDto invalidRequest = TranslationRequestDto.builder()
-                .resume(sampleResume)
-                .languageCode("")
+                .resumeData(sampleResume)
+                .targetLanguage("")
                 .build();
 
         // Act & Assert
@@ -154,8 +154,8 @@ class ResumeControllerTest {
     void translateResume_WithNullLanguageCode_ShouldReturnBadRequest() throws Exception {
         // Arrange
         TranslationRequestDto invalidRequest = TranslationRequestDto.builder()
-                .resume(sampleResume)
-                .languageCode(null)
+                .resumeData(sampleResume)
+                .targetLanguage(null)
                 .build();
 
         // Act & Assert
@@ -214,8 +214,8 @@ class ResumeControllerTest {
                 .build();
 
         TranslationRequestDto minimalRequest = TranslationRequestDto.builder()
-                .resume(minimalResume)
-                .languageCode("fr")
+                .resumeData(minimalResume)
+                .targetLanguage("fr")
                 .build();
 
         ResumeDto translatedResume = ResumeDto.builder()
@@ -335,8 +335,8 @@ class ResumeControllerTest {
                 .build();
 
         TranslationRequestDto complexRequest = TranslationRequestDto.builder()
-                .resume(complexResume)
-                .languageCode("de")
+                .resumeData(complexResume)
+                .targetLanguage("de")
                 .build();
 
         when(translationService.translateResume(any(TranslationRequestDto.class)))
@@ -365,8 +365,8 @@ class ResumeControllerTest {
 
         for (String langCode : languageCodes) {
             TranslationRequestDto request = TranslationRequestDto.builder()
-                    .resume(sampleResume)
-                    .languageCode(langCode)
+                    .resumeData(sampleResume)
+                    .targetLanguage(langCode)
                     .build();
 
             when(translationService.translateResume(any(TranslationRequestDto.class)))

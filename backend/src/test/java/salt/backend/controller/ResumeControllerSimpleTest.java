@@ -1,6 +1,5 @@
 package salt.backend.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -62,8 +61,8 @@ class ResumeControllerSimpleTest {
                 .build();
 
         validRequest = TranslationRequestDto.builder()
-                .resume(sampleResume)
-                .languageCode("es")
+                .resumeData(sampleResume)
+                .targetLanguage("es")
                 .build();
     }
 
@@ -149,8 +148,8 @@ class ResumeControllerSimpleTest {
                 .build();
 
         TranslationRequestDto minimalRequest = TranslationRequestDto.builder()
-                .resume(minimalResume)
-                .languageCode("fr")
+                .resumeData(minimalResume)
+                .targetLanguage("fr")
                 .build();
 
         ResumeDto translatedResume = ResumeDto.builder()
@@ -255,8 +254,8 @@ class ResumeControllerSimpleTest {
                 .build();
 
         TranslationRequestDto complexRequest = TranslationRequestDto.builder()
-                .resume(complexResume)
-                .languageCode("de")
+                .resumeData(complexResume)
+                .targetLanguage("de")
                 .build();
 
         when(translationService.translateResume(any(TranslationRequestDto.class)))

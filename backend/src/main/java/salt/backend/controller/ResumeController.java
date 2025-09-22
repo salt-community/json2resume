@@ -19,6 +19,7 @@ import salt.backend.services.TranslationService;
 @Slf4j
 @RestController
 @RequestMapping(path = "/api", produces = MediaType.APPLICATION_JSON_VALUE)
+@CrossOrigin
 public class ResumeController {
 
     private final TranslationService translationService;
@@ -29,15 +30,15 @@ public class ResumeController {
 
     @PostMapping(path = "/translate", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResumeDto> translateResume(@Valid @RequestBody TranslationRequestDto request) {
-        log.info("🚀 Received translation request for language: {}", request.getLanguageCode());
+        log.info("🚀 Received translation request for language: {}", request.getTargetLanguage());
 
         try {
             ResumeDto translatedResume = translationService.translateResume(request);
-            log.info("📝 Translation completed successfully for language: {}", request.getLanguageCode());
+            log.info("📝 Translation completed successfully for language: {}", request.getTargetLanguage());
             return ResponseEntity.ok(translatedResume);
 
         } catch (Exception e) {
-            log.error("❌ Error processing translation request for language: {}", request.getLanguageCode(), e);
+            log.error("❌ Error processing translation request for language: {}", request.getTargetLanguage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
