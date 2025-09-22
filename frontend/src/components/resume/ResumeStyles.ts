@@ -243,19 +243,21 @@ export const styles = StyleSheet.create({
   itemSubtitle: {
     fontSize: 11,
     color: COLORS.secondary,
-    marginBottom: 6,
+    marginBottom: 8,
+    marginTop: 2,
   },
 
   itemLocation: {
     fontSize: 10,
     color: COLORS.secondary,
     fontStyle: 'italic',
-    marginBottom: 6,
+    marginBottom: 8,
+    marginTop: 2,
   },
 
   // Bullet points
   bulletList: {
-    marginTop: 4,
+    marginTop: 8,
   },
 
   bulletItem: {
@@ -276,6 +278,8 @@ export const styles = StyleSheet.create({
     color: COLORS.primary,
     flex: 1,
     lineHeight: 1.3,
+    marginBottom: 2,
+    marginTop: 2,
   },
 
   // Skills section

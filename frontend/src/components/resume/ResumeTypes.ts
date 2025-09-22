@@ -209,10 +209,62 @@ export const MOCK_RESUME_DATA: ResumeData = {
       "CSS",
       "JavaScript"
     ]
+  }, {
+    name: "React",
+    level: "Expert",
+    keywords: [
+      "JSX",
+      "Hooks",
+      "Redux"
+    ]
+  }, {
+    name: "Node.js",
+    level: "Advanced",
+    keywords: [
+      "Express",
+      "API Development",
+      "MongoDB"
+    ]
+  }, {
+    name: "Python",
+    level: "Intermediate",
+    keywords: [
+      "Django",
+      "Flask",
+      "Data Analysis"
+    ]
+  }, {
+    name: "Docker",
+    level: "Intermediate",
+    keywords: [
+      "Containerization",
+      "Kubernetes",
+      "DevOps"
+    ]
+  }, {
+    name: "Machine Learning",
+    level: "Beginner",
+    keywords: [
+      "TensorFlow",
+      "Scikit-learn",
+      "Neural Networks"
+    ]
   }],
   languages: [{
     language: "English",
     fluency: "Native speaker"
+  }, {
+    language: "Spanish",
+    fluency: "Full Professional"
+  }, {
+    language: "French",
+    fluency: "Professional Working"
+  }, {
+    language: "German",
+    fluency: "Limited Working"
+  }, {
+    language: "Mandarin",
+    fluency: "Elementary"
   }],
   interests: [{
     name: "Wildlife",
