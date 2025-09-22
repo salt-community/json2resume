@@ -15,6 +15,11 @@ export function Resume({
   // Generate the PDF document
   const pdfDocument = <ResumePdfDocument resumeData={resumeData} />
 
+  // Get the name for the filename, fallback to default
+  const fileName = resumeData.basics?.name 
+    ? `${resumeData.basics.name.replace(/\s+/g, '_')}_Resume.pdf`
+    : 'Resume.pdf'
+
   return (
     <div className={className}>
       <div className="mb-6">
@@ -28,7 +33,7 @@ export function Resume({
 
       <ResumePreview
         doc={pdfDocument}
-        fileName={`${resumeData.basics.name.replace(/\s+/g, '_')}_Resume.pdf`}
+        fileName={fileName}
       />
     </div>
   )

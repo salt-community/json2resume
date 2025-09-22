@@ -353,34 +353,45 @@ export const styles = StyleSheet.create({
   },
 })
 
-// Helper function to get skill level percentage
+// Helper function to get skill level percentage - updated for JSON Resume schema
 export const getSkillLevel = (level: string): string => {
-  switch (level) {
-    case 'Expert':
+  const normalizedLevel = level.toLowerCase()
+  
+  switch (normalizedLevel) {
+    case 'master':
+    case 'expert':
       return '100%'
-    case 'Advanced':
+    case 'advanced':
       return '80%'
-    case 'Intermediate':
+    case 'intermediate':
       return '60%'
-    case 'Beginner':
+    case 'beginner':
+    case 'novice':
       return '40%'
     default:
       return '50%'
   }
 }
 
-// Helper function to get language fluency percentage
+// Helper function to get language fluency percentage - updated for JSON Resume schema
 export const getLanguageFluency = (fluency: string): string => {
-  switch (fluency) {
-    case 'Native':
+  const normalizedFluency = fluency.toLowerCase()
+  
+  switch (normalizedFluency) {
+    case 'native':
+    case 'native speaker':
       return '100%'
-    case 'Full Professional':
+    case 'full professional':
+    case 'fluent':
       return '90%'
-    case 'Professional Working':
+    case 'professional working':
+    case 'proficient':
       return '75%'
-    case 'Limited Working':
+    case 'limited working':
+    case 'conversational':
       return '50%'
-    case 'Elementary':
+    case 'elementary':
+    case 'basic':
       return '25%'
     default:
       return '50%'
