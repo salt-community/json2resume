@@ -28,7 +28,7 @@ export default function LanguageSelector({
                 handleSelect(i)
               }
             }}
-            className={`rounded-sm border border-border bg-surface px-3 py-4 text-center text-sm ${isSelected ? 'text-text' : 'text-text-muted'} cursor-pointer select-none`}
+            className={`rounded-sm border border-border px-3 py-4 text-center text-sm cursor-pointer select-none break-words transition-colors ${isSelected ? 'bg-accent text-on-accent border-accent' : 'bg-surface text-text-subtle hover:bg-surface-strong'}`}
             aria-pressed={isSelected}
           >
             {lang.id}
