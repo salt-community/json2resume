@@ -16,7 +16,7 @@ export default function ResumeEditor({ onGenerate }: ResumeEditorProps) {
   "basics": {
     "name": "John Doe",
     "label": "Programmer",
-    "image": "",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/5/54/World_champion_Daniel_St%C3%A5hl_2019.jpg",
     "email": "john@gmail.com",
     "phone": "(912) 555-4321",
     "url": "https://johndoe.com",
