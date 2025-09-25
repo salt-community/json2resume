@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Resume – Alexandra Rivera</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    /* WeasyPrint-friendly CSS (no CSS variables, no gradients, no grid) */
+    @page { margin: 0; }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      background: #f5f7fb; /* soft gray-blue for subtle contrast */
+      color: #1f2937;
+      font-family: "DejaVu Sans", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    .page {
+      position: relative;
+      z-index: 1;
+      border: 1px solid #e5e7eb;
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 20px;
+      overflow: visible; /* allow decorative shape to render outside card */
+    }
+
+    /* Top blue container (holds the header) */
+    .decor-top {
+      background: #dbeafe; /* blue-100 */
+      padding: 12px 16px;
+      margin-bottom: 0;
+    }
+
+    /* Layout wrapper to place the resume and the decorative aside side-by-side */
+    .layout {
+      display: flex;
+      gap: 0;
+      align-items: stretch;
+    }
+
+    /* Right column stacking (top banner + white block) */
+    .right-column {
+      flex: 1 1 auto;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      gap: 0;
+    }
+    .content-card {
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 16px;
+    }
+
+    /* Left-side blue decorative aside */
+    .decor-aside {
+      flex: 0 0 220px;
+      width: 220px;
+      background: #dbeafe;     /* same color as the top block */
+      margin: 0;
+      padding: 12px;           /* holds content now */
+      position: relative;
+    }
+    /* Remove upward extension to prevent overlap in PDF rendering */
+    .decor-aside::before {
+      content: none;
+    }
+
+    /* Header */
+    .header {
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      background: #ffffff;
+      padding: 18px;
+      border-left: 6px solid #3b82f6; /* blue-500 accent */
+    }
+    .topline {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+    .name {
+      font-size: 28px;
+      font-weight: 800;
+      margin: 0;
+      color: #0f172a;
+    }
+    .role {
+      font-weight: 700;
+      color: #1d4ed8; /* blue-600 */
+      margin: 3px 0 0;
+    }
+    .contacts {
+      text-align: right;
+      font-size: 13px;
+      line-height: 1.4;
+    }
+    .contacts a { color: #1d4ed8; text-decoration: none; border-bottom: 1px dotted #93c5fd; }
+    .contacts a:hover { border-bottom-color: #1d4ed8; }
+
+    .summary {
+      margin-top: 10px;
+      color: #4b5563;
+    }
+
+    /* Content layout (simple flex for broad support) */
+    .content {
+      display: flex;
+      gap: 16px;
+    }
+    .col-left {
+      flex: 0 0 34%;
+      min-width: 220px;
+    }
+    .col-right {
+      flex: 1 1 auto;
+    }
+
+    /* Cards / sections */
+    .section {
+      border: 1px solid #e5e7eb;
+      background: #ffffff;
+      padding: 14px 14px 10px;
+      margin-bottom: 16px;
+    }
+    .section-title {
+      display: inline-block;
+      font-weight: 800;
+      color: #1e3a8a; /* blue-900 */
+      padding: 4px 8px;
+      background: #dbeafe; /* blue-100 */
+      border: 1px solid #bfdbfe; /* blue-200 */
+      border-radius: 6px;
+      margin: 0 0 12px;
+      font-size: 13px;
+      letter-spacing: 0.3px;
+      text-transform: uppercase;
+    }
+
+    /* Lists and chips */
+    .tags { margin: 8px -4px -4px; }
+    .tag {
+      display: inline-block;
+      margin: 4px;
+      padding: 4px 8px;
+      border: 1px solid #bfdbfe;
+      background: #eff6ff; /* blue-50 */
+      border-radius: 999px;
+      font-size: 12px;
+      color: #1e3a8a;
+      white-space: nowrap;
+    }
+
+    .item {
+      margin-bottom: 12px;
+    }
+    .item-title {
+      margin: 0;
+      font-weight: 700;
+      color: #111827;
+    }
+    .item-sub {
+      margin: 0;
+      color: #6b7280;
+      font-size: 13px;
+    }
+    .item-time {
+      color: #1d4ed8;
+      font-weight: 600;
+      font-size: 12px;
+      margin-top: 2px;
+    }
+    .bullets {
+      margin: 6px 0 0 18px;
+      padding: 0;
+    }
+    .bullets li { margin: 4px 0; }
+
+    .divider {
+      height: 1px;
+      background: #e5e7eb;
+      margin: 10px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <aside class="decor-aside">
+      <section class="section">
+        <h3 class="section-title">Skills</h3>
+        <div class="tags">
+          <span class="tag">Python</span>
+          <span class="tag">Flask</span>
+          <span class="tag">FastAPI</span>
+          <span class="tag">PostgreSQL</span>
+          <span class="tag">Redis</span>
+          <span class="tag">Docker</span>
+          <span class="tag">Kubernetes</span>
+          <span class="tag">AWS</span>
+          <span class="tag">gRPC</span>
+          <span class="tag">CI/CD</span>
+        </div>
+      </section>
+
+      <section class="section">
+        <h3 class="section-title">Education</h3>
+        <div class="item">
+          <p class="item-title">B.S. Computer Science</p>
+          <p class="item-sub">University of California, Berkeley</p>
+          <p class="item-time">2010 – 2014</p>
+        </div>
+      </section>
+
+      <section class="section">
+        <h3 class="section-title">Awards</h3>
+        <div class="item">
+          <p class="item-title">Engineering Excellence Award</p>
+          <p class="item-sub">Acme Inc. (2021)</p>
+        </div>
+        <div class="item">
+          <p class="item-title">Best Paper – Distributed Systems</p>
+          <p class="item-sub">TechConf (2018)</p>
+        </div>
+      </section>
+    </aside>
+
+    <div class="right-column">
+      <div class="decor-top">
+        <header class="header">
+          <div class="topline">
+            <div>
+              <h1 class="name">Alexandra Rivera</h1>
+            <p class="role">Senior Software Engineer</p>
+          </div>
+          <div class="contacts">
+            <div><a href="mailto:alex.rivera@example.com">alex.rivera@example.com</a></div>
+            <div><a href="tel:+12223334444">+1 (222) 333‑4444</a></div>
+            <div><a href="https://example.com">example.com</a> · <a href="https://www.linkedin.com/in/example">LinkedIn</a> · <a href="https://github.com/example">GitHub</a></div>
+            <div>San Francisco, CA</div>
+          </div>
+        </div>
+        <p class="summary">
+          Builder of resilient, high-performance web platforms. 10+ years shipping products end-to-end,
+          with a focus on developer experience, operability, and measurable impact.
+        </p>
+      </header>
+      </div>
+
+        <main class="content">
+      <!-- left column moved into .decor-aside -->
+      <!-- Right column -->
+      <section class="col-right">
+        <section class="section">
+          <h3 class="section-title">Experience</h3>
+
+          <div class="item">
+            <p class="item-title">Principal Engineer · Nimbus Cloud</p>
+            <p class="item-sub">2021 – Present · Remote</p>
+            <p class="item-time">Kubernetes Platform · Multi-Region</p>
+            <ul class="bullets">
+              <li>Led migration of monolith to services, reducing mean time to recovery by 45% and infra costs by 18%.</li>
+              <li>Designed event-driven architecture handling 150k events/min with at-least-once guarantees.</li>
+              <li>Introduced feature flagging and canary deploys; deployment lead time dropped from days to hours.</li>
+            </ul>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="item">
+            <p class="item-title">Senior Software Engineer · Aurora Labs</p>
+            <p class="item-sub">2017 – 2021 · San Francisco, CA</p>
+            <p class="item-time">APIs · Observability · Data</p>
+            <ul class="bullets">
+              <li>Built a low-latency API (p95 &lt; 60ms) powering a dashboard used by 40k+ daily users.</li>
+              <li>Implemented tracing, metrics, and SLOs; incident count fell by 32% YoY.</li>
+              <li>Mentored 6 engineers; established engineering ladder and peer review guidelines.</li>
+            </ul>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="item">
+            <p class="item-title">Software Engineer · PixelWorks</p>
+            <p class="item-sub">2014 – 2017 · Austin, TX</p>
+            <p class="item-time">E-commerce · Payments</p>
+            <ul class="bullets">
+              <li>Created a fraud detection service reducing chargebacks by 23% within the first quarter.</li>
+              <li>Optimized PostgreSQL queries and indexing, cutting critical queries from seconds to milliseconds.</li>
+              <li>Launched internal design system, improving UI delivery speed by ~20% across teams.</li>
+            </ul>
+          </div>
+        </section>
+
+        <section class="section">
+          <h3 class="section-title">Projects</h3>
+          <div class="item">
+            <p class="item-title">OpenTelemetry Starter Kit</p>
+            <p class="item-sub">Templates and docs for instrumenting Python services.</p>
+            <ul class="bullets">
+              <li>Ready-made examples for tracing, metrics, and logs with exporters.</li>
+              <li>Adopted by 5 teams; cut onboarding time by ~70%.</li>
+            </ul>
+          </div>
+
+          <div class="item">
+            <p class="item-title">Infra-as-Code Modules</p>
+            <p class="item-sub">Reusable Terraform modules for secure VPC, EKS, and RDS setups.</p>
+            <ul class="bullets">
+              <li>Reduced boilerplate by 80%; standardized security groups and backups.</li>
+            </ul>
+          </div>
+        </section>
+
+        <section class="section">
+          <h3 class="section-title">Publications</h3>
+          <div class="item">
+            <p class="item-title">Resilient APIs at Scale</p>
+            <p class="item-sub">Medium · 2022</p>
+          </div>
+          <div class="item">
+            <p class="item-title">Choosing the Right Isolation Level</p>
+            <p class="item-sub">TechBlog · 2019</p>
+          </div>
+        </section>
+      </section>
+    </main>
+    </div>
+  </div>
+</body>
+</html>
