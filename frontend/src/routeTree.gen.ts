@@ -9,8 +9,14 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as PdfRouteImport } from './routes/pdf'
 import { Route as IndexRouteImport } from './routes/index'
 
+const PdfRoute = PdfRouteImport.update({
+  id: '/pdf',
+  path: '/pdf',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -19,28 +25,39 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/pdf': typeof PdfRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/pdf': typeof PdfRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/pdf': typeof PdfRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/pdf'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/pdf'
+  id: '__root__' | '/' | '/pdf'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  PdfRoute: typeof PdfRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/pdf': {
+      id: '/pdf'
+      path: '/pdf'
+      fullPath: '/pdf'
+      preLoaderRoute: typeof PdfRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -53,6 +70,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  PdfRoute: PdfRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
