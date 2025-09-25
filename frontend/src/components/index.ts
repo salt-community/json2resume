@@ -28,3 +28,6 @@ export { usePdfBlob } from './resume/hooks/usePdfBlob'
 
 // Existing components
 export { default as Header } from './Header'
+
+// GistTemplate components
+export * from './GistTemplate'
