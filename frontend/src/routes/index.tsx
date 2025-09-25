@@ -1,53 +1,36 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { useState } from 'react'
-import StatusHeader from '@/components/StatusHeader.tsx'
-import ResumeEditor from '@/components/ResumeEditor/ResumeEditor.tsx'
-import { Resume } from '@/components/resume/Resume.tsx'
-import type { ResumeData } from '@/components/resume/ResumeTypes'
+import { Link, createFileRoute } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/')({
-  component: App,
+  component: HomePage,
 })
 
-function App() {
-  const [generatedResumeData, setGeneratedResumeData] = useState<ResumeData | null>(null)
-  const [showResume, setShowResume] = useState(false)
-
-  const handleGenerate = (resumeData: ResumeData) => {
-    setGeneratedResumeData(resumeData)
-    setShowResume(true)
-  }
-
-  const handleBackToEditor = () => {
-    setShowResume(false)
-  }
-
+function HomePage() {
   return (
-    <>
-      {!showResume ? (
-        <div className="min-h-screen bg-neutral-900 text-neutral-100">
-          <div className="mx-auto max-w-7xl space-y-4 p-4 md:p-6">
-            <StatusHeader />
-            <ResumeEditor onGenerate={handleGenerate} />
+    <div className="min-h-screen bg-neutral-900 text-neutral-100 flex items-center justify-center">
+        <div className="mx-auto w-full max-w-3xl p-4 md:p-6">
+          <header className="py-16 md:py-24 text-center">
+          <h1 className="text-4xl md:text-6xl font-bold tracking-tight">
+            Json2Resume
+          </h1>
+          <p className="mt-4 text-lg text-neutral-300 max-w-2xl">
+            Create, edit, and export a professional resume with an intuitive editor and beautiful templates.
+          </p>
+          <div className="mt-8 flex justify-center gap-4">
+            <Link
+              to="/editor"
+              className="inline-flex items-center rounded-lg bg-indigo-500 px-5 py-3 font-medium text-white hover:bg-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-neutral-900 transition-colors"
+            >
+              Open Editor
+            </Link>
+            <a
+              href="/templates-guide"
+              className="inline-flex items-center rounded-lg border border-neutral-700 px-5 py-3 font-medium text-neutral-100 hover:bg-neutral-800 focus:outline-none focus:ring-2 focus:ring-neutral-600 focus:ring-offset-2 focus:ring-offset-neutral-900 transition-colors"
+            >
+              Create Template
+            </a>
           </div>
-        </div>
-      ) : (
-        <div className="min-h-screen bg-gray-50">
-          <div className="mx-auto max-w-7xl p-4 md:p-6">
-            <div className="mb-6">
-              <button
-                onClick={handleBackToEditor}
-                className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
-              >
-                ← Back to Editor
-              </button>
-            </div>
-            {generatedResumeData && (
-              <Resume resumeData={generatedResumeData} />
-            )}
-          </div>
-        </div>
-      )}
-    </>
+        </header>
+      </div>
+    </div>
   )
 }
