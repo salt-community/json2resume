@@ -12,10 +12,13 @@
   --color-text-muted: #d4d4d4;      /* Tailwind neutral-300 */
   --color-text-subtle: #e5e5e5;     /* Tailwind neutral-200 */
   --color-text-strong: #f5f5f5;     /* Tailwind neutral-100 */
+  --color-link: #617ad6;
+  --color-text-highlight: #d6d061;
 
   /* Accent */
   --color-accent: #4f46e5;          /* Tailwind indigo-600 */
   --color-on-accent: #ffffff;       /* White on accent */
+
 }
 :root {}
 
