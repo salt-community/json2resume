@@ -253,7 +253,7 @@ export const GistTemplate: React.FC<GistTemplateProps> = ({
  * This can be used as a fallback or default template
  */
 export const DEFAULT_CLASSIC_TEMPLATE_URL =
-  'https://gist.github.com/samuel-kar/11b0969ab91989b64650ac9361c8103b#file-classic-resume-html-custom'
+  'https://gist.github.com/samuel-kar/11b0969ab91989b64650ac9361c8103b'
 
 /**
  * Convenience component that uses the default classic template
