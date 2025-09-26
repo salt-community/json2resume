@@ -2,8 +2,25 @@
 import ReactCodeMirror from '@uiw/react-codemirror'
 import { jsonLanguage } from '@codemirror/lang-json'
 import { oneDark } from '@codemirror/theme-one-dark'
-import { drawSelection, highlightActiveLine, highlightActiveLineGutter, lineNumbers } from '@codemirror/view'
+import {
+  EditorView,
+  drawSelection,
+  highlightActiveLine,
+  highlightActiveLineGutter,
+  lineNumbers,
+} from '@codemirror/view'
 import { history } from '@codemirror/commands'
+
+// Function to format JSON with proper indentation
+const formatJson = (jsonString: string): string => {
+  try {
+    const parsed = JSON.parse(jsonString)
+    return JSON.stringify(parsed, null, 2)
+  } catch (error) {
+    // If JSON is invalid, return the original string
+    return jsonString
+  }
+}
 
 export default function JsonCodeEditor({
   jsonState,
@@ -12,9 +29,11 @@ export default function JsonCodeEditor({
   jsonState: string
   onChange: (v: string) => void
 }) {
+  // Format the JSON when the component receives new data
+  const formattedJson = formatJson(jsonState)
   return (
     <ReactCodeMirror
-      value={jsonState}
+      value={formattedJson}
       onChange={onChange}
       theme={oneDark}
       basicSetup={false}
@@ -25,6 +44,7 @@ export default function JsonCodeEditor({
         drawSelection(),
         highlightActiveLine(),
         jsonLanguage,
+        EditorView.lineWrapping,
       ]}
       height="590px"
     />
