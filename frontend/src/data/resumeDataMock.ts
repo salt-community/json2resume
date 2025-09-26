@@ -1,6 +1,6 @@
 // Raw JSON data
 import type { ResumeData } from '@/types.ts'
-import { jsonObjToResumeData } from '@/data/jsonObjToResumeData.ts'
+import { resumeDataFromJsonObj } from '@/data/resumeDataFromJsonObj.ts'
 
 const rawResumeData = {
   $schema:
@@ -182,4 +182,4 @@ const rawResumeData = {
 }
 
 // Export the parsed, type-safe resume data
-export const mockedResumeData: ResumeData = jsonObjToResumeData(rawResumeData)
+export const mockedResumeData: ResumeData = resumeDataFromJsonObj(rawResumeData)

@@ -1,7 +1,7 @@
 import type { ResumeData } from '@/types'
 
 // Type-safe parser for resume data
-export function jsonObjToResumeData(jsonData: any): ResumeData {
+export function resumeDataFromJsonObj(jsonData: any): ResumeData {
   return {
     $schema: jsonData.$schema,
     basics: {

@@ -1,6 +1,6 @@
 import type { ResumeData } from '@/types'
 
-export function resumeDataToJsonObj(data: ResumeData) {
+export function jsonObjFromResumeData(data: ResumeData) {
   if (typeof data !== 'object') return {}
 
   const basics = data.basics
