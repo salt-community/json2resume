@@ -1,4 +1,5 @@
 import Basic from './accordionComponents/Basic'
+import Work from './accordionComponents/Work'
 import Volunteering from './accordionComponents/Volunteering'
 import Education from './accordionComponents/Education'
 import Awards from './accordionComponents/Awards'
@@ -28,7 +29,10 @@ function AccordionGroup({ resumeData, setResumeData }: Props) {
       title: 'Basics',
       content: <Basic resumeData={resumeData} setResumeData={setResumeData} />,
     },
-
+    {
+      title: 'Work Experience',
+      content: <Work resumeData={resumeData} setResumeData={setResumeData} />,
+    },
     {
       title: 'Volunteering',
       content: (
