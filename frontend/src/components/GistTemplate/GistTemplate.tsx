@@ -196,7 +196,7 @@ export const GistTemplate: React.FC<GistTemplateProps> = ({
 
 /** Default template URL (targets the specific file via #file- fragment) */
 export const DEFAULT_CLASSIC_TEMPLATE_URL =
-  'https://gist.github.com/samuel-kar/11b0969ab91989b64650ac9361c8103b#file-classic-resume-html-custom'
+  'https://gist.github.com/samuel-kar/11b0969ab91989b64650ac9361c8103b'
 
 export const ClassicGistTemplate: React.FC<
   Omit<GistTemplateProps, 'gistUrl'>
