@@ -9,6 +9,7 @@ import { jsonStringFromJsonObj } from '@/data/jsonStringFromJsonObj.ts'
 import { jsonObjFromResumeData } from '@/data/jsonObjFromResumeData.ts'
 import { resumeDataFromJsonObj } from '@/data/resumeDataFromJsonObj.ts'
 import jsonObjFromJsonString from '@/data/jsonObjFromJsonString.ts'
+import { GistTemplate } from '@/components/GistTemplate'
 
 export const Route = createFileRoute('/editor')({
   component: App,
@@ -40,12 +41,20 @@ function App() {
             <JsonCodeEditor
               jsonState={json}
               onChange={(jsonString: string) => {
-                const rData = resumeDataFromJsonObj(jsonObjFromJsonString(jsonString))
+                const rData = resumeDataFromJsonObj(
+                  jsonObjFromJsonString(jsonString),
+                )
                 setResumeData(rData)
               }}
             />
           </TabsContent>
         </Tabs>
+      </section>
+      <section className="min-h-screen">
+        <GistTemplate
+          gistUrl="https://gist.github.com/samuel-kar/11b0969ab91989b64650ac9361c8103b"
+          resumeData={resumeData}
+        />
       </section>
     </div>
   )
