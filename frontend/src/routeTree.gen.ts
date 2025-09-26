@@ -9,12 +9,30 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TemplatesGuideRouteImport } from './routes/templates-guide'
+import { Route as HtmlInterpreterStandardRouteImport } from './routes/html-interpreter-standard'
 import { Route as GistDemoRouteImport } from './routes/gist-demo'
+import { Route as EditorRouteImport } from './routes/editor'
 import { Route as IndexRouteImport } from './routes/index'
 
+const TemplatesGuideRoute = TemplatesGuideRouteImport.update({
+  id: '/templates-guide',
+  path: '/templates-guide',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HtmlInterpreterStandardRoute = HtmlInterpreterStandardRouteImport.update({
+  id: '/html-interpreter-standard',
+  path: '/html-interpreter-standard',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const GistDemoRoute = GistDemoRouteImport.update({
   id: '/gist-demo',
   path: '/gist-demo',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EditorRoute = EditorRouteImport.update({
+  id: '/editor',
+  path: '/editor',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -25,37 +43,86 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/editor': typeof EditorRoute
   '/gist-demo': typeof GistDemoRoute
+  '/html-interpreter-standard': typeof HtmlInterpreterStandardRoute
+  '/templates-guide': typeof TemplatesGuideRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/editor': typeof EditorRoute
   '/gist-demo': typeof GistDemoRoute
+  '/html-interpreter-standard': typeof HtmlInterpreterStandardRoute
+  '/templates-guide': typeof TemplatesGuideRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/editor': typeof EditorRoute
   '/gist-demo': typeof GistDemoRoute
+  '/html-interpreter-standard': typeof HtmlInterpreterStandardRoute
+  '/templates-guide': typeof TemplatesGuideRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/gist-demo'
+  fullPaths:
+    | '/'
+    | '/editor'
+    | '/gist-demo'
+    | '/html-interpreter-standard'
+    | '/templates-guide'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/gist-demo'
-  id: '__root__' | '/' | '/gist-demo'
+  to:
+    | '/'
+    | '/editor'
+    | '/gist-demo'
+    | '/html-interpreter-standard'
+    | '/templates-guide'
+  id:
+    | '__root__'
+    | '/'
+    | '/editor'
+    | '/gist-demo'
+    | '/html-interpreter-standard'
+    | '/templates-guide'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  EditorRoute: typeof EditorRoute
   GistDemoRoute: typeof GistDemoRoute
+  HtmlInterpreterStandardRoute: typeof HtmlInterpreterStandardRoute
+  TemplatesGuideRoute: typeof TemplatesGuideRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/templates-guide': {
+      id: '/templates-guide'
+      path: '/templates-guide'
+      fullPath: '/templates-guide'
+      preLoaderRoute: typeof TemplatesGuideRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/html-interpreter-standard': {
+      id: '/html-interpreter-standard'
+      path: '/html-interpreter-standard'
+      fullPath: '/html-interpreter-standard'
+      preLoaderRoute: typeof HtmlInterpreterStandardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/gist-demo': {
       id: '/gist-demo'
       path: '/gist-demo'
       fullPath: '/gist-demo'
       preLoaderRoute: typeof GistDemoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/editor': {
+      id: '/editor'
+      path: '/editor'
+      fullPath: '/editor'
+      preLoaderRoute: typeof EditorRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -70,7 +137,10 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  EditorRoute: EditorRoute,
   GistDemoRoute: GistDemoRoute,
+  HtmlInterpreterStandardRoute: HtmlInterpreterStandardRoute,
+  TemplatesGuideRoute: TemplatesGuideRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

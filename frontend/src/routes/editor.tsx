@@ -1,11 +1,11 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react'
+import type { ResumeData } from '@/components/resume/ResumeTypes'
 import StatusHeader from '@/components/StatusHeader.tsx'
 import ResumeEditor from '@/components/ResumeEditor/ResumeEditor.tsx'
 import { Resume } from '@/components/resume/Resume.tsx'
-import type { ResumeData } from '@/components/resume/ResumeTypes'
 
-export const Route = createFileRoute('/')({
+export const Route = createFileRoute('/editor')({
   component: App,
 })
 
