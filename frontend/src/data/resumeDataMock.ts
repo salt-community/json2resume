@@ -115,6 +115,7 @@ const rawResumeData = {
       endDate: '2019-12',
     },
     {
+      studyType: 'Gymnasieexamen',
       institution: 'NTI Gymnasiet',
       area: 'Teknik program',
       startDate: '2015-12',
