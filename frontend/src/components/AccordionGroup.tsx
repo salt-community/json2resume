@@ -8,6 +8,7 @@ import Skills from './accordionComponents/Skills'
 import Languages from './accordionComponents/Languages'
 import Interests from './accordionComponents/Interests'
 import References from './accordionComponents/References'
+import Projects from './accordionComponents/Projects'
 import type { ResumeData } from '@/types'
 import {
   Accordion,
@@ -80,7 +81,9 @@ function AccordionGroup({ resumeData, setResumeData }: Props) {
     },
     {
       title: 'Projects',
-      content: 'Yes. It adheres to the WAI-ARIA design pattern.',
+      content: (
+        <Projects resumeData={resumeData} setResumeData={setResumeData} />
+      ),
     },
 
     {
