@@ -50,6 +50,21 @@ export default function Work({ resumeData, setResumeData }: Props) {
     })
   }
 
+  const moveWork = (index: number, direction: 'up' | 'down') => {
+    const work = [...(resumeData.work || [])]
+    const newIndex = direction === 'up' ? index - 1 : index + 1
+
+    if (newIndex >= 0 && newIndex < work.length) {
+      const [movedWork] = work.splice(index, 1)
+      work.splice(newIndex, 0, movedWork)
+
+      setResumeData({
+        ...resumeData,
+        work: work,
+      })
+    }
+  }
+
   const addHighlight = (workIndex: number) => {
     const work = resumeData.work?.[workIndex]
     if (work) {
@@ -98,14 +113,37 @@ export default function Work({ resumeData, setResumeData }: Props) {
                 <h4 className="text-sm font-medium text-muted-foreground">
                   Work Experience {index + 1}
                 </h4>
-                <Button
-                  onClick={() => removeWork(index)}
-                  variant="outline"
-                  size="sm"
-                  className="h-7 px-2 text-xs"
-                >
-                  Remove
-                </Button>
+                <div className="flex items-center space-x-2">
+                  {/* Move Up Button */}
+                  <Button
+                    onClick={() => moveWork(index, 'up')}
+                    variant="outline"
+                    size="sm"
+                    className="h-7 px-2 text-xs"
+                    disabled={index === 0}
+                  >
+                    ↑
+                  </Button>
+                  {/* Move Down Button */}
+                  <Button
+                    onClick={() => moveWork(index, 'down')}
+                    variant="outline"
+                    size="sm"
+                    className="h-7 px-2 text-xs"
+                    disabled={index === (resumeData.work?.length || 0) - 1}
+                  >
+                    ↓
+                  </Button>
+                  {/* Remove Button */}
+                  <Button
+                    onClick={() => removeWork(index)}
+                    variant="outline"
+                    size="sm"
+                    className="h-7 px-2 text-xs"
+                  >
+                    Remove
+                  </Button>
+                </div>
               </div>
 
               <div className="space-y-3">

@@ -48,6 +48,21 @@ export default function Certifications({ resumeData, setResumeData }: Props) {
     })
   }
 
+  const moveCertificate = (index: number, direction: 'up' | 'down') => {
+    const certificates = [...(resumeData.certificates || [])]
+    const newIndex = direction === 'up' ? index - 1 : index + 1
+
+    if (newIndex >= 0 && newIndex < certificates.length) {
+      const [movedCertificate] = certificates.splice(index, 1)
+      certificates.splice(newIndex, 0, movedCertificate)
+
+      setResumeData({
+        ...resumeData,
+        certificates: certificates,
+      })
+    }
+  }
+
   return (
     <div className="p-4 space-y-6">
       <div className="flex items-center justify-between">
@@ -63,13 +78,38 @@ export default function Certifications({ resumeData, setResumeData }: Props) {
             <div key={index} className="border rounded-lg p-6 space-y-6">
               <div className="flex items-center justify-between">
                 <h4 className="text-lg font-medium">Certificate {index + 1}</h4>
-                <Button
-                  onClick={() => removeCertificate(index)}
-                  variant="outline"
-                  size="sm"
-                >
-                  Remove
-                </Button>
+                <div className="flex items-center space-x-2">
+                  {/* Move Up Button */}
+                  <Button
+                    onClick={() => moveCertificate(index, 'up')}
+                    variant="outline"
+                    size="sm"
+                    className="h-7 px-2 text-xs"
+                    disabled={index === 0}
+                  >
+                    ↑
+                  </Button>
+                  {/* Move Down Button */}
+                  <Button
+                    onClick={() => moveCertificate(index, 'down')}
+                    variant="outline"
+                    size="sm"
+                    className="h-7 px-2 text-xs"
+                    disabled={
+                      index === (resumeData.certificates?.length || 0) - 1
+                    }
+                  >
+                    ↓
+                  </Button>
+                  {/* Remove Button */}
+                  <Button
+                    onClick={() => removeCertificate(index)}
+                    variant="outline"
+                    size="sm"
+                  >
+                    Remove
+                  </Button>
+                </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

@@ -47,6 +47,21 @@ export default function References({ resumeData, setResumeData }: Props) {
     })
   }
 
+  const moveReference = (index: number, direction: 'up' | 'down') => {
+    const references = [...(resumeData.references || [])]
+    const newIndex = direction === 'up' ? index - 1 : index + 1
+
+    if (newIndex >= 0 && newIndex < references.length) {
+      const [movedReference] = references.splice(index, 1)
+      references.splice(newIndex, 0, movedReference)
+
+      setResumeData({
+        ...resumeData,
+        references: references,
+      })
+    }
+  }
+
   return (
     <div className="p-4 space-y-6">
       <div className="flex items-center justify-between">
@@ -64,14 +79,39 @@ export default function References({ resumeData, setResumeData }: Props) {
                 <h4 className="text-sm font-medium text-muted-foreground">
                   Reference {index + 1}
                 </h4>
-                <Button
-                  onClick={() => removeReference(index)}
-                  variant="outline"
-                  size="sm"
-                  className="h-7 px-2 text-xs"
-                >
-                  Remove
-                </Button>
+                <div className="flex items-center space-x-2">
+                  {/* Move Up Button */}
+                  <Button
+                    onClick={() => moveReference(index, 'up')}
+                    variant="outline"
+                    size="sm"
+                    className="h-7 px-2 text-xs"
+                    disabled={index === 0}
+                  >
+                    ↑
+                  </Button>
+                  {/* Move Down Button */}
+                  <Button
+                    onClick={() => moveReference(index, 'down')}
+                    variant="outline"
+                    size="sm"
+                    className="h-7 px-2 text-xs"
+                    disabled={
+                      index === (resumeData.references?.length || 0) - 1
+                    }
+                  >
+                    ↓
+                  </Button>
+                  {/* Remove Button */}
+                  <Button
+                    onClick={() => removeReference(index)}
+                    variant="outline"
+                    size="sm"
+                    className="h-7 px-2 text-xs"
+                  >
+                    Remove
+                  </Button>
+                </div>
               </div>
 
               <div className="space-y-3">

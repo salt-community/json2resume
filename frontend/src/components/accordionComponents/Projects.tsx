@@ -51,6 +51,21 @@ export default function Projects({ resumeData, setResumeData }: Props) {
     })
   }
 
+  const moveProject = (index: number, direction: 'up' | 'down') => {
+    const projects = [...(resumeData.projects || [])]
+    const newIndex = direction === 'up' ? index - 1 : index + 1
+
+    if (newIndex >= 0 && newIndex < projects.length) {
+      const [movedProject] = projects.splice(index, 1)
+      projects.splice(newIndex, 0, movedProject)
+
+      setResumeData({
+        ...resumeData,
+        projects: projects,
+      })
+    }
+  }
+
   const addHighlight = (projectIndex: number) => {
     const project = resumeData.projects?.[projectIndex]
     if (project) {
@@ -99,14 +114,37 @@ export default function Projects({ resumeData, setResumeData }: Props) {
                 <h4 className="text-sm font-medium text-muted-foreground">
                   Project {index + 1}
                 </h4>
-                <Button
-                  onClick={() => removeProject(index)}
-                  variant="outline"
-                  size="sm"
-                  className="h-7 px-2 text-xs"
-                >
-                  Remove
-                </Button>
+                <div className="flex items-center space-x-2">
+                  {/* Move Up Button */}
+                  <Button
+                    onClick={() => moveProject(index, 'up')}
+                    variant="outline"
+                    size="sm"
+                    className="h-7 px-2 text-xs"
+                    disabled={index === 0}
+                  >
+                    ↑
+                  </Button>
+                  {/* Move Down Button */}
+                  <Button
+                    onClick={() => moveProject(index, 'down')}
+                    variant="outline"
+                    size="sm"
+                    className="h-7 px-2 text-xs"
+                    disabled={index === (resumeData.projects?.length || 0) - 1}
+                  >
+                    ↓
+                  </Button>
+                  {/* Remove Button */}
+                  <Button
+                    onClick={() => removeProject(index)}
+                    variant="outline"
+                    size="sm"
+                    className="h-7 px-2 text-xs"
+                  >
+                    Remove
+                  </Button>
+                </div>
               </div>
 
               <div className="space-y-3">

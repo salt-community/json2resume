@@ -49,6 +49,21 @@ export default function Volunteering({ resumeData, setResumeData }: Props) {
     })
   }
 
+  const moveVolunteer = (index: number, direction: 'up' | 'down') => {
+    const volunteers = [...(resumeData.volunteer || [])]
+    const newIndex = direction === 'up' ? index - 1 : index + 1
+
+    if (newIndex >= 0 && newIndex < volunteers.length) {
+      const [movedVolunteer] = volunteers.splice(index, 1)
+      volunteers.splice(newIndex, 0, movedVolunteer)
+
+      setResumeData({
+        ...resumeData,
+        volunteer: volunteers,
+      })
+    }
+  }
+
   const addHighlight = (volunteerIndex: number) => {
     const volunteer = resumeData.volunteer?.[volunteerIndex]
     if (volunteer) {
@@ -97,13 +112,36 @@ export default function Volunteering({ resumeData, setResumeData }: Props) {
                 <h4 className="text-lg font-medium">
                   Volunteer Experience {index + 1}
                 </h4>
-                <Button
-                  onClick={() => removeVolunteer(index)}
-                  variant="outline"
-                  size="sm"
-                >
-                  Remove
-                </Button>
+                <div className="flex items-center space-x-2">
+                  {/* Move Up Button */}
+                  <Button
+                    onClick={() => moveVolunteer(index, 'up')}
+                    variant="outline"
+                    size="sm"
+                    className="h-7 px-2 text-xs"
+                    disabled={index === 0}
+                  >
+                    ↑
+                  </Button>
+                  {/* Move Down Button */}
+                  <Button
+                    onClick={() => moveVolunteer(index, 'down')}
+                    variant="outline"
+                    size="sm"
+                    className="h-7 px-2 text-xs"
+                    disabled={index === (resumeData.volunteer?.length || 0) - 1}
+                  >
+                    ↓
+                  </Button>
+                  {/* Remove Button */}
+                  <Button
+                    onClick={() => removeVolunteer(index)}
+                    variant="outline"
+                    size="sm"
+                  >
+                    Remove
+                  </Button>
+                </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

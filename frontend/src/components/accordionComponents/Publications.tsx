@@ -50,6 +50,21 @@ export default function Publications({ resumeData, setResumeData }: Props) {
     })
   }
 
+  const movePublication = (index: number, direction: 'up' | 'down') => {
+    const publications = [...(resumeData.publications || [])]
+    const newIndex = direction === 'up' ? index - 1 : index + 1
+
+    if (newIndex >= 0 && newIndex < publications.length) {
+      const [movedPublication] = publications.splice(index, 1)
+      publications.splice(newIndex, 0, movedPublication)
+
+      setResumeData({
+        ...resumeData,
+        publications: publications,
+      })
+    }
+  }
+
   return (
     <div className="p-4 space-y-6">
       <div className="flex items-center justify-between">
@@ -65,13 +80,38 @@ export default function Publications({ resumeData, setResumeData }: Props) {
             <div key={index} className="border rounded-lg p-6 space-y-6">
               <div className="flex items-center justify-between">
                 <h4 className="text-lg font-medium">Publication {index + 1}</h4>
-                <Button
-                  onClick={() => removePublication(index)}
-                  variant="outline"
-                  size="sm"
-                >
-                  Remove
-                </Button>
+                <div className="flex items-center space-x-2">
+                  {/* Move Up Button */}
+                  <Button
+                    onClick={() => movePublication(index, 'up')}
+                    variant="outline"
+                    size="sm"
+                    className="h-7 px-2 text-xs"
+                    disabled={index === 0}
+                  >
+                    ↑
+                  </Button>
+                  {/* Move Down Button */}
+                  <Button
+                    onClick={() => movePublication(index, 'down')}
+                    variant="outline"
+                    size="sm"
+                    className="h-7 px-2 text-xs"
+                    disabled={
+                      index === (resumeData.publications?.length || 0) - 1
+                    }
+                  >
+                    ↓
+                  </Button>
+                  {/* Remove Button */}
+                  <Button
+                    onClick={() => removePublication(index)}
+                    variant="outline"
+                    size="sm"
+                  >
+                    Remove
+                  </Button>
+                </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

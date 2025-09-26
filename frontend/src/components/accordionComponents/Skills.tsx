@@ -50,6 +50,21 @@ export default function Skills({ resumeData, setResumeData }: Props) {
     })
   }
 
+  const moveSkill = (index: number, direction: 'up' | 'down') => {
+    const skills = [...(resumeData.skills || [])]
+    const newIndex = direction === 'up' ? index - 1 : index + 1
+
+    if (newIndex >= 0 && newIndex < skills.length) {
+      const [movedSkill] = skills.splice(index, 1)
+      skills.splice(newIndex, 0, movedSkill)
+
+      setResumeData({
+        ...resumeData,
+        skills: skills,
+      })
+    }
+  }
+
   const updateKeywordInput = (skillIndex: number, value: string) => {
     setKeywordInputs((prev) => ({
       ...prev,
@@ -86,14 +101,37 @@ export default function Skills({ resumeData, setResumeData }: Props) {
                 <h4 className="text-sm font-medium text-muted-foreground">
                   Skill {index + 1}
                 </h4>
-                <Button
-                  onClick={() => removeSkill(index)}
-                  variant="outline"
-                  size="sm"
-                  className="h-7 px-2 text-xs"
-                >
-                  Remove
-                </Button>
+                <div className="flex items-center space-x-2">
+                  {/* Move Up Button */}
+                  <Button
+                    onClick={() => moveSkill(index, 'up')}
+                    variant="outline"
+                    size="sm"
+                    className="h-7 px-2 text-xs"
+                    disabled={index === 0}
+                  >
+                    ↑
+                  </Button>
+                  {/* Move Down Button */}
+                  <Button
+                    onClick={() => moveSkill(index, 'down')}
+                    variant="outline"
+                    size="sm"
+                    className="h-7 px-2 text-xs"
+                    disabled={index === (resumeData.skills?.length || 0) - 1}
+                  >
+                    ↓
+                  </Button>
+                  {/* Remove Button */}
+                  <Button
+                    onClick={() => removeSkill(index)}
+                    variant="outline"
+                    size="sm"
+                    className="h-7 px-2 text-xs"
+                  >
+                    Remove
+                  </Button>
+                </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">

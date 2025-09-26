@@ -46,6 +46,21 @@ export default function Interests({ resumeData, setResumeData }: Props) {
     })
   }
 
+  const moveInterest = (index: number, direction: 'up' | 'down') => {
+    const interests = [...(resumeData.interests || [])]
+    const newIndex = direction === 'up' ? index - 1 : index + 1
+
+    if (newIndex >= 0 && newIndex < interests.length) {
+      const [movedInterest] = interests.splice(index, 1)
+      interests.splice(newIndex, 0, movedInterest)
+
+      setResumeData({
+        ...resumeData,
+        interests: interests,
+      })
+    }
+  }
+
   const updateKeywords = (index: number, keywordsString: string) => {
     const keywords = keywordsString
       .split(',')
@@ -75,14 +90,37 @@ export default function Interests({ resumeData, setResumeData }: Props) {
                 <h4 className="text-sm font-medium text-muted-foreground">
                   Interest {index + 1}
                 </h4>
-                <Button
-                  onClick={() => removeInterest(index)}
-                  variant="outline"
-                  size="sm"
-                  className="h-7 px-2 text-xs"
-                >
-                  Remove
-                </Button>
+                <div className="flex items-center space-x-2">
+                  {/* Move Up Button */}
+                  <Button
+                    onClick={() => moveInterest(index, 'up')}
+                    variant="outline"
+                    size="sm"
+                    className="h-7 px-2 text-xs"
+                    disabled={index === 0}
+                  >
+                    ↑
+                  </Button>
+                  {/* Move Down Button */}
+                  <Button
+                    onClick={() => moveInterest(index, 'down')}
+                    variant="outline"
+                    size="sm"
+                    className="h-7 px-2 text-xs"
+                    disabled={index === (resumeData.interests?.length || 0) - 1}
+                  >
+                    ↓
+                  </Button>
+                  {/* Remove Button */}
+                  <Button
+                    onClick={() => removeInterest(index)}
+                    variant="outline"
+                    size="sm"
+                    className="h-7 px-2 text-xs"
+                  >
+                    Remove
+                  </Button>
+                </div>
               </div>
 
               <div className="space-y-3">

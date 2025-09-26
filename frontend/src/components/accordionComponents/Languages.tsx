@@ -46,6 +46,21 @@ export default function Languages({ resumeData, setResumeData }: Props) {
     })
   }
 
+  const moveLanguage = (index: number, direction: 'up' | 'down') => {
+    const languages = [...(resumeData.languages || [])]
+    const newIndex = direction === 'up' ? index - 1 : index + 1
+
+    if (newIndex >= 0 && newIndex < languages.length) {
+      const [movedLanguage] = languages.splice(index, 1)
+      languages.splice(newIndex, 0, movedLanguage)
+
+      setResumeData({
+        ...resumeData,
+        languages: languages,
+      })
+    }
+  }
+
   return (
     <div className="p-4 space-y-6">
       <div className="flex items-center justify-between">
@@ -63,14 +78,37 @@ export default function Languages({ resumeData, setResumeData }: Props) {
                 <h4 className="text-sm font-medium text-muted-foreground">
                   Language {index + 1}
                 </h4>
-                <Button
-                  onClick={() => removeLanguage(index)}
-                  variant="outline"
-                  size="sm"
-                  className="h-7 px-2 text-xs"
-                >
-                  Remove
-                </Button>
+                <div className="flex items-center space-x-2">
+                  {/* Move Up Button */}
+                  <Button
+                    onClick={() => moveLanguage(index, 'up')}
+                    variant="outline"
+                    size="sm"
+                    className="h-7 px-2 text-xs"
+                    disabled={index === 0}
+                  >
+                    ↑
+                  </Button>
+                  {/* Move Down Button */}
+                  <Button
+                    onClick={() => moveLanguage(index, 'down')}
+                    variant="outline"
+                    size="sm"
+                    className="h-7 px-2 text-xs"
+                    disabled={index === (resumeData.languages?.length || 0) - 1}
+                  >
+                    ↓
+                  </Button>
+                  {/* Remove Button */}
+                  <Button
+                    onClick={() => removeLanguage(index)}
+                    variant="outline"
+                    size="sm"
+                    className="h-7 px-2 text-xs"
+                  >
+                    Remove
+                  </Button>
+                </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">

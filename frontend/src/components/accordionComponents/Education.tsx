@@ -50,6 +50,21 @@ export default function Education({ resumeData, setResumeData }: Props) {
     })
   }
 
+  const moveEducation = (index: number, direction: 'up' | 'down') => {
+    const education = [...(resumeData.education || [])]
+    const newIndex = direction === 'up' ? index - 1 : index + 1
+
+    if (newIndex >= 0 && newIndex < education.length) {
+      const [movedEducation] = education.splice(index, 1)
+      education.splice(newIndex, 0, movedEducation)
+
+      setResumeData({
+        ...resumeData,
+        education: education,
+      })
+    }
+  }
+
   const addCourse = (educationIndex: number) => {
     const education = resumeData.education?.[educationIndex]
     if (education) {
@@ -96,13 +111,36 @@ export default function Education({ resumeData, setResumeData }: Props) {
             <div key={index} className="border rounded-lg p-6 space-y-6">
               <div className="flex items-center justify-between">
                 <h4 className="text-lg font-medium">Education {index + 1}</h4>
-                <Button
-                  onClick={() => removeEducation(index)}
-                  variant="outline"
-                  size="sm"
-                >
-                  Remove
-                </Button>
+                <div className="flex items-center space-x-2">
+                  {/* Move Up Button */}
+                  <Button
+                    onClick={() => moveEducation(index, 'up')}
+                    variant="outline"
+                    size="sm"
+                    className="h-7 px-2 text-xs"
+                    disabled={index === 0}
+                  >
+                    ↑
+                  </Button>
+                  {/* Move Down Button */}
+                  <Button
+                    onClick={() => moveEducation(index, 'down')}
+                    variant="outline"
+                    size="sm"
+                    className="h-7 px-2 text-xs"
+                    disabled={index === (resumeData.education?.length || 0) - 1}
+                  >
+                    ↓
+                  </Button>
+                  {/* Remove Button */}
+                  <Button
+                    onClick={() => removeEducation(index)}
+                    variant="outline"
+                    size="sm"
+                  >
+                    Remove
+                  </Button>
+                </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

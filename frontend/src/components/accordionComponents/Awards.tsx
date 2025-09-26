@@ -42,6 +42,21 @@ export default function Awards({ resumeData, setResumeData }: Props) {
     })
   }
 
+  const moveAward = (index: number, direction: 'up' | 'down') => {
+    const awards = [...(resumeData.awards || [])]
+    const newIndex = direction === 'up' ? index - 1 : index + 1
+
+    if (newIndex >= 0 && newIndex < awards.length) {
+      const [movedAward] = awards.splice(index, 1)
+      awards.splice(newIndex, 0, movedAward)
+
+      setResumeData({
+        ...resumeData,
+        awards: awards,
+      })
+    }
+  }
+
   return (
     <div className="p-4 space-y-6">
       <div className="flex items-center justify-between">
@@ -57,13 +72,36 @@ export default function Awards({ resumeData, setResumeData }: Props) {
             <div key={index} className="border rounded-lg p-6 space-y-6">
               <div className="flex items-center justify-between">
                 <h4 className="text-lg font-medium">Award {index + 1}</h4>
-                <Button
-                  onClick={() => removeAward(index)}
-                  variant="outline"
-                  size="sm"
-                >
-                  Remove
-                </Button>
+                <div className="flex items-center space-x-2">
+                  {/* Move Up Button */}
+                  <Button
+                    onClick={() => moveAward(index, 'up')}
+                    variant="outline"
+                    size="sm"
+                    className="h-7 px-2 text-xs"
+                    disabled={index === 0}
+                  >
+                    ↑
+                  </Button>
+                  {/* Move Down Button */}
+                  <Button
+                    onClick={() => moveAward(index, 'down')}
+                    variant="outline"
+                    size="sm"
+                    className="h-7 px-2 text-xs"
+                    disabled={index === (resumeData.awards?.length || 0) - 1}
+                  >
+                    ↓
+                  </Button>
+                  {/* Remove Button */}
+                  <Button
+                    onClick={() => removeAward(index)}
+                    variant="outline"
+                    size="sm"
+                  >
+                    Remove
+                  </Button>
+                </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
