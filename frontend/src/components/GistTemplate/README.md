@@ -1,31 +1,28 @@
-# GistTemplate Component
+# GistTemplate (with Lightweight Template Engine)
 
-A React component system for fetching HTML templates from GitHub Gists and processing them with resume data using a custom mini templating engine.
+Render JSON Resume data into an HTML/CSS template stored in a GitHub Gist.
+This package fetches the template, merges it with your data using a tiny, dependency-free engine, and renders the final HTML in React.
 
 ## Features
 
-- 🔗 **Fetch templates from GitHub Gists** - Supports various Gist URL formats
-- 🎨 **Custom templating syntax** - Simple but powerful placeholder system
-- 🔒 **Security-focused** - HTML escaping and content sanitization
-- ⚡ **TypeScript support** - Fully typed with comprehensive interfaces
-- 🎯 **React hooks** - Clean API with `useGistTemplate` hook
-- 📱 **Loading states** - Built-in loading and error handling
-- 🔄 **Retry functionality** - Automatic retry on failures
+- 🔗 Fetch from GitHub Gists — Works with multiple Gist URL formats.
+- 🧩 Lightweight template engine — >>[path]<<, [[#if]], [[#each]], [[#join]], [[#if !...]].
+- 🔒 Safe by default — All injected values are HTML-escaped.
+- ⚡ TypeScript-first — Clean types + simple API.
+- 🪝 Hook or Component — Use useGistTemplate or <GistTemplate />.
+- 📱 Good UX — Built-in loading & error states.
 
 ## Quick Start
 
 ```tsx
-import { GistTemplate } from './components/GistTemplate'
+import { GistTemplate } from './GistTemplate'
 
-function MyComponent() {
-  const resumeData = {
-    basics: {
-      name: 'John Doe',
-      email: 'john@example.com',
-      // ... other resume data
-    },
-  }
+const resumeData = {
+  basics: { name: 'John Doe', email: 'john@example.com' },
+  // ...rest of your JSON Resume
+}
 
+export default function MyComponent() {
   return (
     <GistTemplate
       gistUrl="https://gist.github.com/username/gistId#file-template-html"
@@ -35,35 +32,30 @@ function MyComponent() {
 }
 ```
 
-## Templating Syntax
+## Templating Syntax (supported by the engine)
 
-The component supports a mini templating language for processing resume data:
-
-### 1. Placeholders (Scalar Values)
+### 1. Variables
 
 ```html
-<!-- Basic placeholder -->
->>[basics.name]<<
+<!-- Reads from root data -->
+>>[basics.name]<< >>[basics.location.city]<<
 
-<!-- With dot notation -->
->>[basics.location.city]<<
-
-<!-- Array indexing -->
->>[work[0].position]<<
-
-<!-- Raw output (no HTML escaping) -->
->>[basics.summary|raw]<<
+<!-- Inside [[#each]]: current item -->
+>>[.]<<
 ```
+
+Note: Numeric array indexes are supported via dot syntax (e.g. work.0.position).
+Prefer [[#each work]] for readability.
 
 ### 2. Conditionals
 
 ```html
-<!-- Show if value exists -->
+<!-- Render if value is truthy -->
 [[#if basics.email]]
 <a href="mailto:>>[basics.email]<<">>>[basics.email]<<</a>
 [[/if]]
 
-<!-- Show if value doesn't exist -->
+<!-- Negation -->
 [[#if !basics.phone]]
 <p>No phone number provided</p>
 [[/if]]
@@ -72,13 +64,12 @@ The component supports a mini templating language for processing resume data:
 ### 3. Loops
 
 ```html
-<!-- Loop through arrays -->
 [[#each work]]
-<div>
-  <h3>>>[position]<< at >>[name]<<</h3>
-  <p>>>[summary]<<</p>
-
-  [[#if highlights]]
+<div class="item">
+  <h3>>>[position]<< <span class="muted">@ >>[name]<<</span></h3>
+  [[#if summary]]
+  <div class="summary">>>[summary]<<</div>
+  [[/if]] [[#if highlights]]
   <ul>
     [[#each highlights]]
     <li>>>[.]<<</li>
@@ -92,34 +83,37 @@ The component supports a mini templating language for processing resume data:
 ### 4. Join (Comma-separated lists)
 
 ```html
-<!-- Join array items with commas -->
-<p>Skills: [[#join skills[0].keywords]]</p>
+<!-- Join array of primitives with a separator (default: ", ") -->
+<p>Tags: [[#join projects.0.highlights| • ]]</p>
 ```
+
+The separator is whatever follows the |, e.g. |, or | • .
 
 ## Components
 
-### `GistTemplate`
+### `<GistTemplate />`
 
-Main component for processing Gist templates.
+Fetches the Gist template, renders with your data, and injects the resulting HTML.
 
 ```tsx
 <GistTemplate
   gistUrl="https://gist.github.com/username/gistId"
   resumeData={resumeData}
-  filename="template.html" // optional
-  className="custom-class" // optional
+  filename="template.html" // optional (when multiple files)
+  className="resume-container" // optional
   onProcessed={(html) => console.log(html)} // optional
-  onError={(error) => console.error(error)} // optional
-  showLoading={true} // optional, default true
+  onError={(err) => console.error(err)} // optional
+  showLoading={true} // optional (default true)
 />
 ```
 
-### `ClassicGistTemplate`
+### `<ClassicGistTemplate />`
 
-Convenience component using the default classic template.
+Convenience wrapper pointing at a default, classic template.
 
 ```tsx
-<ClassicGistTemplate resumeData={resumeData} className="resume-container" />
+import { ClassicGistTemplate } from './GistTemplate'
+;<ClassicGistTemplate resumeData={resumeData} />
 ```
 
 ### `useGistTemplate` Hook
@@ -127,19 +121,46 @@ Convenience component using the default classic template.
 For custom implementations:
 
 ```tsx
-function CustomComponent() {
+import { useGistTemplate } from './GistTemplate'
+
+function Custom() {
   const { processedHtml, loading, error, refetch } = useGistTemplate(
     gistUrl,
     resumeData,
     filename,
   )
 
-  if (loading) return <div>Loading...</div>
+  if (loading) return <div>Loading…</div>
   if (error) return <div>Error: {error}</div>
 
   return <div dangerouslySetInnerHTML={{ __html: processedHtml }} />
 }
 ```
+
+### Engine API (direct use)
+
+```typescript
+import { renderTemplate, compile } from './templateEngine'
+
+// One-shot:
+const html = renderTemplate(templateString, resumeJson)
+
+// Reuse compiled AST:
+const { render } = compile(templateString)
+const htmlA = render(resumeJsonA)
+const htmlB = render(resumeJsonB)
+
+// Optional: disable escaping (ONLY for trusted HTML values)
+const htmlUnsafe = renderTemplate(templateString, resumeJson, {
+  htmlEscape: false,
+})
+```
+
+Truthiness rules:
+Empty strings/arrays/objects are falsey; numbers follow JS truthiness (0 is falsey).
+
+Path resolution:
+Relative paths resolve against the current context, then fall back to the root object. . or this refers to the current item inside [[#each]].
 
 ## Supported Gist URL Formats
 
@@ -147,78 +168,80 @@ function CustomComponent() {
 - `https://gist.github.com/username/gistId#file-filename`
 - `https://gist.githubusercontent.com/username/gistId/raw/filename`
 
+Uses fetchAndValidateGistTemplate() under the hood to pick the right file and ensure it looks like HTML.
+
 ## Resume Data Structure
 
-The component expects resume data following the JSON Resume schema:
+The component expects a JSON-Resume-like shape. It’s flexible (typed as Record<string, any>) but intended to follow the JSON Resume
+schema. Example:
 
 ```typescript
-interface ResumeData {
-  basics?: {
-    name?: string
-    label?: string
-    email?: string
-    phone?: string
-    url?: string
-    summary?: string
-    location?: {
-      city?: string
-      region?: string
-      // ...
-    }
-    profiles?: Array<{
-      network?: string
-      username?: string
-      url?: string
-    }>
-  }
-  work?: Array<{
-    name?: string
-    position?: string
-    startDate?: string
-    endDate?: string
-    summary?: string
-    highlights?: string[]
-    // ...
-  }>
-  // ... other sections
+type ResumeData = Record<string, any>
+
+// Example
+const resumeData: ResumeData = {
+  basics: { name: 'John Doe', email: 'john@example.com' },
+  work: [{ name: 'Company', position: 'Developer', highlights: ['Built X'] }],
+  // ...
 }
 ```
 
 ## Security
 
-- **HTML Escaping**: All values are HTML-escaped by default unless `|raw` filter is used
-- **Template Sanitization**: Templates are sanitized to remove potentially dangerous script tags
-- **Safe Rendering**: Uses React's `dangerouslySetInnerHTML` with processed content
+- Escaping by default: The engine HTML-escapes all injected values to avoid XSS.
+- Templates are trusted: Your Gist template’s HTML/CSS is injected as-is.
+- Opt-out (rare): You can disable escaping for a render call ({ htmlEscape: false }) if all values are trusted.
+
+Per-placeholder “raw” filters are not supported. Prefer keeping escaping on.
 
 ## Error Handling
 
-The component provides comprehensive error handling:
+- You’ll get clear errors for:
+- Invalid/unsupported Gist URLs
+- Network/HTTP failures
+- Empty or non-HTML templates
 
-- Network errors when fetching Gists
-- Invalid Gist URLs
-- Template processing errors
-- Missing or invalid resume data
-- Automatic retry functionality
+`<GistTemplate />` shows a loading state and a styled error with retry.
 
 ## Development
 
-To test the component, use the included demo:
+## Example Route with TanStack Router
 
 ```tsx
-import { GistTemplateDemo } from './components/GistTemplate'
+import { createFileRoute } from '@tanstack/react-router'
+import { GistTemplateDemo } from '@/components' // or '@/components/GistTemplateDemo'
 
-function App() {
-  return <GistTemplateDemo />
+export const Route = createFileRoute('/gist-demo')({
+  component: GistDemo,
+})
+
+function GistDemo() {
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <GistTemplateDemo />
+    </div>
+  )
 }
 ```
 
-## Processing Order
+## Notes & Limitations
 
 Templates are processed in this deterministic order:
 
-1. **Each blocks** (outermost to innermost, recursively)
-2. **If blocks** (outermost to innermost, recursively)
-3. **Join statements**
-4. **Scalar placeholders**
+- No `else` blocks in `[[#if]]` (use `[[#if !path]]` as needed).
 
-This ensures consistent and predictable template processing.
+- No inline comparisons (e.g., `==`, `>`) — keep logic in data shaping.
+
+- Prefer loops over array indexing in templates for clarity.
+
+## Demo
+
+A ready-to-use demo page is included:
+
+```tsx
+import { GistTemplateDemo } from './GistTemplateDemo'
+
+export default function App() {
+  return <GistTemplateDemo />
+}
+```

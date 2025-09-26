@@ -1,9 +1,14 @@
 /**
- * GistTemplate Demo Component
+ * GistTemplateDemo.tsx
+ * --------------------
+ * Purpose
+ *   Showcase how to render a JSON Resume through a Gist HTML template using
+ *   the <GistTemplate /> component. Also provides UI controls to try another
+ *   gist URL and toggle raw HTML output.
  *
- * This component demonstrates how to use the GistTemplate component
- * with sample resume data. It can be used for testing and as a reference
- * for implementing the GistTemplate in other parts of the application.
+ * Notes
+ *   - This is demo/test UI. In production, you would typically just use
+ *     <GistTemplate gistUrl={...} resumeData={...} /> directly.
  */
 
 import React, { useState } from 'react'
@@ -14,7 +19,8 @@ import {
 } from './GistTemplate'
 import type { ResumeData } from './templateEngine'
 
-// Sample resume data for testing
+// Sample resume data for testing the template engine end-to-end.
+// You can replace this with user-generated data at runtime.
 const SAMPLE_RESUME_DATA: ResumeData = {
   basics: {
     name: 'John Doe',
@@ -42,6 +48,7 @@ const SAMPLE_RESUME_DATA: ResumeData = {
       },
     ],
   },
+  // ...the rest of the sample below is not special — just realistic data
   work: [
     {
       name: 'Tech Solutions Inc.',
@@ -135,20 +142,11 @@ const SAMPLE_RESUME_DATA: ResumeData = {
     },
   ],
   languages: [
-    {
-      language: 'English',
-      fluency: 'Native',
-    },
-    {
-      language: 'Spanish',
-      fluency: 'Conversational',
-    },
+    { language: 'English', fluency: 'Native' },
+    { language: 'Spanish', fluency: 'Conversational' },
   ],
   interests: [
-    {
-      name: 'Technology',
-      keywords: ['Open Source', 'AI/ML', 'Blockchain'],
-    },
+    { name: 'Technology', keywords: ['Open Source', 'AI/ML', 'Blockchain'] },
     {
       name: 'Outdoor Activities',
       keywords: ['Hiking', 'Photography', 'Rock Climbing'],
@@ -157,7 +155,10 @@ const SAMPLE_RESUME_DATA: ResumeData = {
 }
 
 /**
- * Demo component showing different ways to use GistTemplate
+ * Simple playground that lets you:
+ *  - Try the default template
+ *  - Paste in another gist URL
+ *  - Toggle to see the raw HTML output from the engine
  */
 export const GistTemplateDemo: React.FC = () => {
   const [customGistUrl, setCustomGistUrl] = useState(
@@ -186,7 +187,7 @@ export const GistTemplateDemo: React.FC = () => {
         </p>
       </div>
 
-      {/* Controls */}
+      {/* Configuration panel for the gist URL + options */}
       <div className="bg-white p-6 rounded-lg shadow-md border">
         <h2 className="text-xl font-semibold mb-4">Template Configuration</h2>
 
@@ -233,7 +234,7 @@ export const GistTemplateDemo: React.FC = () => {
         </div>
       </div>
 
-      {/* Template Rendering */}
+      {/* Rendered template result */}
       <div className="space-y-6">
         <div>
           <h2 className="text-xl font-semibold mb-4">Rendered Template</h2>
@@ -248,7 +249,7 @@ export const GistTemplateDemo: React.FC = () => {
           </div>
         </div>
 
-        {/* Raw HTML Output */}
+        {/* Raw HTML (debug/teaching aid) */}
         {showRawHtml && processedHtml && (
           <div>
             <h3 className="text-lg font-semibold mb-2">Raw HTML Output</h3>
@@ -259,57 +260,6 @@ export const GistTemplateDemo: React.FC = () => {
             </div>
           </div>
         )}
-      </div>
-
-      {/* Usage Examples */}
-      <div className="bg-gray-50 p-6 rounded-lg">
-        <h2 className="text-xl font-semibold mb-4">Usage Examples</h2>
-
-        <div className="space-y-4">
-          <div>
-            <h3 className="font-medium text-gray-900">Basic Usage:</h3>
-            <pre className="mt-2 bg-white p-3 rounded border text-sm overflow-x-auto">
-              {`<GistTemplate
-  gistUrl="https://gist.github.com/username/gistId#file-template-html"
-  resumeData={resumeData}
-/>`}
-            </pre>
-          </div>
-
-          <div>
-            <h3 className="font-medium text-gray-900">With Callbacks:</h3>
-            <pre className="mt-2 bg-white p-3 rounded border text-sm overflow-x-auto">
-              {`<GistTemplate
-  gistUrl={gistUrl}
-  resumeData={resumeData}
-  onProcessed={(html) => console.log('Processed:', html)}
-  onError={(error) => console.error('Error:', error)}
-/>`}
-            </pre>
-          </div>
-
-          <div>
-            <h3 className="font-medium text-gray-900">
-              Using the Classic Template:
-            </h3>
-            <pre className="mt-2 bg-white p-3 rounded border text-sm overflow-x-auto">
-              {`<ClassicGistTemplate
-  resumeData={resumeData}
-  className="custom-styling"
-/>`}
-            </pre>
-          </div>
-
-          <div>
-            <h3 className="font-medium text-gray-900">Using the Hook:</h3>
-            <pre className="mt-2 bg-white p-3 rounded border text-sm overflow-x-auto">
-              {`const { processedHtml, loading, error, refetch } = useGistTemplate(
-  gistUrl, 
-  resumeData
-);`}
-            </pre>
-          </div>
-        </div>
       </div>
     </div>
   )
