@@ -2,8 +2,8 @@ import { Link } from '@tanstack/react-router'
 
 export default function Header() {
   return (
-    <header className="p-2 flex gap-2 bg-white text-black justify-between">
-      <nav className="bg-white shadow-sm border-b">
+    <header className="p-2 flex gap-2 bg-white text-black justify-between w-full">
+      <nav className="bg-white shadow-sm border-b w-full">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex space-x-8">
