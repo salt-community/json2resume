@@ -4,6 +4,7 @@ import type { Basics, ResumeData } from '@/types'
 import AccordionGroup from '@/components/AccordionGroup'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { fakeResumeData } from '@/data/resumeData'
+import JsonCodeEditor from '@/components/ResumeEditor/JsonCodeEditor.tsx'
 
 export const Route = createFileRoute('/editor')({
   component: App,
@@ -30,7 +31,12 @@ function App() {
               setResumeData={setResumeData}
             />
           </TabsContent>
-          <TabsContent value="json">Display json editor here</TabsContent>
+          <TabsContent value="json">
+            <JsonCodeEditor
+              jsonState={""}
+              onChange={() => {}}
+            />
+          </TabsContent>
         </Tabs>
       </section>
     </div>
