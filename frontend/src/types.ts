@@ -5,6 +5,7 @@ export interface ResumeData {
   volunteer?: Array<Volunteer>
   education?: Array<Education>
   awards?: Array<Award>
+  certificates?: Array<Certificate>
   publications?: Array<Publication>
   skills?: Array<Skill>
   languages?: Array<Language>
@@ -78,6 +79,13 @@ export interface Award {
   date?: string
   awarder?: string
   summary?: string
+}
+
+export interface Certificate {
+  name?: string
+  date?: string
+  issuer?: string
+  url?: string
 }
 
 export interface Publication {
