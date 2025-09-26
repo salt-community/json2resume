@@ -1,13 +1,9 @@
 /**
- * GistTemplate Component
+ * GistTemplate Component (refactored)
  */
 
 import React, { useState, useEffect, useCallback } from 'react'
-import {
-  processTemplate,
-  sanitizeTemplate,
-  type ResumeData,
-} from './templateEngine'
+import { renderTemplate, type ResumeData } from './templateEngine'
 import {
   fetchAndValidateGistTemplate,
   type GistFetchResult,
@@ -55,12 +51,15 @@ export function useGistTemplate(
     }
 
     setState((prev) => ({ ...prev, loading: true, error: null }))
+    let cancelled = false
 
     try {
       const fetchResult: GistFetchResult = await fetchAndValidateGistTemplate(
         gistUrl,
         filename,
       )
+
+      if (cancelled) return
 
       if (!fetchResult.success || !fetchResult.content) {
         setState((prev) => ({
@@ -71,8 +70,8 @@ export function useGistTemplate(
         return
       }
 
-      const sanitizedTemplate = sanitizeTemplate(fetchResult.content)
-      const processedHtml = processTemplate(sanitizedTemplate, resumeData)
+      // Render with the new template engine (HTML-escapes values by default)
+      const processedHtml = renderTemplate(fetchResult.content, resumeData)
 
       setState((prev) => ({
         ...prev,
@@ -85,11 +84,17 @@ export function useGistTemplate(
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : 'An unexpected error occurred'
-      setState((prev) => ({
-        ...prev,
-        loading: false,
-        error: errorMessage,
-      }))
+      if (!cancelled) {
+        setState((prev) => ({
+          ...prev,
+          loading: false,
+          error: errorMessage,
+        }))
+      }
+    }
+
+    return () => {
+      cancelled = true
     }
   }, [gistUrl, resumeData, filename])
 
@@ -194,7 +199,7 @@ export const GistTemplate: React.FC<GistTemplateProps> = ({
   )
 }
 
-/** Default template URL (targets the specific file via #file- fragment) */
+/** Default template URL */
 export const DEFAULT_CLASSIC_TEMPLATE_URL =
   'https://gist.github.com/samuel-kar/11b0969ab91989b64650ac9361c8103b'
 

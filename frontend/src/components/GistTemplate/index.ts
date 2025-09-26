@@ -11,11 +11,8 @@ export {
   type GistTemplateState,
 } from './GistTemplate'
 
-export {
-  processTemplate,
-  sanitizeTemplate,
-  type ResumeData,
-} from './templateEngine'
+// From the new engine
+export { renderTemplate, compile, type ResumeData } from './templateEngine'
 
 export {
   fetchGistContent,

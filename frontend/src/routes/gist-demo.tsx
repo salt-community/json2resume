@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { GistTemplateDemo } from '@/components/GistTemplate'
+import { GistTemplateDemo } from '@/components' // <-- index.ts barrel
 
 export const Route = createFileRoute('/gist-demo')({
   component: GistDemo,

@@ -1,321 +1,381 @@
-/**
- * Mini Templating Engine for GitHub Gist Resume Templates
+/*
+ * Lightweight template engine for the JSON Resume + Gist template syntax.
  *
- * This module implements a simple templating system that processes HTML templates
- * with placeholders and control structures, replacing them with data from a JSON Resume object.
+ * Supported syntax (matches your gist template):
+ *   - Variables:            >>[path]<<            e.g., >>[basics.name]<<, >>[.]<<
+ *   - Conditionals:         [[#if path]] ... [[/if]]
+ *                           [[#if !path]] ... [[/if]]   (negation)
+ *   - Iteration:            [[#each path]] ... [[/each]]
+ *   - Join (inline helper): [[#join path|, ]]  // optional, joins array of primitives by separator
  *
- * Template Syntax:
- * - Placeholders: >>[path.to.value]<< or >>[path.to.value|raw]<<
- * - Conditionals: [[#if path]] ... [[/if]] or [[#if !path]] ... [[/if]]
- * - Loops: [[#each path.to.array]] ... [[/each]]
- * - Join: [[#join path.to.array]]
+ * Path rules:
+ *   - "." means the current item in an [[#each]] block (for arrays of strings use >>[.]<<)
+ *   - Relative lookup prefers the current context, then falls back to the root
+ *   - Absolute/rooted lookup is also possible by using full paths like "basics.name"
  *
- * Processing Order (deterministic):
- * 1. Resolve all [[#each ...]] blocks (outermost to innermost, recursively)
- * 2. Resolve all [[#if ...]] blocks (outermost to innermost, recursively)
- * 3. Resolve all [[#join ...]] singletons
- * 4. Replace all >>[...]<< scalar placeholders
+ * Escaping:
+ *   - By default all injected values are HTML-escaped to protect against XSS.
+ *   - To allow safe HTML snippets, pass { htmlEscape: false } in options for *this render call*.
  */
 
-// Type definition for the JSON Resume data structure
-export interface ResumeData {
-  basics?: {
-    name?: string
-    label?: string
-    image?: string
-    email?: string
-    phone?: string
-    url?: string
-    summary?: string
-    location?: {
-      address?: string
-      postalCode?: string
-      city?: string
-      countryCode?: string
-      region?: string
-    }
-    profiles?: Array<{
-      network?: string
-      username?: string
-      url?: string
-    }>
+export type JsonLike =
+  | Record<string, any>
+  | any[]
+  | string
+  | number
+  | boolean
+  | null
+  | undefined
+
+// Alias for external consumers (your components expect this)
+export type ResumeData = Record<string, any>
+
+export interface RenderOptions {
+  /** HTML-escape all injected values (default: true) */
+  htmlEscape?: boolean
+}
+
+// ---------------------------- Tokenizing / Parsing ----------------------------
+
+type Node = TextNode | VarNode | IfNode | EachNode | JoinNode
+
+interface TextNode {
+  type: 'text'
+  value: string
+}
+
+interface VarNode {
+  type: 'var'
+  path: string
+}
+
+interface IfNode {
+  type: 'if'
+  path: string
+  negate: boolean
+  children: Node[]
+}
+
+interface EachNode {
+  type: 'each'
+  path: string
+  children: Node[]
+}
+
+interface JoinNode {
+  type: 'join'
+  path: string
+  sep: string
+}
+
+const VAR_OPEN = '>>['
+const VAR_CLOSE = ']<<'
+const BLK_OPEN = '[[#'
+const BLK_CLOSE_OPEN = '[[/'
+const TAG_CLOSE = ']]'
+
+class TemplateParseError extends Error {}
+
+function parse(template: string): Node[] {
+  let i = 0
+  const len = template.length
+
+  type Frame = {
+    type: 'root' | 'if' | 'each'
+    node?: IfNode | EachNode
+    children: Node[]
   }
-  work?: Array<{
-    name?: string
-    position?: string
-    url?: string
-    startDate?: string
-    endDate?: string
-    summary?: string
-    highlights?: string[]
-  }>
-  volunteer?: Array<{
-    organization?: string
-    position?: string
-    url?: string
-    startDate?: string
-    endDate?: string
-    summary?: string
-    highlights?: string[]
-  }>
-  education?: Array<{
-    institution?: string
-    url?: string
-    area?: string
-    studyType?: string
-    startDate?: string
-    endDate?: string
-    score?: string
-    courses?: string[]
-  }>
-  awards?: Array<{
-    title?: string
-    date?: string
-    awarder?: string
-    summary?: string
-  }>
-  certificates?: Array<{
-    name?: string
-    date?: string
-    issuer?: string
-    url?: string
-  }>
-  publications?: Array<{
-    name?: string
-    publisher?: string
-    releaseDate?: string
-    url?: string
-    summary?: string
-  }>
-  skills?: Array<{
-    name?: string
-    level?: string
-    keywords?: string[]
-  }>
-  languages?: Array<{
-    language?: string
-    fluency?: string
-  }>
-  interests?: Array<{
-    name?: string
-    keywords?: string[]
-  }>
-  references?: Array<{
-    name?: string
-    reference?: string
-  }>
-  projects?: Array<{
-    name?: string
-    startDate?: string
-    endDate?: string
-    description?: string
-    highlights?: string[]
-    url?: string
-  }>
-  [key: string]: any // Allow for additional fields
-}
+  const stack: Frame[] = [{ type: 'root', children: [] }]
 
-/**
- * HTML-escapes a string to prevent XSS attacks
- */
-function escapeHtml(text: string): string {
-  const div = document.createElement('div')
-  div.textContent = text
-  return div.innerHTML
-}
+  function currChildren(): Node[] {
+    return stack[stack.length - 1].children
+  }
 
-/**
- * Safely gets a nested property from an object using dot notation
- * Supports array indexing like "arr[0].field"
- */
-function getNestedProperty(obj: any, path: string): any {
-  if (!path || path === '.') return obj
+  function pushNode(n: Node) {
+    currChildren().push(n)
+  }
 
-  // Handle array indexing syntax like "arr[0].field"
-  const parts = path.split('.').flatMap((part) => {
-    if (part.includes('[')) {
-      const matches = part.match(/^([^[]+)\[(\d+)\](.*)$/)
-      if (matches) {
-        const [, arrayName, index, rest] = matches
-        const result = [arrayName, index]
-        if (rest) result.push(rest)
-        return result
+  function startsWithAt(s: string) {
+    return template.startsWith(s, i)
+  }
+
+  function readUntil(marker: string): string {
+    const idx = template.indexOf(marker, i)
+    if (idx === -1)
+      throw new TemplateParseError(`Unclosed tag, expected "${marker}".`)
+    const out = template.slice(i, idx)
+    i = idx + marker.length
+    return out
+  }
+
+  while (i < len) {
+    // Next special token index
+    const nextVar = template.indexOf(VAR_OPEN, i)
+    const nextBlk = template.indexOf('[[', i) // either open or close
+    const next = [nextVar, nextBlk]
+      .filter((n) => n !== -1)
+      .sort((a, b) => a - b)[0]
+
+    if (next === undefined) {
+      // No more tags; flush remaining text
+      pushNode({ type: 'text', value: template.slice(i) })
+      break
+    }
+
+    if (next > i) {
+      pushNode({ type: 'text', value: template.slice(i, next) })
+      i = next
+    }
+
+    // Variable: >>[path]<<
+    if (startsWithAt(VAR_OPEN)) {
+      i += VAR_OPEN.length
+      const inside = readUntil(VAR_CLOSE).trim()
+      pushNode({ type: 'var', path: inside })
+      continue
+    }
+
+    // Block open: [[#if ...]] | [[#each ...]] | [[#join ...]]
+    if (startsWithAt(BLK_OPEN)) {
+      i += BLK_OPEN.length
+      const head = readUntil(TAG_CLOSE).trim() // e.g. "if basics.label" or "each work" or "join tags|, "
+      const [keyword, ...restParts] = head.split(/\s+/)
+      const rest = restParts.join(' ').trim()
+
+      if (keyword === 'if') {
+        const negate = rest.startsWith('!')
+        const path = negate ? rest.slice(1).trim() : rest
+        const node: IfNode = { type: 'if', path, negate, children: [] }
+        stack.push({ type: 'if', node, children: node.children })
+        continue
       }
+
+      if (keyword === 'each') {
+        const path = rest
+        const node: EachNode = { type: 'each', path, children: [] }
+        stack.push({ type: 'each', node, children: node.children })
+        continue
+      }
+
+      if (keyword === 'join') {
+        // Syntax: [[#join path|separator]] — separator optional (default ", ")
+        let joinPath = rest
+        let sep = ', '
+        const pipeIdx = rest.indexOf('|')
+        if (pipeIdx !== -1) {
+          joinPath = rest.slice(0, pipeIdx).trim()
+          sep = rest.slice(pipeIdx + 1) // keep as-is (allows spaces)
+        }
+        pushNode({ type: 'join', path: joinPath.trim(), sep })
+        continue
+      }
+
+      // Unknown keyword -> treat literally
+      pushNode({ type: 'text', value: `[[#${head}]]` })
+      continue
     }
-    return [part]
-  })
 
-  let current = obj
+    // Block close: [[/if]] or [[/each]]
+    if (startsWithAt(BLK_CLOSE_OPEN)) {
+      i += BLK_CLOSE_OPEN.length
+      const head = readUntil(TAG_CLOSE).trim() // e.g. "if" or "each"
+
+      if (head === 'if' || head === 'each') {
+        // Pop until matching
+        for (let j = stack.length - 1; j >= 0; j--) {
+          const f = stack[j]
+          if (f.type === head) {
+            // Close this frame
+            const closed = stack.pop()!
+            const node = closed.node as unknown as Node
+            // Append the completed block to the new current frame
+            pushNode(node)
+            break
+          }
+          if (j === 0)
+            throw new TemplateParseError(`Mismatched closing tag [[/${head}]]`)
+        }
+        continue
+      }
+
+      // Unknown closing tag — keep literally
+      pushNode({ type: 'text', value: `[[/${head}]]` })
+      continue
+    }
+
+    // Fallback safety: if we got here, consume a single char to avoid infinite loop
+    pushNode({ type: 'text', value: template[i] })
+    i += 1
+  }
+
+  if (stack.length !== 1) {
+    throw new TemplateParseError('Unclosed block(s) in template.')
+  }
+
+  return stack[0].children
+}
+
+// ---------------------------- Rendering ----------------------------
+
+function htmlEscape(s: unknown): string {
+  const str = s == null ? '' : String(s)
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/\"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+}
+
+function isTruthy(val: any): boolean {
+  if (val == null) return false
+  if (typeof val === 'boolean') return val
+  if (typeof val === 'number') return val !== 0 && !Number.isNaN(val)
+  if (typeof val === 'string') return val.trim().length > 0
+  if (Array.isArray(val)) return val.length > 0
+  if (typeof val === 'object') return Object.keys(val).length > 0
+  return Boolean(val)
+}
+
+function getNested(obj: any, path: string): any {
+  if (!path || path === '.') return obj
+  const parts = path.split('.')
+  let curr = obj
   for (const part of parts) {
-    if (current == null) return undefined
+    if (curr == null) return undefined
+    // numeric indexes (not used in your template, but harmless)
+    const key: any = /^\d+$/.test(part) ? Number(part) : part
+    curr = curr[key]
+  }
+  return curr
+}
 
-    // Handle numeric indices for arrays
-    if (/^\d+$/.test(part)) {
-      current = current[parseInt(part, 10)]
-    } else {
-      current = current[part]
+function resolvePath(path: string, ctxStack: any[], root: any): any {
+  // Current context is the top of stack
+  const ctx = ctxStack[ctxStack.length - 1]
+
+  if (!path || path === '.' || path === 'this') return ctx
+
+  // Absolute-ish lookup (dot in path) — prefer root for clarity like "basics.name"
+  if (path.includes('.')) {
+    const fromRoot = getNested(root, path)
+    if (fromRoot !== undefined) return fromRoot
+    // If not in root, try current context
+    return getNested(ctx, path)
+  }
+
+  // Single-segment relative lookup — prefer current context, then root
+  const rel = getNested(ctx, path)
+  if (rel !== undefined) return rel
+  return getNested(root, path)
+}
+
+function renderNodes(
+  nodes: Node[],
+  ctxStack: any[],
+  root: any,
+  opt: Required<RenderOptions>,
+): string {
+  let out = ''
+
+  for (const n of nodes) {
+    switch (n.type) {
+      case 'text':
+        out += n.value
+        break
+
+      case 'var': {
+        const val = resolvePath(n.path, ctxStack, root)
+        const str =
+          val == null
+            ? ''
+            : typeof val === 'object'
+              ? JSON.stringify(val)
+              : String(val)
+        out += opt.htmlEscape ? htmlEscape(str) : String(str)
+        break
+      }
+
+      case 'if': {
+        const val = resolvePath(n.path, ctxStack, root)
+        const should = n.negate ? !isTruthy(val) : isTruthy(val)
+        if (should) out += renderNodes(n.children, ctxStack, root, opt)
+        break
+      }
+
+      case 'each': {
+        const arr = resolvePath(n.path, ctxStack, root)
+        if (Array.isArray(arr)) {
+          for (const item of arr) {
+            ctxStack.push(item)
+            out += renderNodes(n.children, ctxStack, root, opt)
+            ctxStack.pop()
+          }
+        }
+        break
+      }
+
+      case 'join': {
+        const arr = resolvePath(n.path, ctxStack, root)
+        if (Array.isArray(arr)) {
+          const parts = arr.map((v) => {
+            const s =
+              v == null
+                ? ''
+                : typeof v === 'object'
+                  ? JSON.stringify(v)
+                  : String(v)
+            return opt.htmlEscape ? htmlEscape(s) : String(s)
+          })
+          out += parts.join(n.sep)
+        }
+        break
+      }
+
+      default:
+        // exhaustive check
+        const _ex: never = n
+        void _ex
     }
   }
 
-  return current
+  return out
 }
 
-/**
- * Checks if a value is considered "truthy" according to template logic
- * null, undefined, "", false, 0, and empty arrays are falsy
- */
-function isTruthy(value: any): boolean {
-  if (value == null) return false
-  if (value === false || value === 0 || value === '') return false
-  if (Array.isArray(value) && value.length === 0) return false
-  return true
+export interface CompiledTemplate {
+  render(data: JsonLike, options?: RenderOptions): string
 }
 
-/**
- * Processes [[#each path]] ... [[/each]] blocks
- * Recursively handles nested structures
- */
-function processEachBlocks(
+const compileCache = new Map<string, Node[]>()
+
+export function compile(template: string): CompiledTemplate {
+  const ast = compileCache.get(template) ?? parse(template)
+  compileCache.set(template, ast)
+
+  return {
+    render(data: JsonLike, options?: RenderOptions) {
+      const opt: Required<RenderOptions> = {
+        htmlEscape: options?.htmlEscape !== false,
+      }
+      const root = data as any
+      return renderNodes(ast, [root], root, opt)
+    },
+  }
+}
+
+export function renderTemplate(
   template: string,
-  data: ResumeData,
-  currentContext: any = data,
+  data: JsonLike,
+  options?: RenderOptions,
 ): string {
-  const eachRegex = /\[\[#each\s+([^\]]+)\]\]([\s\S]*?)\[\[\/each\]\]/g
-
-  return template.replace(eachRegex, (match, path, content) => {
-    const arrayData = getNestedProperty(currentContext, path)
-
-    if (!Array.isArray(arrayData) || arrayData.length === 0) {
-      return '' // Empty array or not an array - render nothing
-    }
-
-    // Process each item in the array
-    return arrayData
-      .map((item) => {
-        // Recursively process nested each/if blocks within this context
-        let processedContent = processEachBlocks(content, data, item)
-        processedContent = processIfBlocks(processedContent, data, item)
-        return processedContent
-      })
-      .join('')
-  })
+  return compile(template).render(data, options)
 }
 
-/**
- * Processes [[#if path]] ... [[/if]] and [[#if !path]] ... [[/if]] blocks
- * Supports negation with !path syntax
- */
-function processIfBlocks(
-  template: string,
-  data: ResumeData,
-  currentContext: any = data,
-): string {
-  const ifRegex = /\[\[#if\s+(!?)([^\]]+)\]\]([\s\S]*?)\[\[\/if\]\]/g
-
-  return template.replace(ifRegex, (match, negation, path, content) => {
-    const value = getNestedProperty(currentContext, path)
-    const isNegated = negation === '!'
-    const shouldRender = isNegated ? !isTruthy(value) : isTruthy(value)
-
-    if (shouldRender) {
-      // Recursively process nested blocks within this context
-      let processedContent = processEachBlocks(content, data, currentContext)
-      processedContent = processIfBlocks(processedContent, data, currentContext)
-      return processedContent
-    }
-
-    return '' // Condition not met - render nothing
-  })
-}
-
-/**
- * Processes [[#join path.to.array]] statements
- * Replaces with comma-separated list of array items
- */
-function processJoinStatements(
-  template: string,
-  data: ResumeData,
-  currentContext: any = data,
-): string {
-  const joinRegex = /\[\[#join\s+([^\]]+)\]\]/g
-
-  return template.replace(joinRegex, (match, path) => {
-    const arrayData = getNestedProperty(currentContext, path)
-
-    if (!Array.isArray(arrayData) || arrayData.length === 0) {
-      return '' // Empty array or not an array
-    }
-
-    // Join primitive values only
-    return arrayData
-      .filter(
-        (item) =>
-          typeof item === 'string' ||
-          typeof item === 'number' ||
-          typeof item === 'boolean',
-      )
-      .join(', ')
-  })
-}
-
-/**
- * Processes >>[path]<< and >>[path|raw]<< placeholders
- * Applies HTML escaping unless |raw filter is specified
- */
-function processPlaceholders(
-  template: string,
-  data: ResumeData,
-  currentContext: any = data,
-): string {
-  const placeholderRegex = />>\[([^\]|]+)(\|raw)?\]<</g
-
-  return template.replace(placeholderRegex, (match, path, rawFilter) => {
-    const value = getNestedProperty(currentContext, path)
-
-    if (value == null) return ''
-
-    const stringValue = String(value)
-
-    // Apply HTML escaping unless |raw filter is used
-    return rawFilter ? stringValue : escapeHtml(stringValue)
-  })
-}
-
-/**
- * Main template processing function
- * Processes template in the specified deterministic order:
- * 1. Each blocks (outermost to innermost, recursively)
- * 2. If blocks (outermost to innermost, recursively)
- * 3. Join statements
- * 4. Scalar placeholders
- */
-export function processTemplate(template: string, data: ResumeData): string {
-  let result = template
-
-  // Step 1: Process all [[#each ...]] blocks
-  result = processEachBlocks(result, data)
-
-  // Step 2: Process all [[#if ...]] blocks
-  result = processIfBlocks(result, data)
-
-  // Step 3: Process all [[#join ...]] statements
-  result = processJoinStatements(result, data)
-
-  // Step 4: Process all >>[...]<< placeholders
-  result = processPlaceholders(result, data)
-
-  return result
-}
-
-/**
- * Sanitizes HTML template content before processing
- * Basic validation to ensure template structure is safe
- */
-export function sanitizeTemplate(template: string): string {
-  // Basic sanitization - remove potentially dangerous script tags
-  // In a production environment, you might want more comprehensive sanitization
-  return template.replace(
-    /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,
-    '',
-  )
-}
+// ---------------------------- Small self-test (optional) ----------------------------
+// Uncomment for quick verification in dev environments.
+// const demo = {
+//   basics: { name: 'John Doe', label: 'Programmer', email: 'john@gmail.com', location: { city: 'SF' }, summary: 'Hello <b>world</b>', profiles: [{ network: 'Twitter', username: 'john', url: 'https://twitter.com/john' }] },
+//   skills: [{ name: 'Web Dev', level: 'Master', keywords: ['HTML', 'CSS', 'JS'] }],
+// }
+// const tpl = 'Hello >>[basics.name]<< [[#if basics.label]](>>[basics.label]<<)[[/if]] [[#if !basics.foo]]no foo![[/if]] [[#each skills]]| >>[name]<<: [[#join keywords|, ]] [[/each]]'
+// console.log(renderTemplate(tpl, demo))
