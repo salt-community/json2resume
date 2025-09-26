@@ -50,9 +50,9 @@ function App() {
           </TabsContent>
         </Tabs>
       </section>
-      <section className="min-h-screen border-2">
+      <section className=" min-h-screen border-2">
         <GistTemplate
-          gistUrl="https://gist.github.com/samuel-kar/11b0969ab91989b64650ac9361c8103b"
+          gistUrl="https://gist.github.com/david11267/b03fd23966945976472361c8e5d3e161"
           resumeData={resumeData}
         />
       </section>
