@@ -1,16 +1,5 @@
 /**
  * GistTemplate Component
- *
- * This component fetches HTML templates from GitHub Gists and processes them
- * with resume data using the mini templating engine. It handles the complete
- * workflow from fetching raw Gist content to rendering the final HTML.
- *
- * Features:
- * - Fetches templates from GitHub Gist URLs
- * - Processes templates with resume data using custom templating syntax
- * - Provides loading states and error handling
- * - Sanitizes content for security
- * - Renders processed HTML safely using dangerouslySetInnerHTML
  */
 
 import React, { useState, useEffect, useCallback } from 'react'
@@ -25,38 +14,23 @@ import {
 } from './gistFetcher'
 
 export interface GistTemplateProps {
-  /** The GitHub Gist URL containing the HTML template */
   gistUrl: string
-  /** The resume data to inject into the template */
   resumeData: ResumeData
-  /** Optional specific filename to fetch from the Gist */
   filename?: string
-  /** Custom CSS classes to apply to the container */
   className?: string
-  /** Callback fired when template processing completes */
   onProcessed?: (html: string) => void
-  /** Callback fired when an error occurs */
   onError?: (error: string) => void
-  /** Whether to show loading state */
   showLoading?: boolean
 }
 
 export interface GistTemplateState {
-  /** The processed HTML ready for rendering */
   processedHtml: string
-  /** Current loading state */
   loading: boolean
-  /** Error message if something went wrong */
   error: string | null
-  /** The raw template content from the Gist */
   rawTemplate: string
-  /** Whether the template has been successfully fetched */
   templateFetched: boolean
 }
 
-/**
- * Hook to manage Gist template fetching and processing
- */
 export function useGistTemplate(
   gistUrl: string,
   resumeData: ResumeData,
@@ -83,7 +57,6 @@ export function useGistTemplate(
     setState((prev) => ({ ...prev, loading: true, error: null }))
 
     try {
-      // Fetch the template from GitHub Gist
       const fetchResult: GistFetchResult = await fetchAndValidateGistTemplate(
         gistUrl,
         filename,
@@ -98,10 +71,7 @@ export function useGistTemplate(
         return
       }
 
-      // Sanitize the template content
       const sanitizedTemplate = sanitizeTemplate(fetchResult.content)
-
-      // Process the template with resume data
       const processedHtml = processTemplate(sanitizedTemplate, resumeData)
 
       setState((prev) => ({
@@ -123,7 +93,6 @@ export function useGistTemplate(
     }
   }, [gistUrl, resumeData, filename])
 
-  // Fetch template when dependencies change
   useEffect(() => {
     fetchAndProcessTemplate()
   }, [fetchAndProcessTemplate])
@@ -134,9 +103,6 @@ export function useGistTemplate(
   }
 }
 
-/**
- * Loading component displayed while fetching and processing template
- */
 const LoadingState: React.FC = () => (
   <div className="flex items-center justify-center p-8 bg-gray-50 rounded-lg">
     <div className="text-center">
@@ -147,9 +113,6 @@ const LoadingState: React.FC = () => (
   </div>
 )
 
-/**
- * Error component displayed when template processing fails
- */
 const ErrorState: React.FC<{ error: string; onRetry?: () => void }> = ({
   error,
   onRetry,
@@ -189,9 +152,6 @@ const ErrorState: React.FC<{ error: string; onRetry?: () => void }> = ({
   </div>
 )
 
-/**
- * Main GistTemplate component that renders processed HTML from a GitHub Gist template
- */
 export const GistTemplate: React.FC<GistTemplateProps> = ({
   gistUrl,
   resumeData,
@@ -207,30 +167,17 @@ export const GistTemplate: React.FC<GistTemplateProps> = ({
     filename,
   )
 
-  // Fire callbacks when state changes
   useEffect(() => {
-    if (processedHtml && onProcessed) {
-      onProcessed(processedHtml)
-    }
+    if (processedHtml && onProcessed) onProcessed(processedHtml)
   }, [processedHtml, onProcessed])
 
   useEffect(() => {
-    if (error && onError) {
-      onError(error)
-    }
+    if (error && onError) onError(error)
   }, [error, onError])
 
-  // Render loading state
-  if (loading && showLoading) {
-    return <LoadingState />
-  }
+  if (loading && showLoading) return <LoadingState />
+  if (error) return <ErrorState error={error} onRetry={refetch} />
 
-  // Render error state
-  if (error) {
-    return <ErrorState error={error} onRetry={refetch} />
-  }
-
-  // Render processed HTML
   if (processedHtml) {
     return (
       <div
@@ -240,7 +187,6 @@ export const GistTemplate: React.FC<GistTemplateProps> = ({
     )
   }
 
-  // Empty state (shouldn't normally be reached)
   return (
     <div className="p-4 text-center text-gray-500">
       No template content available
@@ -248,16 +194,10 @@ export const GistTemplate: React.FC<GistTemplateProps> = ({
   )
 }
 
-/**
- * Default hardcoded Gist URL for the classic resume template
- * This can be used as a fallback or default template
- */
+/** Default template URL (targets the specific file via #file- fragment) */
 export const DEFAULT_CLASSIC_TEMPLATE_URL =
-  'https://gist.github.com/samuel-kar/11b0969ab91989b64650ac9361c8103b'
+  'https://gist.github.com/samuel-kar/11b0969ab91989b64650ac9361c8103b#file-classic-resume-html-custom'
 
-/**
- * Convenience component that uses the default classic template
- */
 export const ClassicGistTemplate: React.FC<
   Omit<GistTemplateProps, 'gistUrl'>
 > = (props) => (
