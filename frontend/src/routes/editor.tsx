@@ -5,7 +5,10 @@ import AccordionGroup from '@/components/AccordionGroup'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { mockedResumeData } from '@/data/resumeDataMock.ts'
 import JsonCodeEditor from '@/components/ResumeEditor/JsonCodeEditor.tsx'
-import { GistTemplate } from '@/components/GistTemplate'
+import { jsonStringFromJsonObj } from '@/data/jsonStringFromJsonObj.ts'
+import { jsonObjFromResumeData } from '@/data/jsonObjFromResumeData.ts'
+import { resumeDataFromJsonObj } from '@/data/resumeDataFromJsonObj.ts'
+import jsonObjFromJsonString from '@/data/jsonObjFromJsonString.ts'
 
 export const Route = createFileRoute('/editor')({
   component: App,
@@ -13,6 +16,7 @@ export const Route = createFileRoute('/editor')({
 
 function App() {
   const [resumeData, setResumeData] = useState<ResumeData>(mockedResumeData)
+  const json = jsonStringFromJsonObj(jsonObjFromResumeData(resumeData))
 
   return (
     <div className="grid grid-cols-2 gap-8 p-16">
@@ -33,15 +37,15 @@ function App() {
             />
           </TabsContent>
           <TabsContent value="json">
-            <JsonCodeEditor jsonState={''} onChange={() => {}} />
+            <JsonCodeEditor
+              jsonState={json}
+              onChange={(jsonString: string) => {
+                const rData = resumeDataFromJsonObj(jsonObjFromJsonString(jsonString))
+                setResumeData(rData)
+              }}
+            />
           </TabsContent>
         </Tabs>
-      </section>
-      <section className="min-h-screen">
-        <GistTemplate
-          gistUrl="https://gist.github.com/samuel-kar/11b0969ab91989b64650ac9361c8103b"
-          resumeData={resumeData}
-        />
       </section>
     </div>
   )
