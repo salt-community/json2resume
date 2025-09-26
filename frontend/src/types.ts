@@ -119,15 +119,11 @@ export interface Reference {
 
 export interface Project {
   name?: string
-  description?: string
-  highlights?: Array<string>
-  keywords?: Array<string>
   startDate?: string
   endDate?: string
+  description?: string
+  highlights?: Array<string>
   url?: string
-  roles?: Array<string>
-  entity?: string
-  type?: string
 }
 
 export interface Meta {

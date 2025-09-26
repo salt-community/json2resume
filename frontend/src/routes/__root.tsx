@@ -10,7 +10,6 @@ function RootComponent() {
     <>
       {/* Navigation Header */}
       <Header />
-
       {/* Main Content */}
       <Outlet />
     </>
