@@ -4,6 +4,8 @@ import Education from './accordionComponents/Education'
 import Awards from './accordionComponents/Awards'
 import Certifications from './accordionComponents/Certifications'
 import Publications from './accordionComponents/Publications'
+import Skills from './accordionComponents/Skills'
+import Languages from './accordionComponents/Languages'
 import type { ResumeData } from '@/types'
 import {
   Accordion,
@@ -54,11 +56,13 @@ function AccordionGroup({ resumeData, setResumeData }: Props) {
     },
     {
       title: 'Skills',
-      content: 'Yes. It adheres to the WAI-ARIA design pattern.',
+      content: <Skills resumeData={resumeData} setResumeData={setResumeData} />,
     },
     {
       title: 'Languages',
-      content: 'Yes. It adheres to the WAI-ARIA design pattern.',
+      content: (
+        <Languages resumeData={resumeData} setResumeData={setResumeData} />
+      ),
     },
     {
       title: 'Interests',
