@@ -1,4 +1,19 @@
-// Basic information types
+export interface ResumeData {
+  $schema?: string
+  basics: Basics
+  work?: Array<Work>
+  volunteer?: Array<Volunteer>
+  education?: Array<Education>
+  awards?: Array<Award>
+  publications?: Array<Publication>
+  skills?: Array<Skill>
+  languages?: Array<Language>
+  interests?: Array<Interest>
+  references?: Array<Reference>
+  projects?: Array<Project>
+  meta?: Meta
+}
+
 export interface Location {
   address?: string
   postalCode?: string
@@ -25,7 +40,6 @@ export interface Basics {
   profiles?: Array<Profile>
 }
 
-// Work experience types
 export interface Work {
   name?: string
   location?: string
@@ -38,7 +52,6 @@ export interface Work {
   highlights?: Array<string>
 }
 
-// Volunteer experience types
 export interface Volunteer {
   organization?: string
   position?: string
@@ -49,7 +62,6 @@ export interface Volunteer {
   highlights?: Array<string>
 }
 
-// Education types
 export interface Education {
   institution?: string
   url?: string
@@ -61,7 +73,6 @@ export interface Education {
   courses?: Array<string>
 }
 
-// Awards types
 export interface Award {
   title?: string
   date?: string
@@ -69,7 +80,6 @@ export interface Award {
   summary?: string
 }
 
-// Publications types
 export interface Publication {
   name?: string
   publisher?: string
@@ -78,32 +88,27 @@ export interface Publication {
   summary?: string
 }
 
-// Skills types
 export interface Skill {
   name?: string
   level?: string
   keywords?: Array<string>
 }
 
-// Languages types
 export interface Language {
   language?: string
   fluency?: string
 }
 
-// Interests types
 export interface Interest {
   name?: string
   keywords?: Array<string>
 }
 
-// References types
 export interface Reference {
   name?: string
   reference?: string
 }
 
-// Projects types
 export interface Project {
   name?: string
   description?: string
@@ -117,26 +122,8 @@ export interface Project {
   type?: string
 }
 
-// Meta information types
 export interface Meta {
   canonical?: string
   version?: string
   lastModified?: string
-}
-
-// Main ResumeData type
-export interface ResumeData {
-  $schema?: string
-  basics: Basics
-  work?: Array<Work>
-  volunteer?: Array<Volunteer>
-  education?: Array<Education>
-  awards?: Array<Award>
-  publications?: Array<Publication>
-  skills?: Array<Skill>
-  languages?: Array<Language>
-  interests?: Array<Interest>
-  references?: Array<Reference>
-  projects?: Array<Project>
-  meta?: Meta
 }
