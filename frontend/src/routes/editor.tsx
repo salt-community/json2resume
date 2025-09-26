@@ -3,7 +3,7 @@ import { useState } from 'react'
 import type { ResumeData } from '@/types'
 import AccordionGroup from '@/components/AccordionGroup'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { fakeResumeData } from '@/data/resumeData'
+import { mockedResumeData } from '@/data/resumeDataMock.ts'
 import JsonCodeEditor from '@/components/ResumeEditor/JsonCodeEditor.tsx'
 
 export const Route = createFileRoute('/editor')({
@@ -11,7 +11,7 @@ export const Route = createFileRoute('/editor')({
 })
 
 function App() {
-  const [resumeData, setResumeData] = useState<ResumeData>(fakeResumeData)
+  const [resumeData, setResumeData] = useState<ResumeData>(mockedResumeData)
 
   return (
     <div className="grid grid-cols-2 gap-8 p-16">
