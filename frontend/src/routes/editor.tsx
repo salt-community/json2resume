@@ -4,6 +4,8 @@ import type { Basics, ResumeData } from '@/types'
 import AccordionGroup from '@/components/AccordionGroup'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { fakeResumeData } from '@/data/resumeData'
+import { GistTemplateDemo } from '@/components/GistTemplate/GistTemplateDemo'
+import { GistTemplate } from '@/components/GistTemplate'
 
 export const Route = createFileRoute('/editor')({
   component: App,
@@ -32,6 +34,12 @@ function App() {
           </TabsContent>
           <TabsContent value="json">Display json editor here</TabsContent>
         </Tabs>
+      </section>
+      <section className="min-h-screen">
+        <GistTemplate
+          gistUrl="https://gist.github.com/samuel-kar/11b0969ab91989b64650ac9361c8103b"
+          resumeData={resumeData}
+        />
       </section>
     </div>
   )
