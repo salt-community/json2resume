@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react'
-import type { Basics, ResumeData } from '@/types'
+import type { ResumeData } from '@/types'
 import AccordionGroup from '@/components/AccordionGroup'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { fakeResumeData } from '@/data/resumeData'
