@@ -1,18 +1,17 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react'
-import type { Basics, ResumeData } from '@/types'
+import type { ResumeData } from '@/types'
 import AccordionGroup from '@/components/AccordionGroup'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { fakeResumeData } from '@/data/resumeData'
-import { GistTemplateDemo } from '@/components/GistTemplate/GistTemplateDemo'
-import { GistTemplate } from '@/components/GistTemplate'
+import { mockedResumeData } from '@/data/resumeDataMock.ts'
+import JsonCodeEditor from '@/components/ResumeEditor/JsonCodeEditor.tsx'
 
 export const Route = createFileRoute('/editor')({
   component: App,
 })
 
 function App() {
-  const [resumeData, setResumeData] = useState<ResumeData>(fakeResumeData)
+  const [resumeData, setResumeData] = useState<ResumeData>(mockedResumeData)
 
   return (
     <div className="grid grid-cols-2 gap-8 p-16">
@@ -32,14 +31,13 @@ function App() {
               setResumeData={setResumeData}
             />
           </TabsContent>
-          <TabsContent value="json">Display json editor here</TabsContent>
+          <TabsContent value="json">
+            <JsonCodeEditor
+              jsonState={""}
+              onChange={() => {}}
+            />
+          </TabsContent>
         </Tabs>
-      </section>
-      <section className="min-h-screen">
-        <GistTemplate
-          gistUrl="https://gist.github.com/samuel-kar/11b0969ab91989b64650ac9361c8103b"
-          resumeData={resumeData}
-        />
       </section>
     </div>
   )

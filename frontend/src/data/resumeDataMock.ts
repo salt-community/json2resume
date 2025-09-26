@@ -1,43 +1,7 @@
-import type { ResumeData } from '@/types'
-
-// Type-safe parser for resume data
-function parseResumeData(jsonData: any): ResumeData {
-  return {
-    $schema: jsonData.$schema,
-    basics: {
-      name: jsonData.basics?.name || '',
-      label: jsonData.basics?.label,
-      image: jsonData.basics?.image,
-      email: jsonData.basics?.email,
-      phone: jsonData.basics?.phone,
-      url: jsonData.basics?.url,
-      summary: jsonData.basics?.summary,
-      location: jsonData.basics?.location
-        ? {
-            address: jsonData.basics.location.address,
-            postalCode: jsonData.basics.location.postalCode,
-            city: jsonData.basics.location.city,
-            countryCode: jsonData.basics.location.countryCode,
-            region: jsonData.basics.location.region,
-          }
-        : undefined,
-      profiles: jsonData.basics?.profiles || [],
-    },
-    work: jsonData.work || [],
-    volunteer: jsonData.volunteer || [],
-    education: jsonData.education || [],
-    awards: jsonData.awards || [],
-    publications: jsonData.publications || [],
-    skills: jsonData.skills || [],
-    languages: jsonData.languages || [],
-    interests: jsonData.interests || [],
-    references: jsonData.references || [],
-    projects: jsonData.projects || [],
-    meta: jsonData.meta,
-  }
-}
-
 // Raw JSON data
+import type { ResumeData } from '@/types.ts'
+import { jsonObjToResumeData } from '@/data/jsonObjToResumeData.ts'
+
 const rawResumeData = {
   $schema:
     'https://raw.githubusercontent.com/jsonresume/resume-schema/v1.0.0/schema.json',
@@ -218,4 +182,4 @@ const rawResumeData = {
 }
 
 // Export the parsed, type-safe resume data
-export const fakeResumeData: ResumeData = parseResumeData(rawResumeData)
+export const mockedResumeData: ResumeData = jsonObjToResumeData(rawResumeData)

@@ -1,4 +1,9 @@
 import Basic from './accordionComponents/Basic'
+import Volunteering from './accordionComponents/Volunteering'
+import Education from './accordionComponents/Education'
+import Awards from './accordionComponents/Awards'
+import Certifications from './accordionComponents/Certifications'
+import Publications from './accordionComponents/Publications'
 import type { ResumeData } from '@/types'
 import {
   Accordion,
@@ -13,65 +18,39 @@ type Props = {
 }
 
 function AccordionGroup({ resumeData, setResumeData }: Props) {
-  /*   const [basics, setBasics] = useState<Basics>(fakeResumeData.basics)
-  const [work, setWork] = useState<Array<Work>>(fakeResumeData.work || [])
-  const [volunteer, setVolunteer] = useState<Array<Volunteer>>(
-    fakeResumeData.volunteer || [],
-  )
-  const [education, setEducation] = useState<Array<Education>>(
-    fakeResumeData.education || [],
-  )
-  const [awards, setAwards] = useState<Array<Award>>(
-    fakeResumeData.awards || [],
-  )
-  const [publications, setPublications] = useState<Array<Publication>>(
-    fakeResumeData.publications || [],
-  )
-  const [skills, setSkills] = useState<Array<Skill>>(
-    fakeResumeData.skills || [],
-  )
-  const [languages, setLanguages] = useState<Array<Language>>(
-    fakeResumeData.languages || [],
-  )
-  const [interests, setInterests] = useState<Array<Interest>>(
-    fakeResumeData.interests || [],
-  )
-  const [references, setReferences] = useState<Array<Reference>>(
-    fakeResumeData.references || [],
-  )
-  const [projects, setProjects] = useState<Array<Project>>(
-    fakeResumeData.projects || [],
-  )
-  const [meta, setMeta] = useState<Meta>(fakeResumeData.meta || {})
- */
   const items: Array<{ title: string; content: React.ReactNode }> = [
     {
       title: 'Basics',
       content: <Basic resumeData={resumeData} setResumeData={setResumeData} />,
     },
-    {
-      title: 'Profiles',
-      content: 'Yes. It adheres to the WAI-ARIA design pattern.',
-    },
+
     {
       title: 'Volunteering',
-      content: 'Yes. It adheres to the WAI-ARIA design pattern.',
+      content: (
+        <Volunteering resumeData={resumeData} setResumeData={setResumeData} />
+      ),
     },
     {
       title: 'Education',
-      content: 'Yes. It adheres to the WAI-ARIA design pattern.',
+      content: (
+        <Education resumeData={resumeData} setResumeData={setResumeData} />
+      ),
     },
     {
       title: 'Awards',
-      content: 'Yes. It adheres to the WAI-ARIA design pattern.',
+      content: <Awards resumeData={resumeData} setResumeData={setResumeData} />,
     },
     {
       title: 'Certifications',
-      content: 'Yes. It adheres to the WAI-ARIA design pattern.',
+      content: (
+        <Certifications resumeData={resumeData} setResumeData={setResumeData} />
+      ),
     },
     {
       title: 'Publications',
-      content: 'Yes. It adheres to the WAI-ARIA design pattern.',
+      content: (
+        <Publications resumeData={resumeData} setResumeData={setResumeData} />
+      ),
     },
     {
       title: 'Skills',
