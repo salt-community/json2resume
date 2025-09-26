@@ -1,5 +1,6 @@
 import Basic from './accordionComponents/Basic'
 import Volunteering from './accordionComponents/Volunteering'
+import Education from './accordionComponents/Education'
 import type { ResumeData } from '@/types'
 import {
   Accordion,
@@ -59,7 +60,9 @@ function AccordionGroup({ resumeData, setResumeData }: Props) {
     },
     {
       title: 'Education',
-      content: 'Yes. It adheres to the WAI-ARIA design pattern.',
+      content: (
+        <Education resumeData={resumeData} setResumeData={setResumeData} />
+      ),
     },
     {
       title: 'Awards',
