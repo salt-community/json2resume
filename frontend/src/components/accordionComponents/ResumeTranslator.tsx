@@ -1,10 +1,10 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { useTranslate } from '@/useTranslate'
 import type { ResumeData } from '@/types'
-import { Languages, RotateCcw, Search } from 'lucide-react'
+import { Languages, RotateCcw, Search, CheckCircle, X } from 'lucide-react'
 
 interface ResumeTranslatorProps {
   resumeData: ResumeData
@@ -18,8 +18,20 @@ export default function ResumeTranslator({
   const [targetLanguage, setTargetLanguage] = useState('spanish')
   const [isTranslated, setIsTranslated] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
+  const [showToast, setShowToast] = useState(false)
+  const [toastMessage, setToastMessage] = useState('')
   
   const translateMutation = useTranslate()
+
+  // Auto-hide toast after 4 seconds
+  useEffect(() => {
+    if (showToast) {
+      const timer = setTimeout(() => {
+        setShowToast(false)
+      }, 4000)
+      return () => clearTimeout(timer)
+    }
+  }, [showToast])
 
   const handleTranslate = () => {
     translateMutation.mutate(
@@ -32,6 +44,9 @@ export default function ResumeTranslator({
         onSuccess: (translatedData) => {
           onTranslationComplete(translatedData)
           setIsTranslated(true)
+          const selectedLang = languageOptions.find(lang => lang.value === targetLanguage)
+          setToastMessage(`Resume translated to ${selectedLang?.label} successfully!`)
+          setShowToast(true)
         },
         onError: (error) => {
           console.error('Translation failed:', error)
@@ -155,8 +170,8 @@ export default function ResumeTranslator({
                 filteredLanguages.map((option) => (
                   <div
                     key={option.value}
-                    className={`px-3 py-2 text-sm cursor-pointer hover:bg-accent hover:text-accent-foreground border-b last:border-b-0 ${
-                      targetLanguage === option.value ? 'bg-accent text-accent-foreground' : ''
+                    className={`px-3 py-2 text-sm cursor-pointer hover:bg-gray-100 hover:text-gray-900 border-b last:border-b-0 ${
+                      targetLanguage === option.value ? 'bg-gray-200 text-gray-900' : ''
                     }`}
                     onClick={() => setTargetLanguage(option.value)}
                   >
@@ -208,13 +223,6 @@ export default function ResumeTranslator({
             </div>
           )}
 
-          {translateMutation.isSuccess && (
-            <div className="p-3 bg-green-50 border border-green-200 rounded-md">
-              <p className="text-green-700 text-sm">
-                ✅ Resume translated to {selectedLanguage?.label} successfully!
-              </p>
-            </div>
-          )}
 
           <div className="text-sm text-muted-foreground">
             <p>This will translate your resume content using AI and update the preview.</p>
@@ -222,6 +230,22 @@ export default function ResumeTranslator({
           </div>
         </div>
       </div>
+
+      {/* Toast Notification */}
+      {showToast && (
+        <div className="fixed top-4 right-4 z-50 bg-white border border-gray-200 rounded-lg shadow-lg p-4 max-w-sm">
+          <div className="flex items-center gap-3">
+            <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
+            <p className="text-sm text-gray-900 flex-1">{toastMessage}</p>
+            <button
+              onClick={() => setShowToast(false)}
+              className="text-gray-400 hover:text-gray-600 flex-shrink-0"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
