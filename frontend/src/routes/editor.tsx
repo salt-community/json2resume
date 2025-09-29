@@ -29,14 +29,14 @@ function App() {
   }
 
   return (
-    <div className="grid grid-cols-2 gap-8 p-16">
-      <section>
+    <div className="min-h-screen bg-surface-strong text-text-strong grid grid-cols-1 lg:grid-cols-2 gap-8 p-6 md:p-10">
+      <section className="bg-surface rounded-xl border border-border shadow-sm p-4">
         <Tabs defaultValue="form">
-          <TabsList className="w-full">
-            <TabsTrigger className="p-8 font-bold text-2xl" value="form">
+          <TabsList className="w-full bg-surface rounded-lg border border-border">
+            <TabsTrigger className="p-8 font-bold text-2xl text-text-strong" value="form">
               Form
             </TabsTrigger>
-            <TabsTrigger className="p-8 font-bold text-2xl" value="json">
+            <TabsTrigger className="p-8 font-bold text-2xl text-text-strong" value="json">
               Json
             </TabsTrigger>
           </TabsList>
@@ -62,7 +62,7 @@ function App() {
           </TabsContent>
         </Tabs>
       </section>
-      <section className=" min-h-screen">
+      <section className="bg-surface-strong rounded-xl border border-border shadow-sm p-4 overflow-auto">
         <GistTemplate
           gistUrl={selectedTheme}
           resumeData={resumeData}
