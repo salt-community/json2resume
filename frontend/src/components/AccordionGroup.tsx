@@ -12,6 +12,7 @@ import References from './accordionComponents/References'
 import Projects from './accordionComponents/Projects'
 import Export from './accordionComponents/Export'
 import ResumeTranslator from './accordionComponents/ResumeTranslator'
+import SectionHeaders from './accordionComponents/SectionHeaders'
 import { LinkedinImporter } from './LinkedinImport'
 import type { ResumeData } from '@/types'
 import {
@@ -120,6 +121,10 @@ function AccordionGroup({ resumeData, setResumeData, onThemeChange, onTranslatio
     {
       title: 'Themes',
       content: <Themes onThemeChange={onThemeChange} currentTheme={currentTheme} />,
+    },
+    {
+      title: 'Section Headers',
+      content: <SectionHeaders resumeData={resumeData} setResumeData={setResumeData} />,
     },
   ]
   return (
