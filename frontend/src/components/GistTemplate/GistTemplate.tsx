@@ -16,7 +16,7 @@
  *   - The template’s *own* HTML/CSS is rendered as-is (trusted template).
  */
 
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useCallback, useRef } from 'react'
 import { renderTemplate, type ResumeData } from './templateEngine'
 import {
   fetchAndValidateGistTemplate,
@@ -221,6 +221,8 @@ export const GistTemplate: React.FC<GistTemplateProps> = ({
     filename,
   )
 
+  const iframeRef = useRef<HTMLIFrameElement>(null)
+
   // Bubble up the processed HTML if a callback is provided
   useEffect(() => {
     if (processedHtml && onProcessed) onProcessed(processedHtml)
@@ -231,17 +233,51 @@ export const GistTemplate: React.FC<GistTemplateProps> = ({
     if (error && onError) onError(error)
   }, [error, onError])
 
+  // Resize iframe to fit its content when the processed HTML updates
+  useEffect(() => {
+    const iframe = iframeRef.current
+    if (!iframe) return
+
+    const resize = () => {
+      try {
+        const doc = iframe.contentDocument
+        if (!doc) return
+        const scrollHeight =
+          doc.documentElement?.scrollHeight || doc.body?.scrollHeight || 0
+        iframe.style.height = Math.max(scrollHeight, 800) + 'px'
+      } catch {
+        // Ignore cross-origin access errors if any (shouldn't occur with srcDoc + same-origin)
+      }
+    }
+
+    // Attempt immediate resize and a deferred pass after layout
+    resize()
+    const timer = setTimeout(resize, 50)
+    return () => clearTimeout(timer)
+  }, [processedHtml])
+
   if (loading && showLoading) return <LoadingState />
   if (error) return <ErrorState error={error} onRetry={refetch} />
 
   if (processedHtml) {
+    const iframeHtml = `<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+  </head>
+  <body>
+    ${processedHtml}
+  </body>
+</html>`
+
     return (
-      <div
-        className={`gist-template-container ${className}`}
-        data-resume-content="true"
-        // Safe because values were HTML-escaped by the engine;
-        // the template *structure* is trusted by you (from your gist).
-        dangerouslySetInnerHTML={{ __html: processedHtml }}
+      <iframe
+        ref={iframeRef}
+        className={`w-full border-0 ${className}`}
+        style={{ minHeight: 800 }}
+        srcDoc={iframeHtml}
+        sandbox="allow-same-origin"
       />
     )
   }

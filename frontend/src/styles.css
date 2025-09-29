@@ -1,28 +1,68 @@
 @import "tailwindcss";
-@import "tailwindcss";
 
-/* App color tokens */
+/* App color tokens (routed through theme CSS variables) */
 @theme {
-  /* Surfaces and borders (dark theme) */
-  --color-surface: #262626;         /* Tailwind neutral-800 */
-  --color-surface-strong: #171717;  /* Tailwind neutral-900 */
-  --color-border: #404040;          /* Tailwind neutral-700 */
+  /* Surfaces and borders */
+  --color-surface: var(--theme-surface);
+  --color-surface-strong: var(--theme-surface-strong);
+  --color-border: var(--theme-border);
 
   /* Text */
-  --color-text-muted: #d4d4d4;      /* Tailwind neutral-300 */
-  --color-text-subtle: #e5e5e5;     /* Tailwind neutral-200 */
-  --color-text-strong: #f5f5f5;     /* Tailwind neutral-100 */
-  --color-link: #617ad6;
-  --color-text-highlight: #d6d061;
+  --color-text-muted: var(--theme-text-muted);
+  --color-text-subtle: var(--theme-text-subtle);
+  --color-text-strong: var(--theme-text-strong);
+  --color-link: var(--theme-link);
+  --color-text-highlight: var(--theme-text-highlight);
 
   /* Accent */
-  --color-accent: #4f46e5;          /* Tailwind indigo-600 */
-  --color-on-accent: #ffffff;       /* White on accent */
-
+  --color-accent: var(--theme-accent);
+  --color-on-accent: var(--theme-on-accent);
 }
-:root {}
 
-.dark {}
+/* Light theme defaults */
+:root,
+[data-theme="light"] {
+  color-scheme: light;
+
+  /* Surfaces and borders (light) */
+  --theme-surface: #ffffff;
+  --theme-surface-strong: #f5f5f5;  /* neutral-100 */
+  --theme-border: #e5e5e5;          /* neutral-200 */
+
+  /* Text (light) */
+  --theme-text-muted: #525252;      /* neutral-600 */
+  --theme-text-subtle: #404040;     /* neutral-700 */
+  --theme-text-strong: #171717;     /* neutral-900 */
+  --theme-link: #2563eb;            /* blue-600 */
+  --theme-text-highlight: #ca8a04;  /* yellow-600-ish */
+
+  /* Accent */
+  --theme-accent: #4f46e5;          /* indigo-600 */
+  --theme-on-accent: #ffffff;       /* white */
+}
+
+/* Dark theme overrides: follow system preference */
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+
+    /* Surfaces and borders (dark) */
+    --theme-surface: #262626;         /* neutral-800 */
+    --theme-surface-strong: #171717;  /* neutral-900 */
+    --theme-border: #404040;          /* neutral-700 */
+
+    /* Text (dark) */
+    --theme-text-muted: #d4d4d4;      /* neutral-300 */
+    --theme-text-subtle: #e5e5e5;     /* neutral-200 */
+    --theme-text-strong: #f5f5f5;     /* neutral-100 */
+    --theme-link: #617ad6;
+    --theme-text-highlight: #d6d061;
+
+    /* Accent */
+    --theme-accent: #4f46e5;          /* indigo-600 */
+    --theme-on-accent: #ffffff;       /* white */
+  }
+}
 
 /* Print styles - Enable background graphics automatically */
 @media print {
