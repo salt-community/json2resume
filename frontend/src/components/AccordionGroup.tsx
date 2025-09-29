@@ -10,6 +10,7 @@ import Languages from './accordionComponents/Languages'
 import Interests from './accordionComponents/Interests'
 import References from './accordionComponents/References'
 import Projects from './accordionComponents/Projects'
+import Export from './accordionComponents/Export'
 import type { ResumeData } from '@/types'
 import {
   Accordion,
@@ -88,6 +89,10 @@ function AccordionGroup({ resumeData, setResumeData }: Props) {
       content: (
         <Projects resumeData={resumeData} setResumeData={setResumeData} />
       ),
+    },
+    {
+      title: 'Export',
+      content: <Export resumeData={resumeData} />,
     },
 
     {

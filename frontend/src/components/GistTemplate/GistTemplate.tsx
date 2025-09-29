@@ -238,6 +238,7 @@ export const GistTemplate: React.FC<GistTemplateProps> = ({
     return (
       <div
         className={`gist-template-container ${className}`}
+        data-resume-content="true"
         // Safe because values were HTML-escaped by the engine;
         // the template *structure* is trusted by you (from your gist).
         dangerouslySetInnerHTML={{ __html: processedHtml }}
