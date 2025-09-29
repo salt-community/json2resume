@@ -130,4 +130,19 @@ export interface Meta {
   canonical?: string
   version?: string
   lastModified?: string
+  sectionHeaders?: SectionHeaders
+}
+
+export interface SectionHeaders {
+  work?: string
+  volunteer?: string
+  education?: string
+  awards?: string
+  certificates?: string
+  publications?: string
+  skills?: string
+  languages?: string
+  interests?: string
+  references?: string
+  projects?: string
 }
