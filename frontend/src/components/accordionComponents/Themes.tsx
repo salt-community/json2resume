@@ -2,43 +2,46 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { ExternalLink, Palette, Github } from 'lucide-react'
+import { ExternalLink, Palette, Github, Eye } from 'lucide-react'
 
 interface Theme {
   id: string
-  name: string
   description: string
   url: string
-  preview: string
 }
 
 const presetThemes: Theme[] = [
   {
-    id: 'salt-resume',
-    name: 'SALT Resume',
+    id: 'SALT Resume',
     description: 'Modern two-column layout with dark sidebar',
-    url: 'https://gist.github.com/david11267/b03fd23966945976472361c8e5d3e161',
-    preview: 'https://gist.github.com/david11267/b03fd23966945976472361c8e5d3e161'
+    url: 'https://gist.github.com/david11267/b03fd23966945976472361c8e5d3e161'
   },
   {
-    id: 'salt-resume-2',
-    name: 'SALT Resume (Copy)',
+    id: 'AIK Resume',
     description: 'Modern two-column layout with dark sidebar',
-    url: 'https://gist.github.com/david11267/b03fd23966945976472361c8e5d3e161',
-    preview: 'https://gist.github.com/david11267/b03fd23966945976472361c8e5d3e161'
+    url: 'https://gist.github.com/samuel-kar/11b0969ab91989b64650ac9361c8103b'
   },
   {
-    id: 'salt-resume-3',
-    name: 'SALT Resume (Copy 2)',
+    id: 'Classic',
     description: 'Modern two-column layout with dark sidebar',
-    url: 'https://gist.github.com/david11267/b03fd23966945976472361c8e5d3e161',
-    preview: 'https://gist.github.com/david11267/b03fd23966945976472361c8e5d3e161'
+    url: 'https://gist.github.com/david11267/f23e349d88017d6d0c3df09741cdf7c6'
+  },
+  {
+    id: 'Fun',
+    description: 'Modern two-column layout with dark sidebar',
+    url: 'https://gist.github.com/david11267/c74fd529168695a92ead6cd9976017d6'
+  },
+  {
+    id: 'Terminal',
+    description: 'Modern two-column layout with dark sidebar',
+    url: 'https://gist.github.com/david11267/8160c1ac2a49a95416c6ec991df48916'
   }
 ]
 
 interface Props {
   onThemeChange?: (themeUrl: string) => void
 }
+
 
 export default function Themes({ onThemeChange }: Props) {
   const [customUrl, setCustomUrl] = useState('')
@@ -131,7 +134,7 @@ export default function Themes({ onThemeChange }: Props) {
         {/* Preset Themes */}
         <div className="space-y-3">
           <Label className="text-sm font-medium">Preset Themes</Label>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {presetThemes.map((theme) => (
               <div
                 key={theme.id}
@@ -142,35 +145,51 @@ export default function Themes({ onThemeChange }: Props) {
                 }`}
                 onClick={() => handlePresetSelect(theme)}
               >
-                <div className="flex items-start justify-between mb-2">
-                  <div className="flex items-center gap-2">
-                    <Palette className="w-4 h-4 text-orange-500" />
-                    <h4 className="font-medium text-sm">{theme.name}</h4>
+                <div className="flex items-start justify-between mb-3">
+                  <div className="flex items-start gap-3 flex-1 min-w-0">
+                    <div className="p-2 rounded-lg bg-orange-100 flex-shrink-0">
+                      <Palette className="w-5 h-5 text-orange-600" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h4 className="font-medium text-sm break-words">{theme.id}</h4>
+                      <p className="text-xs text-muted-foreground mt-1 break-words">
+                        {theme.description}
+                      </p>
+                    </div>
                   </div>
                   {selectedTheme === theme.id && (
-                    <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+                    <div className="w-2 h-2 bg-orange-500 rounded-full flex-shrink-0 ml-2"></div>
                   )}
                 </div>
                 
-                <p className="text-xs text-muted-foreground mb-3">
-                  {theme.description}
-                </p>
-                
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-gray-500 font-mono">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-xs text-gray-500 font-mono truncate flex-1 min-w-0">
                     gist.github.com/...
                   </span>
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    className="h-6 px-2 text-xs"
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      window.open(theme.preview, '_blank')
-                    }}
-                  >
-                    <ExternalLink className="w-3 h-3" />
-                  </Button>
+                  <div className="flex gap-1 flex-shrink-0">
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="h-6 px-2 text-xs"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        window.open(theme.url, '_blank')
+                      }}
+                    >
+                      <Eye className="w-3 h-3" />
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="h-6 px-2 text-xs"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        window.open(theme.url, '_blank')
+                      }}
+                    >
+                      <ExternalLink className="w-3 h-3" />
+                    </Button>
+                  </div>
                 </div>
               </div>
             ))}
