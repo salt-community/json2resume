@@ -12,6 +12,7 @@ export default function Export({ resumeData }: Props) {
 
   const exportToPDF = async () => {
     setIsExporting(true)
+    // Note: For best results, ensure "Background graphics" is enabled in your browser's print dialog
     try {
       // Get the current resume HTML content from the GistTemplate
       const resumeElement = document.querySelector('[data-resume-content]')
@@ -125,17 +126,85 @@ export default function Export({ resumeData }: Props) {
               margin: 0 !important;
               padding: 8px 16px !important;
             }
-            /* Ensure images and graphics are included */
+            /* Optimize for file size while maintaining text selectability */
             img {
               max-width: 100% !important;
               height: auto !important;
               -webkit-print-color-adjust: exact !important;
               print-color-adjust: exact !important;
+              /* Reduce image quality for smaller file size */
+              image-rendering: -webkit-optimize-contrast;
+              image-rendering: crisp-edges;
             }
-            /* Ensure background colors are preserved */
+            
+            /* Enable background graphics but optimize for size */
             * {
               -webkit-print-color-adjust: exact !important;
               print-color-adjust: exact !important;
+              color-adjust: exact !important;
+            }
+            
+            /* Optimize text rendering for PDF */
+            body, html {
+              -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important;
+              color-adjust: exact !important;
+              /* Ensure text remains selectable */
+              -webkit-text-stroke: 0.01em transparent;
+              text-rendering: optimizeLegibility;
+            }
+            
+            /* Optimize text elements for smaller file size */
+            p, span, div, h1, h2, h3, h4, h5, h6, li, td, th {
+              -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important;
+              color-adjust: exact !important;
+              /* Ensure text is selectable and crisp */
+              -webkit-text-stroke: 0.01em transparent;
+              text-rendering: optimizeLegibility;
+            }
+            
+            /* Reduce background complexity for smaller file size */
+            [style*="background"],
+            [class*="bg-"] {
+              -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important;
+              color-adjust: exact !important;
+              /* Simplify gradients and complex backgrounds */
+              background-image: none !important;
+            }
+            
+            /* Optimize resume container for PDF generation */
+            .resume-container,
+            .page,
+            .main-content,
+            .sidebar,
+            .content,
+            .header {
+              -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important;
+              color-adjust: exact !important;
+              /* Ensure text remains selectable */
+              -webkit-text-stroke: 0.01em transparent;
+              text-rendering: optimizeLegibility;
+            }
+            
+            /* Remove unnecessary visual elements for smaller file size */
+            .no-print,
+            .print-hidden {
+              display: none !important;
+            }
+            
+            /* Optimize borders and shadows for PDF */
+            * {
+              box-shadow: none !important;
+              text-shadow: none !important;
+            }
+            
+            /* Ensure proper font embedding for text selectability */
+            @font-face {
+              font-family: 'system-ui';
+              font-display: swap;
             }
           }
         </style>
@@ -146,8 +215,55 @@ export default function Export({ resumeData }: Props) {
       styleElement.innerHTML = printStyles
       iframeDoc.head.appendChild(styleElement)
 
-      // Trigger print dialog (this will download PDF directly)
-      iframe.contentWindow?.print()
+      // Enable background graphics and optimize for file size
+      try {
+        // Add additional CSS for file size optimization
+        const optimizationStyle = iframeDoc.createElement('style')
+        optimizationStyle.innerHTML = `
+          @media print {
+            * {
+              -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important;
+              color-adjust: exact !important;
+            }
+            body {
+              -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important;
+              color-adjust: exact !important;
+              /* Optimize for smaller file size */
+              font-size: 12px !important;
+              line-height: 1.4 !important;
+            }
+            /* Ensure text remains selectable and crisp */
+            p, span, div, h1, h2, h3, h4, h5, h6 {
+              -webkit-text-stroke: 0.01em transparent !important;
+              text-rendering: optimizeLegibility !important;
+            }
+            /* Remove complex visual effects for smaller file size */
+            * {
+              box-shadow: none !important;
+              text-shadow: none !important;
+              filter: none !important;
+              transform: none !important;
+            }
+          }
+        `
+        iframeDoc.head.appendChild(optimizationStyle)
+        
+        // Add print optimization meta tags
+        const metaViewport = iframeDoc.createElement('meta')
+        metaViewport.setAttribute('name', 'viewport')
+        metaViewport.setAttribute('content', 'width=device-width, initial-scale=1.0')
+        iframeDoc.head.appendChild(metaViewport)
+        
+        // Small delay to ensure styles are applied
+        setTimeout(() => {
+          iframe.contentWindow?.print()
+        }, 150)
+      } catch (error) {
+        // Fallback: just print normally
+        iframe.contentWindow?.print()
+      }
 
       // Clean up iframe after a delay
       setTimeout(() => {

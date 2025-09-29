@@ -18,13 +18,16 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion'
+import TranslateTo from './accordionComponents/TranslateTo'
+import Themes from './accordionComponents/Themes'
 
 type Props = {
   resumeData: ResumeData
   setResumeData: (data: ResumeData) => void
+  onThemeChange?: (themeUrl: string) => void
 }
 
-function AccordionGroup({ resumeData, setResumeData }: Props) {
+function AccordionGroup({ resumeData, setResumeData, onThemeChange }: Props) {
   const items: Array<{ title: string; content: React.ReactNode }> = [
     {
       title: 'Basics',
@@ -97,18 +100,19 @@ function AccordionGroup({ resumeData, setResumeData }: Props) {
 
     {
       title: 'Translate to: ',
-      content: 'Yes. It adheres to the WAI-ARIA design pattern.',
+      content: <TranslateTo />,
     },
 
     {
-      title: 'Theme:',
-      content: 'Yes. It adheres to the WAI-ARIA design pattern.',
+      title: 'Themes',
+      content: <Themes onThemeChange={onThemeChange} />,
     },
   ]
   return (
     <Accordion type="single" collapsible>
       {items.map((item, index) => (
-        <AccordionItem value={`item-${index}`}>
+  
+        <AccordionItem className={index === 11 ? 'mb-16' : ''} value={`item-${index}`}>
           <AccordionTrigger>{item.title}</AccordionTrigger>
           <AccordionContent>{item.content}</AccordionContent>
         </AccordionItem>
