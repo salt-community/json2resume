@@ -11,6 +11,7 @@ import Interests from './accordionComponents/Interests'
 import References from './accordionComponents/References'
 import Projects from './accordionComponents/Projects'
 import Export from './accordionComponents/Export'
+import ResumeTranslator from './accordionComponents/ResumeTranslator'
 import type { ResumeData } from '@/types'
 import {
   Accordion,
@@ -22,9 +23,10 @@ import {
 type Props = {
   resumeData: ResumeData
   setResumeData: (data: ResumeData) => void
+  onTranslationComplete?: (translatedData: ResumeData) => void
 }
 
-function AccordionGroup({ resumeData, setResumeData }: Props) {
+function AccordionGroup({ resumeData, setResumeData, onTranslationComplete }: Props) {
   const items: Array<{ title: string; content: React.ReactNode }> = [
     {
       title: 'Basics',
@@ -94,16 +96,23 @@ function AccordionGroup({ resumeData, setResumeData }: Props) {
       title: 'Export',
       content: <Export resumeData={resumeData} />,
     },
-
     {
-      title: 'Translate to: ',
-      content: 'Yes. It adheres to the WAI-ARIA design pattern.',
+      title: 'Translation',
+      content: onTranslationComplete ? (
+        <ResumeTranslator 
+          resumeData={resumeData} 
+          onTranslationComplete={onTranslationComplete} 
+        />
+      ) : (
+        <div className="p-4 text-center text-muted-foreground">
+          <p>Translation feature not available</p>
+        </div>
+      ),
     },
-
     {
       title: 'Theme:',
       content: 'Yes. It adheres to the WAI-ARIA design pattern.',
-    },
+}
   ]
   return (
     <Accordion type="single" collapsible>

@@ -10,7 +10,6 @@ import { jsonObjFromResumeData } from '@/data/jsonObjFromResumeData.ts'
 import { resumeDataFromJsonObj } from '@/data/resumeDataFromJsonObj.ts'
 import jsonObjFromJsonString from '@/data/jsonObjFromJsonString.ts'
 import { GistTemplate } from '@/components/GistTemplate'
-import TemporaryTranslator from '@/components/TemporaryTranslator'
 
 export const Route = createFileRoute('/editor')({
   component: App,
@@ -37,16 +36,11 @@ function App() {
             </TabsTrigger>
           </TabsList>
           <TabsContent value="form">
-            <div className="space-y-4">
-              <TemporaryTranslator
-                resumeData={resumeData}
-                onTranslationComplete={handleTranslationComplete}
-              />
-              <AccordionGroup
-                resumeData={resumeData}
-                setResumeData={setResumeData}
-              />
-            </div>
+            <AccordionGroup
+              resumeData={resumeData}
+              setResumeData={setResumeData}
+              onTranslationComplete={handleTranslationComplete}
+            />
           </TabsContent>
           <TabsContent value="json">
             <JsonCodeEditor
