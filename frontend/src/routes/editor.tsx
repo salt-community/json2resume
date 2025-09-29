@@ -46,6 +46,7 @@ function App() {
               setResumeData={setResumeData}
               onThemeChange={handleThemeChange}
               onTranslationComplete={handleTranslationComplete}
+              currentTheme={selectedTheme}
             />
           </TabsContent>
           <TabsContent value="json">

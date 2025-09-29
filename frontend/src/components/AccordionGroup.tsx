@@ -19,7 +19,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion'
-import TranslateTo from './accordionComponents/TranslateTo'
 import Themes from './accordionComponents/Themes'
 
 type Props = {
@@ -27,9 +26,10 @@ type Props = {
   setResumeData: (data: ResumeData) => void
   onThemeChange?: (themeUrl: string) => void
   onTranslationComplete?: (data: ResumeData) => void
+  currentTheme?: string
 }
 
-function AccordionGroup({ resumeData, setResumeData, onThemeChange, onTranslationComplete }: Props) {
+function AccordionGroup({ resumeData, setResumeData, onThemeChange, onTranslationComplete, currentTheme }: Props) {
   const items: Array<{ title: string; content: React.ReactNode }> = [
     {
       title: 'Basics',
@@ -114,7 +114,7 @@ function AccordionGroup({ resumeData, setResumeData, onThemeChange, onTranslatio
     },
     {
       title: 'Themes',
-      content: <Themes onThemeChange={onThemeChange} />,
+      content: <Themes onThemeChange={onThemeChange} currentTheme={currentTheme} />,
     },
   ]
   return (

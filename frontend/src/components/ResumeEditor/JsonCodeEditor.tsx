@@ -46,7 +46,7 @@ export default function JsonCodeEditor({
         jsonLanguage,
         EditorView.lineWrapping,
       ]}
-      height="590px"
+      height="1080px"
     />
   )
 }

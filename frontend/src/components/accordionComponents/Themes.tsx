@@ -45,12 +45,17 @@ const presetThemes: Theme[] = [
 
 interface Props {
   onThemeChange?: (themeUrl: string) => void
+  currentTheme?: string
 }
 
 
-export default function Themes({ onThemeChange }: Props) {
+export default function Themes({ onThemeChange, currentTheme }: Props) {
   const [customUrl, setCustomUrl] = useState('')
-  const [selectedTheme, setSelectedTheme] = useState<string | null>(null)
+  const [selectedTheme, setSelectedTheme] = useState<string | null>(() => {
+    // Find the theme that matches the current theme URL
+    const matchingTheme = presetThemes.find(theme => theme.url === currentTheme)
+    return matchingTheme ? matchingTheme.id : null
+  })
   const [isLoading, setIsLoading] = useState(false)
 
   const handlePresetSelect = (theme: Theme) => {
