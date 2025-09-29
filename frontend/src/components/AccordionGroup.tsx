@@ -12,6 +12,7 @@ import References from './accordionComponents/References'
 import Projects from './accordionComponents/Projects'
 import Export from './accordionComponents/Export'
 import ResumeTranslator from './accordionComponents/ResumeTranslator'
+import SectionHeaders from './accordionComponents/SectionHeaders'
 import type { ResumeData } from '@/types'
 import {
   Accordion,
@@ -116,12 +117,16 @@ function AccordionGroup({ resumeData, setResumeData, onThemeChange, onTranslatio
       title: 'Themes',
       content: <Themes onThemeChange={onThemeChange} currentTheme={currentTheme} />,
     },
+    {
+      title: 'Section Headers',
+      content: <SectionHeaders resumeData={resumeData} setResumeData={setResumeData} />,
+    },
   ]
   return (
     <Accordion type="single" collapsible>
       {items.map((item, index) => (
   
-        <AccordionItem className={index === 11 ? 'mb-16' : ''} value={`item-${index}`}>
+        <AccordionItem className={index === 12 ? 'mb-16' : ''} value={`item-${index}`}>
           <AccordionTrigger>{item.title}</AccordionTrigger>
           <AccordionContent>{item.content}</AccordionContent>
         </AccordionItem>

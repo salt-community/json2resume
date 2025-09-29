@@ -80,7 +80,7 @@ public class TranslationService {
             5. Return ONLY the translated JSON, no additional text or markdown formatting
             6. Ensure the output is valid JSON that can be parsed
             7. If a field is null or empty, keep it as null or empty
-            
+            8. Do translate SectionHeaders
             Resume JSON to translate:
             %s
             

@@ -43,6 +43,8 @@ public class ResumeDto {
 
     private List<@Valid Project> projects;
 
+    private @Valid Meta meta;
+
     @Data
     @Builder
     @NoArgsConstructor
@@ -210,5 +212,32 @@ public class ResumeDto {
         private String description;
         private List<String> highlights;
         private String url;
+    }
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class Meta {
+        private String version;
+        private SectionHeaders sectionHeaders;
+    }
+    
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class SectionHeaders {
+        private String work;
+        private String volunteer;
+        private String education;
+        private String awards;
+        private String certificates;
+        private String publications;
+        private String skills;
+        private String languages;
+        private String interests;
+        private String references;
+        private String projects;
     }
 }
