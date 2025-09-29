@@ -10,6 +10,7 @@ import { jsonObjFromResumeData } from '@/data/jsonObjFromResumeData.ts'
 import { resumeDataFromJsonObj } from '@/data/resumeDataFromJsonObj.ts'
 import jsonObjFromJsonString from '@/data/jsonObjFromJsonString.ts'
 import { GistTemplate } from '@/components/GistTemplate'
+import TemporaryTranslator from '@/components/TemporaryTranslator'
 
 export const Route = createFileRoute('/editor')({
   component: App,
@@ -18,6 +19,10 @@ export const Route = createFileRoute('/editor')({
 function App() {
   const [resumeData, setResumeData] = useState<ResumeData>(mockedResumeData)
   const json = jsonStringFromJsonObj(jsonObjFromResumeData(resumeData))
+
+  const handleTranslationComplete = (translatedData: ResumeData) => {
+    setResumeData(translatedData)
+  }
 
   return (
     <div className="grid grid-cols-2 gap-8 p-16">
@@ -32,10 +37,16 @@ function App() {
             </TabsTrigger>
           </TabsList>
           <TabsContent value="form">
-            <AccordionGroup
-              resumeData={resumeData}
-              setResumeData={setResumeData}
-            />
+            <div className="space-y-4">
+              <TemporaryTranslator
+                resumeData={resumeData}
+                onTranslationComplete={handleTranslationComplete}
+              />
+              <AccordionGroup
+                resumeData={resumeData}
+                setResumeData={setResumeData}
+              />
+            </div>
           </TabsContent>
           <TabsContent value="json">
             <JsonCodeEditor
