@@ -23,3 +23,45 @@
 :root {}
 
 .dark {}
+
+/* Print styles - Enable background graphics automatically */
+@media print {
+  * {
+    -webkit-print-color-adjust: exact !important;
+    color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  
+  /* Ensure all backgrounds, borders, and colors are printed */
+  body, html {
+    -webkit-print-color-adjust: exact !important;
+    color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  
+  /* Force background graphics for all elements */
+  * {
+    background: transparent !important;
+    -webkit-print-color-adjust: exact !important;
+    color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  
+  /* Specific overrides for elements that should keep their backgrounds */
+  [style*="background"],
+  [class*="bg-"],
+  .bg-white,
+  .bg-gray,
+  .bg-black,
+  .bg-blue,
+  .bg-red,
+  .bg-green,
+  .bg-yellow,
+  .bg-purple,
+  .bg-pink,
+  .bg-indigo {
+    -webkit-print-color-adjust: exact !important;
+    color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+}

@@ -132,10 +132,49 @@ export default function Export({ resumeData }: Props) {
               -webkit-print-color-adjust: exact !important;
               print-color-adjust: exact !important;
             }
-            /* Ensure background colors are preserved */
+            
+            /* Force background graphics to be enabled */
             * {
               -webkit-print-color-adjust: exact !important;
               print-color-adjust: exact !important;
+              color-adjust: exact !important;
+            }
+            
+            /* Ensure all backgrounds, borders, and colors are printed */
+            body, html {
+              -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important;
+              color-adjust: exact !important;
+            }
+            
+            /* Specific overrides for background elements */
+            [style*="background"],
+            [class*="bg-"],
+            .bg-white,
+            .bg-gray,
+            .bg-black,
+            .bg-blue,
+            .bg-red,
+            .bg-green,
+            .bg-yellow,
+            .bg-purple,
+            .bg-pink,
+            .bg-indigo {
+              -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important;
+              color-adjust: exact !important;
+            }
+            
+            /* Force background graphics for resume elements */
+            .resume-container,
+            .page,
+            .main-content,
+            .sidebar,
+            .content,
+            .header {
+              -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important;
+              color-adjust: exact !important;
             }
           }
         </style>
@@ -146,8 +185,34 @@ export default function Export({ resumeData }: Props) {
       styleElement.innerHTML = printStyles
       iframeDoc.head.appendChild(styleElement)
 
-      // Trigger print dialog (this will download PDF directly)
-      iframe.contentWindow?.print()
+      // Enable background graphics programmatically
+      try {
+        // Add additional CSS to force background graphics
+        const backgroundGraphicsStyle = iframeDoc.createElement('style')
+        backgroundGraphicsStyle.innerHTML = `
+          @media print {
+            * {
+              -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important;
+              color-adjust: exact !important;
+            }
+            body {
+              -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important;
+              color-adjust: exact !important;
+            }
+          }
+        `
+        iframeDoc.head.appendChild(backgroundGraphicsStyle)
+        
+        // Small delay to ensure styles are applied
+        setTimeout(() => {
+          iframe.contentWindow?.print()
+        }, 100)
+      } catch (error) {
+        // Fallback: just print normally
+        iframe.contentWindow?.print()
+      }
 
       // Clean up iframe after a delay
       setTimeout(() => {

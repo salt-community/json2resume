@@ -18,6 +18,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion'
+import TranslateTo from './accordionComponents/TranslateTo'
 
 type Props = {
   resumeData: ResumeData
@@ -97,7 +98,7 @@ function AccordionGroup({ resumeData, setResumeData }: Props) {
 
     {
       title: 'Translate to: ',
-      content: 'Yes. It adheres to the WAI-ARIA design pattern.',
+      content: <TranslateTo />,
     },
 
     {
