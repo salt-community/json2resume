@@ -19,13 +19,15 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion'
 import TranslateTo from './accordionComponents/TranslateTo'
+import Themes from './accordionComponents/Themes'
 
 type Props = {
   resumeData: ResumeData
   setResumeData: (data: ResumeData) => void
+  onThemeChange?: (themeUrl: string) => void
 }
 
-function AccordionGroup({ resumeData, setResumeData }: Props) {
+function AccordionGroup({ resumeData, setResumeData, onThemeChange }: Props) {
   const items: Array<{ title: string; content: React.ReactNode }> = [
     {
       title: 'Basics',
@@ -102,8 +104,8 @@ function AccordionGroup({ resumeData, setResumeData }: Props) {
     },
 
     {
-      title: 'Theme:',
-      content: 'Yes. It adheres to the WAI-ARIA design pattern.',
+      title: 'Themes',
+      content: <Themes onThemeChange={onThemeChange} />,
     },
   ]
   return (
