@@ -35,6 +35,11 @@ const presetThemes: Theme[] = [
     id: 'Terminal',
     description: 'Modern two-column layout with dark sidebar',
     url: 'https://gist.github.com/david11267/8160c1ac2a49a95416c6ec991df48916'
+  },
+  {
+    id: 'Regular',
+    description: 'Modern two-column layout with dark sidebar',
+    url: 'https://gist.github.com/david11267/deceafa6ab9de41a77833607cabd4dc0'
   }
 ]
 

@@ -11,6 +11,7 @@ import Interests from './accordionComponents/Interests'
 import References from './accordionComponents/References'
 import Projects from './accordionComponents/Projects'
 import Export from './accordionComponents/Export'
+import ResumeTranslator from './accordionComponents/ResumeTranslator'
 import type { ResumeData } from '@/types'
 import {
   Accordion,
@@ -25,9 +26,10 @@ type Props = {
   resumeData: ResumeData
   setResumeData: (data: ResumeData) => void
   onThemeChange?: (themeUrl: string) => void
+  onTranslationComplete?: (data: ResumeData) => void
 }
 
-function AccordionGroup({ resumeData, setResumeData, onThemeChange }: Props) {
+function AccordionGroup({ resumeData, setResumeData, onThemeChange, onTranslationComplete }: Props) {
   const items: Array<{ title: string; content: React.ReactNode }> = [
     {
       title: 'Basics',
@@ -97,12 +99,19 @@ function AccordionGroup({ resumeData, setResumeData, onThemeChange }: Props) {
       title: 'Export',
       content: <Export resumeData={resumeData} />,
     },
-
     {
-      title: 'Translate to: ',
-      content: <TranslateTo />,
+      title: 'Translation',
+      content: onTranslationComplete ? (
+        <ResumeTranslator 
+          resumeData={resumeData} 
+          onTranslationComplete={onTranslationComplete} 
+        />
+      ) : (
+        <div className="p-4 text-center text-muted-foreground">
+          <p>Translation feature not available</p>
+        </div>
+      ),
     },
-
     {
       title: 'Themes',
       content: <Themes onThemeChange={onThemeChange} />,

@@ -24,6 +24,10 @@ function App() {
     setSelectedTheme(themeUrl)
   }
 
+  const handleTranslationComplete = (translatedData: ResumeData) => {
+    setResumeData(translatedData)
+  }
+
   return (
     <div className="grid grid-cols-2 gap-8 p-16">
       <section>
@@ -41,6 +45,7 @@ function App() {
               resumeData={resumeData}
               setResumeData={setResumeData}
               onThemeChange={handleThemeChange}
+              onTranslationComplete={handleTranslationComplete}
             />
           </TabsContent>
           <TabsContent value="json">
