@@ -108,7 +108,8 @@ function AccordionGroup({ resumeData, setResumeData }: Props) {
   return (
     <Accordion type="single" collapsible>
       {items.map((item, index) => (
-        <AccordionItem value={`item-${index}`}>
+  
+        <AccordionItem className={index === 11 ? 'mb-16' : ''} value={`item-${index}`}>
           <AccordionTrigger>{item.title}</AccordionTrigger>
           <AccordionContent>{item.content}</AccordionContent>
         </AccordionItem>
