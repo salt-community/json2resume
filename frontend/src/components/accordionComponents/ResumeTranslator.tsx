@@ -15,7 +15,7 @@ export default function ResumeTranslator({
   resumeData, 
   onTranslationComplete 
 }: ResumeTranslatorProps) {
-  const [targetLanguage, setTargetLanguage] = useState('russian')
+  const [targetLanguage, setTargetLanguage] = useState('spanish')
   const [isTranslated, setIsTranslated] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   
