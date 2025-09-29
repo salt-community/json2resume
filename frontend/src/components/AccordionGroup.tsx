@@ -12,6 +12,7 @@ import References from './accordionComponents/References'
 import Projects from './accordionComponents/Projects'
 import Export from './accordionComponents/Export'
 import ResumeTranslator from './accordionComponents/ResumeTranslator'
+import { LinkedinImporter } from './LinkedinImport'
 import type { ResumeData } from '@/types'
 import {
   Accordion,
@@ -113,6 +114,10 @@ function AccordionGroup({ resumeData, setResumeData, onThemeChange, onTranslatio
       ),
     },
     {
+      title: 'LinkedIn Import',
+      content: <LinkedinImporter onDataImported={setResumeData} />,
+    },
+    {
       title: 'Themes',
       content: <Themes onThemeChange={onThemeChange} currentTheme={currentTheme} />,
     },
@@ -121,7 +126,7 @@ function AccordionGroup({ resumeData, setResumeData, onThemeChange, onTranslatio
     <Accordion type="single" collapsible>
       {items.map((item, index) => (
   
-        <AccordionItem className={index === 11 ? 'mb-16' : ''} value={`item-${index}`}>
+        <AccordionItem className={index === 12 ? 'mb-16' : ''} value={`item-${index}`}>
           <AccordionTrigger>{item.title}</AccordionTrigger>
           <AccordionContent>{item.content}</AccordionContent>
         </AccordionItem>
