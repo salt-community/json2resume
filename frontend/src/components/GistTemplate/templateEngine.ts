@@ -20,7 +20,7 @@
 
 export type JsonLike =
   | Record<string, any>
-  | any[]
+  | Array<any>
   | string
   | number
   | boolean
@@ -53,13 +53,13 @@ interface IfNode {
   type: 'if'
   path: string
   negate: boolean
-  children: Node[]
+  children: Array<Node>
 }
 
 interface EachNode {
   type: 'each'
   path: string
-  children: Node[]
+  children: Array<Node>
 }
 
 interface JoinNode {
@@ -76,18 +76,18 @@ const TAG_CLOSE = ']]'
 
 class TemplateParseError extends Error {}
 
-function parse(template: string): Node[] {
+function parse(template: string): Array<Node> {
   let i = 0
   const len = template.length
 
   type Frame = {
     type: 'root' | 'if' | 'each'
     node?: IfNode | EachNode
-    children: Node[]
+    children: Array<Node>
   }
-  const stack: Frame[] = [{ type: 'root', children: [] }]
+  const stack: Array<Frame> = [{ type: 'root', children: [] }]
 
-  function currChildren(): Node[] {
+  function currChildren(): Array<Node> {
     return stack[stack.length - 1].children
   }
 
@@ -250,7 +250,7 @@ function getNested(obj: any, path: string): any {
   return curr
 }
 
-function resolvePath(path: string, ctxStack: any[], root: any): any {
+function resolvePath(path: string, ctxStack: Array<any>, root: any): any {
   // Current context is the top of stack
   const ctx = ctxStack[ctxStack.length - 1]
 
@@ -280,8 +280,8 @@ function resolvePath(path: string, ctxStack: any[], root: any): any {
 }
 
 function renderNodes(
-  nodes: Node[],
-  ctxStack: any[],
+  nodes: Array<Node>,
+  ctxStack: Array<any>,
   root: any,
   opt: Required<RenderOptions>,
 ): string {
@@ -355,7 +355,7 @@ export interface CompiledTemplate {
   render(data: JsonLike, options?: RenderOptions): string
 }
 
-const compileCache = new Map<string, Node[]>()
+const compileCache = new Map<string, Array<Node>>()
 
 export function compile(template: string): CompiledTemplate {
   const ast = compileCache.get(template) ?? parse(template)

@@ -10,7 +10,6 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TemplatesGuideRouteImport } from './routes/templates-guide'
-import { Route as PdfRouteImport } from './routes/pdf'
 import { Route as LinkedinTestRouteImport } from './routes/linkedin-test'
 import { Route as HtmlInterpreterStandardRouteImport } from './routes/html-interpreter-standard'
 import { Route as GistDemoRouteImport } from './routes/gist-demo'
@@ -20,11 +19,6 @@ import { Route as IndexRouteImport } from './routes/index'
 const TemplatesGuideRoute = TemplatesGuideRouteImport.update({
   id: '/templates-guide',
   path: '/templates-guide',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PdfRoute = PdfRouteImport.update({
-  id: '/pdf',
-  path: '/pdf',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LinkedinTestRoute = LinkedinTestRouteImport.update({
@@ -59,7 +53,6 @@ export interface FileRoutesByFullPath {
   '/gist-demo': typeof GistDemoRoute
   '/html-interpreter-standard': typeof HtmlInterpreterStandardRoute
   '/linkedin-test': typeof LinkedinTestRoute
-  '/pdf': typeof PdfRoute
   '/templates-guide': typeof TemplatesGuideRoute
 }
 export interface FileRoutesByTo {
@@ -68,7 +61,6 @@ export interface FileRoutesByTo {
   '/gist-demo': typeof GistDemoRoute
   '/html-interpreter-standard': typeof HtmlInterpreterStandardRoute
   '/linkedin-test': typeof LinkedinTestRoute
-  '/pdf': typeof PdfRoute
   '/templates-guide': typeof TemplatesGuideRoute
 }
 export interface FileRoutesById {
@@ -78,7 +70,6 @@ export interface FileRoutesById {
   '/gist-demo': typeof GistDemoRoute
   '/html-interpreter-standard': typeof HtmlInterpreterStandardRoute
   '/linkedin-test': typeof LinkedinTestRoute
-  '/pdf': typeof PdfRoute
   '/templates-guide': typeof TemplatesGuideRoute
 }
 export interface FileRouteTypes {
@@ -89,7 +80,6 @@ export interface FileRouteTypes {
     | '/gist-demo'
     | '/html-interpreter-standard'
     | '/linkedin-test'
-    | '/pdf'
     | '/templates-guide'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -98,7 +88,6 @@ export interface FileRouteTypes {
     | '/gist-demo'
     | '/html-interpreter-standard'
     | '/linkedin-test'
-    | '/pdf'
     | '/templates-guide'
   id:
     | '__root__'
@@ -107,7 +96,6 @@ export interface FileRouteTypes {
     | '/gist-demo'
     | '/html-interpreter-standard'
     | '/linkedin-test'
-    | '/pdf'
     | '/templates-guide'
   fileRoutesById: FileRoutesById
 }
@@ -117,7 +105,6 @@ export interface RootRouteChildren {
   GistDemoRoute: typeof GistDemoRoute
   HtmlInterpreterStandardRoute: typeof HtmlInterpreterStandardRoute
   LinkedinTestRoute: typeof LinkedinTestRoute
-  PdfRoute: typeof PdfRoute
   TemplatesGuideRoute: typeof TemplatesGuideRoute
 }
 
@@ -128,13 +115,6 @@ declare module '@tanstack/react-router' {
       path: '/templates-guide'
       fullPath: '/templates-guide'
       preLoaderRoute: typeof TemplatesGuideRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/pdf': {
-      id: '/pdf'
-      path: '/pdf'
-      fullPath: '/pdf'
-      preLoaderRoute: typeof PdfRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/linkedin-test': {
@@ -181,7 +161,6 @@ const rootRouteChildren: RootRouteChildren = {
   GistDemoRoute: GistDemoRoute,
   HtmlInterpreterStandardRoute: HtmlInterpreterStandardRoute,
   LinkedinTestRoute: LinkedinTestRoute,
-  PdfRoute: PdfRoute,
   TemplatesGuideRoute: TemplatesGuideRoute,
 }
 export const routeTree = rootRouteImport

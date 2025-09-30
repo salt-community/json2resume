@@ -12,8 +12,8 @@ import References from './accordionComponents/References'
 import Projects from './accordionComponents/Projects'
 import Export from './accordionComponents/Export'
 import ResumeTranslator from './accordionComponents/ResumeTranslator'
-import SectionHeaders from './accordionComponents/SectionHeaders'
 import { LinkedinImporter } from './LinkedinImport'
+import SectionHeadersComponent from './accordionComponents/SectionHeaders'
 import type { ResumeData } from '@/types'
 import {
   Accordion,
@@ -34,6 +34,14 @@ type Props = {
 function AccordionGroup({ resumeData, setResumeData, onThemeChange, onTranslationComplete, currentTheme }: Props) {
   const items: Array<{ title: string; content: React.ReactNode }> = [
     {
+      title: 'LinkedIn Import',
+      content: <LinkedinImporter onDataImported={setResumeData} />,
+    },
+    {
+      title: 'Section Headers',
+      content: <SectionHeadersComponent resumeData={resumeData} setResumeData={setResumeData} />,
+    },
+    {
       title: 'Basics',
       content: <Basic resumeData={resumeData} setResumeData={setResumeData} />,
     },
@@ -42,20 +50,20 @@ function AccordionGroup({ resumeData, setResumeData, onThemeChange, onTranslatio
       content: <Work resumeData={resumeData} setResumeData={setResumeData} />,
     },
     {
-      title: 'Volunteering',
-      content: (
-        <Volunteering resumeData={resumeData} setResumeData={setResumeData} />
-      ),
-    },
-    {
       title: 'Education',
       content: (
         <Education resumeData={resumeData} setResumeData={setResumeData} />
       ),
     },
     {
-      title: 'Awards',
-      content: <Awards resumeData={resumeData} setResumeData={setResumeData} />,
+      title: 'Projects',
+      content: (
+        <Projects resumeData={resumeData} setResumeData={setResumeData} />
+      ),
+    },
+    {
+      title: 'Skills',
+      content: <Skills resumeData={resumeData} setResumeData={setResumeData} />,
     },
     {
       title: 'Certifications',
@@ -64,14 +72,20 @@ function AccordionGroup({ resumeData, setResumeData, onThemeChange, onTranslatio
       ),
     },
     {
+      title: 'Awards',
+      content: <Awards resumeData={resumeData} setResumeData={setResumeData} />,
+    },
+    {
       title: 'Publications',
       content: (
         <Publications resumeData={resumeData} setResumeData={setResumeData} />
       ),
     },
     {
-      title: 'Skills',
-      content: <Skills resumeData={resumeData} setResumeData={setResumeData} />,
+      title: 'Volunteering',
+      content: (
+        <Volunteering resumeData={resumeData} setResumeData={setResumeData} />
+      ),
     },
     {
       title: 'Languages',
@@ -92,10 +106,8 @@ function AccordionGroup({ resumeData, setResumeData, onThemeChange, onTranslatio
       ),
     },
     {
-      title: 'Projects',
-      content: (
-        <Projects resumeData={resumeData} setResumeData={setResumeData} />
-      ),
+      title: 'Themes',
+      content: <Themes onThemeChange={onThemeChange} currentTheme={currentTheme} />,
     },
     {
       title: 'Export',
@@ -114,24 +126,13 @@ function AccordionGroup({ resumeData, setResumeData, onThemeChange, onTranslatio
         </div>
       ),
     },
-    {
-      title: 'LinkedIn Import',
-      content: <LinkedinImporter onDataImported={setResumeData} />,
-    },
-    {
-      title: 'Themes',
-      content: <Themes onThemeChange={onThemeChange} currentTheme={currentTheme} />,
-    },
-    {
-      title: 'Section Headers',
-      content: <SectionHeaders resumeData={resumeData} setResumeData={setResumeData} />,
-    },
   ]
   return (
     <Accordion type="single" collapsible>
       {items.map((item, index) => (
+        
   
-        <AccordionItem className={index === 12 ? 'mb-16' : ''} value={`item-${index}`}>
+        <AccordionItem className={index === 13 ? 'mb-16' : ''} value={`item-${index}`}>
           <AccordionTrigger>{item.title}</AccordionTrigger>
           <AccordionContent>{item.content}</AccordionContent>
         </AccordionItem>

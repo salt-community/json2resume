@@ -1,7 +1,7 @@
-import type { ResumeData } from '@/types'
-import { Button } from '@/components/ui/button'
 import { useState } from 'react'
 import { Download } from 'lucide-react'
+import type { ResumeData } from '@/types'
+import { Button } from '@/components/ui/button'
 
 type Props = {
   resumeData: ResumeData
@@ -22,7 +22,7 @@ export default function Export({ resumeData }: Props) {
 
       // Clone the resume content
       const clonedContent = resumeElement.cloneNode(true) as HTMLElement
-      
+
       // Create a hidden iframe for PDF generation
       const iframe = document.createElement('iframe')
       iframe.style.position = 'absolute'
@@ -73,7 +73,7 @@ export default function Export({ resumeData }: Props) {
       iframe.contentDocument?.close()
 
       // Wait for content to load and images to render
-      await new Promise(resolve => setTimeout(resolve, 2000))
+      await new Promise((resolve) => setTimeout(resolve, 2000))
 
       // Calculate exact scrollable height
       const iframeDoc = iframe.contentDocument
@@ -249,13 +249,16 @@ export default function Export({ resumeData }: Props) {
           }
         `
         iframeDoc.head.appendChild(optimizationStyle)
-        
+
         // Add print optimization meta tags
         const metaViewport = iframeDoc.createElement('meta')
         metaViewport.setAttribute('name', 'viewport')
-        metaViewport.setAttribute('content', 'width=device-width, initial-scale=1.0')
+        metaViewport.setAttribute(
+          'content',
+          'width=device-width, initial-scale=1.0',
+        )
         iframeDoc.head.appendChild(metaViewport)
-        
+
         // Small delay to ensure styles are applied
         setTimeout(() => {
           iframe.contentWindow?.print()
@@ -269,7 +272,6 @@ export default function Export({ resumeData }: Props) {
       setTimeout(() => {
         document.body.removeChild(iframe)
       }, 3000)
-
     } catch (error) {
       console.error('Error exporting PDF:', error)
       alert('Error exporting PDF. Please try again.')
@@ -282,7 +284,7 @@ export default function Export({ resumeData }: Props) {
     <div className="p-4 space-y-6">
       <div className="space-y-4">
         <h3 className="text-lg font-medium">Export Options</h3>
-        
+
         <div className="space-y-3">
           <div className="flex items-center justify-between p-4 border rounded-lg">
             <div className="space-y-1">
@@ -291,8 +293,8 @@ export default function Export({ resumeData }: Props) {
                 Export your resume as a PDF with dynamic height calculation
               </p>
             </div>
-            <Button 
-              onClick={exportToPDF} 
+            <Button
+              onClick={exportToPDF}
               disabled={isExporting}
               className="flex items-center gap-2"
             >

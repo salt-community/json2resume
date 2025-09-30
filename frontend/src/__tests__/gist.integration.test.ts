@@ -1,8 +1,8 @@
-import { describe, test, expect } from 'vitest'
+import { describe, expect, test } from 'vitest'
 import {
-  fetchGistFiles,
-  fetchGistContent,
   fetchAndValidateGistTemplate,
+  fetchGistContent,
+  fetchGistFiles,
   parseGistUrl,
 } from '@/components/GistTemplate/gistFetcher'
 import { DEFAULT_CLASSIC_TEMPLATE_URL } from '@/components/GistTemplate'
@@ -11,8 +11,7 @@ import { DEFAULT_CLASSIC_TEMPLATE_URL } from '@/components/GistTemplate'
 const itIntegration = process.env.RUN_INTEGRATION === 'true' ? test : test.skip
 
 // Allow overriding which Gist to use during integration tests
-const GIST_URL =
-  process.env.TEST_GIST_URL || DEFAULT_CLASSIC_TEMPLATE_URL
+const GIST_URL = process.env.TEST_GIST_URL || DEFAULT_CLASSIC_TEMPLATE_URL
 const GIST_FILENAME = process.env.TEST_GIST_FILENAME
 
 // Basic pre-parse (static for conditional test definitions)
@@ -21,47 +20,53 @@ const hasParsedInfo = !!parsed
 
 // Validate test should only run if we have a filename that looks like HTML,
 // or an explicit filename was provided.
-const shouldRunValidate =
-  !!GIST_FILENAME || !!parsed // we'll dynamically detect an html-like file in the test
+const shouldRunValidate = !!GIST_FILENAME || !!parsed // we'll dynamically detect an html-like file in the test
 
 describe('GitHub Gist integration', () => {
-  itIntegration('fetchGistFiles returns a non-empty list for a valid gist', async () => {
-    const info = parseGistUrl(GIST_URL)
-    expect(info).toBeTruthy()
-    if (!info) return
+  itIntegration(
+    'fetchGistFiles returns a non-empty list for a valid gist',
+    async () => {
+      const info = parseGistUrl(GIST_URL)
+      expect(info).toBeTruthy()
+      if (!info) return
 
-    const files = await fetchGistFiles(info)
-    expect(Array.isArray(files)).toBe(true)
-    expect(files.length).toBeGreaterThan(0)
-  }, 30000)
-
-  itIntegration('fetchGistContent retrieves raw content for a specific file (if available)', async () => {
-    const info = parseGistUrl(GIST_URL)
-    expect(info).toBeTruthy()
-    if (!info) return
-
-    // Discover a file name if not provided
-    let filename = GIST_FILENAME
-    if (!filename) {
       const files = await fetchGistFiles(info)
+      expect(Array.isArray(files)).toBe(true)
       expect(files.length).toBeGreaterThan(0)
-      // Prefer common template-looking files
-      filename =
-        files.find(
-          (f) =>
-            f.endsWith('.html') ||
-            f.endsWith('.html.custom') ||
-            f.endsWith('.template'),
-        ) || files[0]
-    }
+    },
+    30000,
+  )
 
-    const res = await fetchGistContent(GIST_URL, filename)
-    expect(res.success).toBe(true)
-    expect(res.content && res.content.length).toBeGreaterThan(0)
-    expect(res.url).toBeTruthy()
-    expect(res.url).toContain('gist.githubusercontent.com')
-  }, 30000)
+  itIntegration(
+    'fetchGistContent retrieves raw content for a specific file (if available)',
+    async () => {
+      const info = parseGistUrl(GIST_URL)
+      expect(info).toBeTruthy()
+      if (!info) return
 
+      // Discover a file name if not provided
+      let filename = GIST_FILENAME
+      if (!filename) {
+        const files = await fetchGistFiles(info)
+        expect(files.length).toBeGreaterThan(0)
+        // Prefer common template-looking files
+        filename =
+          files.find(
+            (f) =>
+              f.endsWith('.html') ||
+              f.endsWith('.html.custom') ||
+              f.endsWith('.template'),
+          ) || files[0]
+      }
+
+      const res = await fetchGistContent(GIST_URL, filename)
+      expect(res.success).toBe(true)
+      expect(res.content && res.content.length).toBeGreaterThan(0)
+      expect(res.url).toBeTruthy()
+      expect(res.url).toContain('gist.githubusercontent.com')
+    },
+    30000,
+  )
   ;(shouldRunValidate ? itIntegration : test.skip)(
     'fetchAndValidateGistTemplate returns valid HTML template when an HTML-like file is available',
     async () => {
