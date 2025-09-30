@@ -256,6 +256,15 @@ function resolvePath(path: string, ctxStack: any[], root: any): any {
 
   if (!path || path === '.' || path === 'this') return ctx
 
+  // Special handling for basics.image - prioritize uploadedImage over image
+  if (path === 'basics.image' || path === 'image') {
+    const basics = getNested(root, 'basics')
+    if (basics) {
+      // Return uploadedImage if available, otherwise fall back to image
+      return basics.uploadedImage || basics.image
+    }
+  }
+
   // Absolute-ish lookup (dot in path) — prefer root for clarity like "basics.name"
   if (path.includes('.')) {
     const fromRoot = getNested(root, path)

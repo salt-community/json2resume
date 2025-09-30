@@ -3,6 +3,8 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { ImageUpload } from '@/components/ui/image-upload'
 
 type Props = {
   resumeData: ResumeData
@@ -134,16 +136,30 @@ export default function Basic({ resumeData, setResumeData }: Props) {
           />
         </div>
 
-        {/* Image URL */}
+        {/* Profile Image */}
         <div className="space-y-2">
-          <Label htmlFor="image">Profile Image URL</Label>
-          <Input
-            id="image"
-            type="url"
-            placeholder="https://example.com/photo.jpg"
-            value={resumeData.basics.image || ''}
-            onChange={(e) => updateBasics('image', e.target.value)}
-          />
+          <Tabs defaultValue="url" className="w-full">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="url">URL</TabsTrigger>
+              <TabsTrigger value="upload">Upload</TabsTrigger>
+            </TabsList>
+            <TabsContent value="url" className="space-y-2">
+              <Label htmlFor="image">Profile Image URL</Label>
+              <Input
+                id="image"
+                type="url"
+                placeholder="https://example.com/photo.jpg"
+                value={resumeData.basics.image || ''}
+                onChange={(e) => updateBasics('image', e.target.value)}
+              />
+            </TabsContent>
+            <TabsContent value="upload" className="space-y-2">
+              <ImageUpload
+                value={resumeData.basics.uploadedImage}
+                onChange={(value) => updateBasics('uploadedImage', value)}
+              />
+            </TabsContent>
+          </Tabs>
         </div>
       </div>
 
