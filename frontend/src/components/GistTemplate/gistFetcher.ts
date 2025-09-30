@@ -90,7 +90,9 @@ export function buildRawGistUrl(gistInfo: GistInfo, filename?: string): string {
 /**
  * Fetches the list of files in a Gist using GitHub API
  */
-export async function fetchGistFiles(gistInfo: GistInfo): Promise<string[]> {
+export async function fetchGistFiles(
+  gistInfo: GistInfo,
+): Promise<Array<string>> {
   try {
     const response = await fetch(
       `https://api.github.com/gists/${gistInfo.gistId}`,
