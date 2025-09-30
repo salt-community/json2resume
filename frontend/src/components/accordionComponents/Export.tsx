@@ -35,53 +35,15 @@ export default function Export({ resumeData }: Props) {
 
       // Create a hidden iframe for PDF generation
       const iframe = document.createElement('iframe')
-      iframe.style.position = 'absolute'
+      /*iframe.style.position = 'absolute'
       iframe.style.left = '-9999px'
       iframe.style.top = '-9999px'
       iframe.style.width = '800px'
-      iframe.style.height = '600px'
+      iframe.style.height = '600px'*/
       document.body.appendChild(iframe)
 
       // Create HTML document for PDF generation with the extracted content
-      const htmlContent = `
-        <!DOCTYPE html>
-        <html>
-          <head>
-            <meta charset="utf-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-            <title>Resume - ${resumeData.basics.name}</title>
-            <style>
-              body {
-                margin: 0;
-                padding: 0;
-                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-                background: white;
-                color: black;
-                line-height: 1.6;
-                overflow: visible;
-              }
-              * {
-                box-sizing: border-box;
-              }
-              .resume-container {
-                width: 100%;
-                margin: 0;
-                padding: 0;
-                background: white;
-              }
-              img {
-                max-width: 100%;
-                height: auto;
-              }
-            </style>
-          </head>
-          <body>
-            <div class="resume-container">
-              ${resumeInnerHtml}
-            </div>
-          </body>
-        </html>
-      `
+      const htmlContent = resumeInnerHtml
 
       // Write content to the print iframe
       iframe.contentDocument?.open()
@@ -108,52 +70,6 @@ export default function Export({ resumeData }: Props) {
           @page {
             size: ${pageWidthMm}mm ${pageHeightMm}mm;
             margin: 0;
-          }
-          body {
-            margin: 0;
-            padding: 0;
-            height: ${pageHeightMm}mm;
-            width: ${pageWidthMm}mm;
-            overflow: hidden;
-            -webkit-print-color-adjust: exact !important;
-            print-color-adjust: exact !important;
-          }
-          .resume-container {
-            width: ${pageWidthMm}mm;
-            margin: 0;
-            padding: 0;
-            height: ${pageHeightMm}mm;
-            overflow: hidden;
-          }
-          .page,
-          .main-content,
-          .sidebar,
-          .content,
-          .header {
-            margin: 0 !important;
-            padding: 0 !important;
-            -webkit-print-color-adjust: exact !important;
-            print-color-adjust: exact !important;
-          }
-          img {
-            max-width: 100% !important;
-            height: auto !important;
-            -webkit-print-color-adjust: exact !important;
-            print-color-adjust: exact !important;
-            image-rendering: -webkit-optimize-contrast;
-            image-rendering: crisp-edges;
-          }
-          [style*="background"],
-          [class*="bg-"] {
-            background-image: none !important;
-          }
-          .no-print,
-          .print-hidden {
-            display: none !important;
-          }
-          * {
-            box-shadow: none !important;
-            text-shadow: none !important;
           }
         }
       `
