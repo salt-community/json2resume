@@ -30,7 +30,7 @@ export interface Profile {
 }
 
 export interface Basics {
-  name: string
+  name?: string
   label?: string
   image?: string
   uploadedImage?: string // Base64 data URI for uploaded images

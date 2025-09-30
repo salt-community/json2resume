@@ -9,11 +9,7 @@ interface TranslationRequest {
 }
 
 // Prefer Vite env, fall back to process.env, then default localhost
-const API_URL =
-  (import.meta as any)?.env?.VITE_API_URL ??
-  process.env.VITE_API_URL ??
-  process.env.API_URL ??
-  'http://localhost:8080/api'
+const API_URL = 'http://localhost:8080/api'
 
 // API function to handle the translation request
 export async function translateText(payload: TranslationRequest): Promise<ResumeData> {
