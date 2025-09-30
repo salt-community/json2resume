@@ -12,7 +12,6 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as TemplatesGuideRouteImport } from './routes/templates-guide'
 import { Route as LinkedinTestRouteImport } from './routes/linkedin-test'
 import { Route as HtmlInterpreterStandardRouteImport } from './routes/html-interpreter-standard'
-import { Route as GistDemoRouteImport } from './routes/gist-demo'
 import { Route as EditorRouteImport } from './routes/editor'
 import { Route as IndexRouteImport } from './routes/index'
 
@@ -31,11 +30,6 @@ const HtmlInterpreterStandardRoute = HtmlInterpreterStandardRouteImport.update({
   path: '/html-interpreter-standard',
   getParentRoute: () => rootRouteImport,
 } as any)
-const GistDemoRoute = GistDemoRouteImport.update({
-  id: '/gist-demo',
-  path: '/gist-demo',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const EditorRoute = EditorRouteImport.update({
   id: '/editor',
   path: '/editor',
@@ -50,7 +44,6 @@ const IndexRoute = IndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/editor': typeof EditorRoute
-  '/gist-demo': typeof GistDemoRoute
   '/html-interpreter-standard': typeof HtmlInterpreterStandardRoute
   '/linkedin-test': typeof LinkedinTestRoute
   '/templates-guide': typeof TemplatesGuideRoute
@@ -58,7 +51,6 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/editor': typeof EditorRoute
-  '/gist-demo': typeof GistDemoRoute
   '/html-interpreter-standard': typeof HtmlInterpreterStandardRoute
   '/linkedin-test': typeof LinkedinTestRoute
   '/templates-guide': typeof TemplatesGuideRoute
@@ -67,7 +59,6 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/editor': typeof EditorRoute
-  '/gist-demo': typeof GistDemoRoute
   '/html-interpreter-standard': typeof HtmlInterpreterStandardRoute
   '/linkedin-test': typeof LinkedinTestRoute
   '/templates-guide': typeof TemplatesGuideRoute
@@ -77,7 +68,6 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/editor'
-    | '/gist-demo'
     | '/html-interpreter-standard'
     | '/linkedin-test'
     | '/templates-guide'
@@ -85,7 +75,6 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/editor'
-    | '/gist-demo'
     | '/html-interpreter-standard'
     | '/linkedin-test'
     | '/templates-guide'
@@ -93,7 +82,6 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/editor'
-    | '/gist-demo'
     | '/html-interpreter-standard'
     | '/linkedin-test'
     | '/templates-guide'
@@ -102,7 +90,6 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   EditorRoute: typeof EditorRoute
-  GistDemoRoute: typeof GistDemoRoute
   HtmlInterpreterStandardRoute: typeof HtmlInterpreterStandardRoute
   LinkedinTestRoute: typeof LinkedinTestRoute
   TemplatesGuideRoute: typeof TemplatesGuideRoute
@@ -131,13 +118,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HtmlInterpreterStandardRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/gist-demo': {
-      id: '/gist-demo'
-      path: '/gist-demo'
-      fullPath: '/gist-demo'
-      preLoaderRoute: typeof GistDemoRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/editor': {
       id: '/editor'
       path: '/editor'
@@ -158,7 +138,6 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   EditorRoute: EditorRoute,
-  GistDemoRoute: GistDemoRoute,
   HtmlInterpreterStandardRoute: HtmlInterpreterStandardRoute,
   LinkedinTestRoute: LinkedinTestRoute,
   TemplatesGuideRoute: TemplatesGuideRoute,

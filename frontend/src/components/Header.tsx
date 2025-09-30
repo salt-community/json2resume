@@ -17,16 +17,6 @@ export default function Header() {
               >
                 Resume Editor
               </Link>
-              <Link
-                to="/gist-demo"
-                className="inline-flex items-center px-1 pt-1 text-sm font-medium text-text-muted hover:text-link"
-                activeProps={{
-                  className:
-                    'inline-flex items-center px-1 pt-1 border-b-2 border-accent text-sm font-medium text-accent',
-                }}
-              >
-                Gist Template Demo
-              </Link>
             </div>
           </div>
         </div>

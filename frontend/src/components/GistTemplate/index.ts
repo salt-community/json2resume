@@ -33,6 +33,3 @@ export {
   type GistInfo,
   type GistFetchResult,
 } from './gistFetcher'
-
-// Optional: demo UI for docs/tests
-export { GistTemplateDemo } from './GistTemplateDemo'
