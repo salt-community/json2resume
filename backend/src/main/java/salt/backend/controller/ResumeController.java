@@ -19,7 +19,6 @@ import salt.backend.services.TranslationService;
 @Slf4j
 @RestController
 @RequestMapping(path = "/api", produces = MediaType.APPLICATION_JSON_VALUE)
-@CrossOrigin
 public class ResumeController {
 
     private final TranslationService translationService;
