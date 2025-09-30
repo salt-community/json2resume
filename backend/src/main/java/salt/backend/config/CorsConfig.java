@@ -9,7 +9,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class CorsConfig implements WebMvcConfigurer {
 
     // Comma-separated list of allowed origins; defaults to the dev frontend
-    @Value("${cors.allowed-origins:http://localhost:5173}")
+    @Value("${cors.allowed-origins:http://localhost:3000}")
     private String allowedOrigins;
 
     @Override
