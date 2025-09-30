@@ -13,6 +13,7 @@ import Projects from './accordionComponents/Projects'
 import Export from './accordionComponents/Export'
 import ResumeTranslator from './accordionComponents/ResumeTranslator'
 import SectionHeaders from './accordionComponents/SectionHeaders'
+import { LinkedinImporter } from './LinkedinImport'
 import type { ResumeData } from '@/types'
 import {
   Accordion,
@@ -112,6 +113,10 @@ function AccordionGroup({ resumeData, setResumeData, onThemeChange, onTranslatio
           <p>Translation feature not available</p>
         </div>
       ),
+    },
+    {
+      title: 'LinkedIn Import',
+      content: <LinkedinImporter onDataImported={setResumeData} />,
     },
     {
       title: 'Themes',

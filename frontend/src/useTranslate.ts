@@ -8,16 +8,17 @@ interface TranslationRequest {
   sourceLanguage?: string
 }
 
-const API_URL = 'http://localhost:8080/api';
+// Prefer Vite env, fall back to process.env, then default localhost
+const API_URL = 'http://localhost:8080/api'
 
 // API function to handle the translation request
-async function translateText(payload: TranslationRequest): Promise<ResumeData> {
+export async function translateText(payload: TranslationRequest): Promise<ResumeData> {
   const response = await fetch(`${API_URL}/translate`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(payload)
+    body: JSON.stringify(payload),
   })
 
   if (!response.ok) {
