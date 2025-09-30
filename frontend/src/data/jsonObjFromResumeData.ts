@@ -2,16 +2,19 @@ import type { ResumeData } from '@/types'
 
 export function jsonObjFromResumeData(data: ResumeData) {
   if (typeof data !== 'object') return {}
+  if (typeof data == 'undefined') return {}
+  // eslint-disable-next-line
+  if (data === null) return {}
 
   const basics = data.basics
   const location = basics.location
     ? {
-      address: basics.location.address,
-      postalCode: basics.location.postalCode,
-      city: basics.location.city,
-      countryCode: basics.location.countryCode,
-      region: basics.location.region,
-    }
+        address: basics.location.address,
+        postalCode: basics.location.postalCode,
+        city: basics.location.city,
+        countryCode: basics.location.countryCode,
+        region: basics.location.region,
+      }
     : undefined
 
   return {

@@ -30,7 +30,7 @@ export interface Profile {
 }
 
 export interface Basics {
-  name: string
+  name?: string
   label?: string
   image?: string
   email?: string
