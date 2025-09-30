@@ -23,7 +23,7 @@ export function ImageUpload({ value, onChange, placeholder, className }: ImageUp
       return
     }
 
-    // Size validation (5MB limit - commented out for now)
+    // Size validation (5MB limit - commented out for now) - also change the one down in return
     // const maxSize = 5 * 1024 * 1024 // 5MB
     // if (file.size > maxSize) {
     //   alert('File size must be less than 5MB')
@@ -137,9 +137,10 @@ export function ImageUpload({ value, onChange, placeholder, className }: ImageUp
             <Upload className="h-4 w-4 mr-2" />
             Choose File
           </Button>
+          {/* Upload New Button 
           <p className="text-xs text-muted-foreground mt-2">
             JPG, PNG up to 5MB
-          </p>
+          </p>*/}
         </div>
       )}
 
