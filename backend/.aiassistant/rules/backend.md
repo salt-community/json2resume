@@ -1,5 +1,5 @@
 ---
-apply: by model decision
+apply: always
 instructions: Apply this when working in the backend (backend folder)
 ---
 
