@@ -5,6 +5,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { ImageUpload } from '@/components/ui/image-upload'
+import { useState } from 'react'
 
 type Props = {
   resumeData: ResumeData
@@ -12,6 +13,8 @@ type Props = {
 }
 
 export default function Basic({ resumeData, setResumeData }: Props) {
+  const [imageMode, setImageMode] = useState<'url' | 'upload'>('url')
+
   const updateBasics = (field: keyof typeof resumeData.basics, value: any) => {
     setResumeData({
       ...resumeData,
@@ -138,28 +141,46 @@ export default function Basic({ resumeData, setResumeData }: Props) {
 
         {/* Profile Image */}
         <div className="space-y-2">
-          <Tabs defaultValue="url" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="url">URL</TabsTrigger>
-              <TabsTrigger value="upload">Upload</TabsTrigger>
-            </TabsList>
-            <TabsContent value="url" className="space-y-2">
-              <Label htmlFor="image">Profile Image URL</Label>
-              <Input
-                id="image"
-                type="url"
-                placeholder="https://example.com/photo.jpg"
-                value={resumeData.basics.image || ''}
-                onChange={(e) => updateBasics('image', e.target.value)}
-              />
-            </TabsContent>
-            <TabsContent value="upload" className="space-y-2">
-              <ImageUpload
-                value={resumeData.basics.uploadedImage}
-                onChange={(value) => updateBasics('uploadedImage', value)}
-              />
-            </TabsContent>
-          </Tabs>
+          <Label htmlFor="image">Profile Image URL</Label>
+          <div className="flex gap-2">
+            <div className="flex-1">
+              {imageMode === 'url' ? (
+                <Input
+                  id="image"
+                  type="url"
+                  placeholder="https://example.com/photo.jpg"
+                  value={resumeData.basics.image || ''}
+                  onChange={(e) => updateBasics('image', e.target.value)}
+                />
+              ) : (
+                <ImageUpload
+                  value={resumeData.basics.uploadedImage}
+                  onChange={(value) => updateBasics('uploadedImage', value)}
+                  showLabel={false}
+                />
+              )}
+            </div>
+            <div className="flex flex-col gap-1">
+              <Button
+                type="button"
+                variant={imageMode === 'url' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setImageMode('url')}
+                className="text-xs px-3 py-2 h-8"
+              >
+                URL
+              </Button>
+              <Button
+                type="button"
+                variant={imageMode === 'upload' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setImageMode('upload')}
+                className="text-xs px-3 py-2 h-8"
+              >
+                Upload
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
 

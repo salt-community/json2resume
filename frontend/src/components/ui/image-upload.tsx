@@ -9,9 +9,10 @@ interface ImageUploadProps {
   onChange: (value: string | undefined) => void
   placeholder?: string
   className?: string
+  showLabel?: boolean // Whether to show the "Profile Image" label
 }
 
-export function ImageUpload({ value, onChange, placeholder, className }: ImageUploadProps) {
+export function ImageUpload({ value, onChange, placeholder, className, showLabel = true }: ImageUploadProps) {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [dragOver, setDragOver] = useState(false)
 
@@ -79,7 +80,7 @@ export function ImageUpload({ value, onChange, placeholder, className }: ImageUp
 
   return (
     <div className={`space-y-2 ${className}`}>
-      <Label>Profile Image</Label>
+      {showLabel && <Label>Profile Image</Label>}
       
       {value ? (
         <div className="space-y-2">
