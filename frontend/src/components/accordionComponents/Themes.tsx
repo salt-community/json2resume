@@ -10,37 +10,37 @@ interface Theme {
   url: string
 }
 
-const presetThemes: Theme[] = [
+const presetThemes: Array<Theme> = [
   {
     id: 'SALT Resume',
     description: 'Modern two-column layout with dark sidebar',
-    url: 'https://gist.github.com/david11267/b03fd23966945976472361c8e5d3e161'
+    url: 'https://gist.github.com/david11267/b03fd23966945976472361c8e5d3e161',
   },
   {
     id: 'AIK Resume',
     description: 'Modern two-column layout with dark sidebar',
-    url: 'https://gist.github.com/samuel-kar/11b0969ab91989b64650ac9361c8103b'
+    url: 'https://gist.github.com/samuel-kar/11b0969ab91989b64650ac9361c8103b',
   },
   {
     id: 'Classic',
     description: 'Modern two-column layout with dark sidebar',
-    url: 'https://gist.github.com/david11267/f23e349d88017d6d0c3df09741cdf7c6'
+    url: 'https://gist.github.com/david11267/f23e349d88017d6d0c3df09741cdf7c6',
   },
   {
     id: 'Fun',
     description: 'Modern two-column layout with dark sidebar',
-    url: 'https://gist.github.com/david11267/c74fd529168695a92ead6cd9976017d6'
+    url: 'https://gist.github.com/david11267/c74fd529168695a92ead6cd9976017d6',
   },
   {
     id: 'Terminal',
     description: 'Modern two-column layout with dark sidebar',
-    url: 'https://gist.github.com/david11267/8160c1ac2a49a95416c6ec991df48916'
+    url: 'https://gist.github.com/david11267/8160c1ac2a49a95416c6ec991df48916',
   },
   {
     id: 'Regular',
     description: 'Modern two-column layout with dark sidebar',
-    url: 'https://gist.github.com/david11267/deceafa6ab9de41a77833607cabd4dc0'
-  }
+    url: 'https://gist.github.com/david11267/deceafa6ab9de41a77833607cabd4dc0',
+  },
 ]
 
 interface Props {
@@ -48,12 +48,13 @@ interface Props {
   currentTheme?: string
 }
 
-
 export default function Themes({ onThemeChange, currentTheme }: Props) {
   const [customUrl, setCustomUrl] = useState('')
   const [selectedTheme, setSelectedTheme] = useState<string | null>(() => {
     // Find the theme that matches the current theme URL
-    const matchingTheme = presetThemes.find(theme => theme.url === currentTheme)
+    const matchingTheme = presetThemes.find(
+      (theme) => theme.url === currentTheme,
+    )
     return matchingTheme ? matchingTheme.id : null
   })
   const [isLoading, setIsLoading] = useState(false)
@@ -66,7 +67,7 @@ export default function Themes({ onThemeChange, currentTheme }: Props) {
 
   const handleCustomUrlSubmit = () => {
     if (!customUrl.trim()) return
-    
+
     // Validate GitHub Gist URL
     const gistUrlPattern = /^https:\/\/gist\.github\.com\/[^\/]+\/[a-f0-9]+$/
     if (!gistUrlPattern.test(customUrl)) {
@@ -77,7 +78,7 @@ export default function Themes({ onThemeChange, currentTheme }: Props) {
     setIsLoading(true)
     setSelectedTheme('custom')
     onThemeChange?.(customUrl)
-    
+
     // Simulate loading
     setTimeout(() => {
       setIsLoading(false)
@@ -97,7 +98,8 @@ export default function Themes({ onThemeChange, currentTheme }: Props) {
         <div>
           <h3 className="text-lg font-medium">Theme Selection</h3>
           <p className="text-sm text-muted-foreground">
-            Choose a theme for your resume preview or enter a custom GitHub Gist URL
+            Choose a theme for your resume preview or enter a custom GitHub Gist
+            URL
           </p>
         </div>
 
@@ -118,7 +120,7 @@ export default function Themes({ onThemeChange, currentTheme }: Props) {
                 className="pl-10"
               />
             </div>
-            <Button 
+            <Button
               onClick={handleCustomUrlSubmit}
               disabled={!customUrl.trim() || isLoading}
               className="px-6"
@@ -161,7 +163,9 @@ export default function Themes({ onThemeChange, currentTheme }: Props) {
                       <Palette className="w-5 h-5 text-orange-600" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h4 className="font-medium text-sm break-words">{theme.id}</h4>
+                      <h4 className="font-medium text-sm break-words">
+                        {theme.id}
+                      </h4>
                       <p className="text-xs text-muted-foreground mt-1 break-words">
                         {theme.description}
                       </p>
@@ -171,7 +175,7 @@ export default function Themes({ onThemeChange, currentTheme }: Props) {
                     <div className="w-2 h-2 bg-orange-500 rounded-full flex-shrink-0 ml-2"></div>
                   )}
                 </div>
-                
+
                 <div className="flex items-center justify-between gap-2">
                   <span className="text-xs text-gray-500 font-mono truncate flex-1 min-w-0">
                     gist.github.com/...
@@ -212,7 +216,8 @@ export default function Themes({ onThemeChange, currentTheme }: Props) {
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 bg-green-500 rounded-full"></div>
               <span className="text-sm text-green-700">
-                Theme applied successfully! The preview will update with your selected theme.
+                Theme applied successfully! The preview will update with your
+                selected theme.
               </span>
             </div>
           </div>
