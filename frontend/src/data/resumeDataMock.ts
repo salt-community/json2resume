@@ -2,7 +2,7 @@
 import type { ResumeData } from '@/types.ts'
 import { resumeDataFromJsonObj } from '@/data/resumeDataFromJsonObj.ts'
 
-const rawResumeData = {
+const rawResumeData: ResumeData = {
   $schema:
     'https://raw.githubusercontent.com/jsonresume/resume-schema/v1.0.0/schema.json',
   basics: {
@@ -235,7 +235,19 @@ const rawResumeData = {
   ],
   meta: {
     version: 'v1.0.0',
-    theme: 'even',
+    sectionHeaders: {
+      work: 'Work',
+      volunteer: 'Volunteer',
+      education: 'Education',
+      awards: 'Awards',
+      certificates: 'Certificates',
+      publications: 'Publications',
+      skills: 'Skills',
+      languages: 'Languages',
+      interests: 'Interests',
+      references: 'References',
+      projects: 'Projects',
+    },
   },
 }
 

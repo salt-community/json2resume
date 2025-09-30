@@ -17,7 +17,16 @@ export const Route = createFileRoute('/editor')({
 
 function App() {
   const [resumeData, setResumeData] = useState<ResumeData>(mockedResumeData)
+  const [selectedTheme, setSelectedTheme] = useState<string>('https://gist.github.com/david11267/b03fd23966945976472361c8e5d3e161')
   const json = jsonStringFromJsonObj(jsonObjFromResumeData(resumeData))
+
+  const handleThemeChange = (themeUrl: string) => {
+    setSelectedTheme(themeUrl)
+  }
+
+  const handleTranslationComplete = (translatedData: ResumeData) => {
+    setResumeData(translatedData)
+  }
 
   return (
     <div className="grid grid-cols-2 gap-8 p-16">
@@ -35,6 +44,9 @@ function App() {
             <AccordionGroup
               resumeData={resumeData}
               setResumeData={setResumeData}
+              onThemeChange={handleThemeChange}
+              onTranslationComplete={handleTranslationComplete}
+              currentTheme={selectedTheme}
             />
           </TabsContent>
           <TabsContent value="json">
@@ -52,7 +64,7 @@ function App() {
       </section>
       <section className=" min-h-screen">
         <GistTemplate
-          gistUrl="https://gist.github.com/david11267/b03fd23966945976472361c8e5d3e161"
+          gistUrl={selectedTheme}
           resumeData={resumeData}
         />
       </section>

@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query"
-import type { ResumeData } from "./components"
+import type { ResumeData } from "@/types"
 
 // Types for the translation request and response
 interface TranslationRequest {
