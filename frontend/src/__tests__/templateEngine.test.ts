@@ -92,7 +92,8 @@ describe('Template Engine', () => {
     test('renders current context with dot notation', () => {
       const template = '[[#each work]]>>[.]<< [[/each]]'
       const result = renderTemplate(template, sampleResumeData)
-      expect(result).toBe('[object Object] [object Object]')
+      const expected = '{"company":"Tech Corp","position":"Senior Developer","startDate":"2020-01","endDate":"2023-12","summary":"Led development of key features","highlights":["Improved performance by 50%","Mentored junior developers"]} {"company":"Startup Inc","position":"Full Stack Developer","startDate":"2018-06","endDate":"2019-12","summary":"Built web applications from scratch"} '
+      expect(result).toBe(expected)
     })
 
     test('handles missing properties gracefully', () => {
@@ -253,7 +254,7 @@ describe('Template Engine', () => {
     test('renders complex nested template', () => {
       const template = `
         <div class="resume">
-          <h1>>[basics.name]<<</h1>
+          <h1>>>[basics.name]<<</h1>
           <p class="title">>>[basics.label]<<</p>
           [[#if basics.summary]]
           <div class="summary">>>[basics.summary]<<</div>
@@ -261,12 +262,12 @@ describe('Template Engine', () => {
           <div class="work">
             [[#each work]]
             <div class="job">
-              <h3>>[position]<< at >>[company]<<</h3>
-              <p>>[summary]<<</p>
+              <h3>>>[position]<< at >>[company]<<</h3>
+              <p>>>[summary]<<</p>
               [[#if highlights]]
               <ul>
                 [[#each highlights]]
-                <li>>[.]<<</li>
+                <li>>>[.]<<</li>
                 [[/each]]
               </ul>
               [[/if]]
@@ -293,14 +294,14 @@ describe('Template Engine', () => {
       const template = `
         [[#each work]]
         <div class="job">
-          <h3>>[position]<<</h3>
+          <h3>>>[position]<<</h3>
           [[#if summary]]
-          <p>>[summary]<<</p>
+          <p>>>[summary]<<</p>
           [[/if]]
           [[#if highlights]]
           <ul>
             [[#each highlights]]
-            <li>>[.]<<</li>
+            <li>>>[.]<<</li>
             [[/each]]
           </ul>
           [[/if]]
@@ -363,11 +364,11 @@ describe('Template Engine', () => {
   })
 
   describe('Error Handling', () => {
-    test('handles malformed templates gracefully', () => {
+    test('throws error for malformed templates with unclosed blocks', () => {
       const template = 'Hello >>[basics.name]<< [[#if basics.label]]Unclosed'
 
-      // This should not throw an error, but may not render correctly
-      expect(() => renderTemplate(template, sampleResumeData)).not.toThrow()
+      // This should throw a TemplateParseError due to unclosed block
+      expect(() => renderTemplate(template, sampleResumeData)).toThrow()
     })
 
     test('handles empty template', () => {
