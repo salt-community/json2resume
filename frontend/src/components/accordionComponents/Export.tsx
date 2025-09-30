@@ -1,7 +1,7 @@
-import type { ResumeData } from '@/types'
-import { Button } from '@/components/ui/button'
 import { useState } from 'react'
 import { Download } from 'lucide-react'
+import type { ResumeData } from '@/types'
+import { Button } from '@/components/ui/button'
 
 type Props = {
   resumeData: ResumeData
@@ -14,15 +14,25 @@ export default function Export({ resumeData }: Props) {
     setIsExporting(true)
     // Note: For best results, ensure "Background graphics" is enabled in your browser's print dialog
     try {
-      // Get the current resume HTML content from the GistTemplate
-      const resumeElement = document.querySelector('[data-resume-content]')
-      if (!resumeElement) {
+      // Find the rendered resume inside the Gist iframe and extract its HTML
+      const gistIframe = document.querySelector(
+        'iframe[sandbox][srcdoc]',
+      ) as HTMLIFrameElement | null
+
+      if (!gistIframe) {
         throw new Error('Resume content not found')
       }
 
-      // Clone the resume content
-      const clonedContent = resumeElement.cloneNode(true) as HTMLElement
-      
+      const gistDoc = gistIframe.contentDocument
+      const resumeInnerHtml =
+        gistDoc?.body?.innerHTML ||
+        gistIframe.getAttribute('srcdoc') ||
+        ''
+
+      if (!resumeInnerHtml || resumeInnerHtml.trim().length === 0) {
+        throw new Error('Resume content not found')
+      }
+
       // Create a hidden iframe for PDF generation
       const iframe = document.createElement('iframe')
       iframe.style.position = 'absolute'
@@ -32,12 +42,13 @@ export default function Export({ resumeData }: Props) {
       iframe.style.height = '600px'
       document.body.appendChild(iframe)
 
-      // Create HTML document for PDF generation
+      // Create HTML document for PDF generation with the extracted content
       const htmlContent = `
         <!DOCTYPE html>
         <html>
           <head>
             <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
             <title>Resume - ${resumeData.basics.name}</title>
             <style>
               body {
@@ -58,22 +69,27 @@ export default function Export({ resumeData }: Props) {
                 padding: 0;
                 background: white;
               }
+              img {
+                max-width: 100%;
+                height: auto;
+              }
             </style>
           </head>
           <body>
             <div class="resume-container">
-              ${clonedContent.outerHTML}
+              ${resumeInnerHtml}
             </div>
           </body>
         </html>
       `
 
-      // Write content to iframe
+      // Write content to the print iframe
+      iframe.contentDocument?.open()
       iframe.contentDocument?.write(htmlContent)
       iframe.contentDocument?.close()
 
       // Wait for content to load and images to render
-      await new Promise(resolve => setTimeout(resolve, 2000))
+      await new Promise((resolve) => setTimeout(resolve, 2000))
 
       // Calculate exact scrollable height
       const iframeDoc = iframe.contentDocument
@@ -83,187 +99,72 @@ export default function Export({ resumeData }: Props) {
 
       const scrollHeight = iframeDoc.documentElement.scrollHeight
       const pageHeightMm = scrollHeight * 0.264583
+      const contentWidthPx = iframeDoc.documentElement.scrollWidth
+      const pageWidthMm = contentWidthPx * 0.264583
 
       // Add print-specific styles with exact height and full page coverage
-      const printStyles = `
-        <style>
-          @media print {
-            @page {
-              size: 210mm ${pageHeightMm}mm;
-              margin: 0;
-            }
-            body {
-              margin: 0;
-              padding: 0;
-              height: ${pageHeightMm}mm;
-              overflow: hidden;
-            }
-            .resume-container {
-              width: 100%;
-              margin: 0;
-              padding: 0;
-              height: ${pageHeightMm}mm;
-              overflow: hidden;
-            }
-            .page {
-              width: 100% !important;
-              margin: 0 !important;
-              padding: 0 !important;
-            }
-            .main-content {
-              margin: 0 !important;
-              padding: 0 !important;
-            }
-            .sidebar {
-              margin: 0 !important;
-              padding: 16px !important;
-            }
-            .content {
-              margin: 0 !important;
-              padding: 8px !important;
-            }
-            .header {
-              margin: 0 !important;
-              padding: 8px 16px !important;
-            }
-            /* Optimize for file size while maintaining text selectability */
-            img {
-              max-width: 100% !important;
-              height: auto !important;
-              -webkit-print-color-adjust: exact !important;
-              print-color-adjust: exact !important;
-              /* Reduce image quality for smaller file size */
-              image-rendering: -webkit-optimize-contrast;
-              image-rendering: crisp-edges;
-            }
-            
-            /* Enable background graphics but optimize for size */
-            * {
-              -webkit-print-color-adjust: exact !important;
-              print-color-adjust: exact !important;
-              color-adjust: exact !important;
-            }
-            
-            /* Optimize text rendering for PDF */
-            body, html {
-              -webkit-print-color-adjust: exact !important;
-              print-color-adjust: exact !important;
-              color-adjust: exact !important;
-              /* Ensure text remains selectable */
-              -webkit-text-stroke: 0.01em transparent;
-              text-rendering: optimizeLegibility;
-            }
-            
-            /* Optimize text elements for smaller file size */
-            p, span, div, h1, h2, h3, h4, h5, h6, li, td, th {
-              -webkit-print-color-adjust: exact !important;
-              print-color-adjust: exact !important;
-              color-adjust: exact !important;
-              /* Ensure text is selectable and crisp */
-              -webkit-text-stroke: 0.01em transparent;
-              text-rendering: optimizeLegibility;
-            }
-            
-            /* Reduce background complexity for smaller file size */
-            [style*="background"],
-            [class*="bg-"] {
-              -webkit-print-color-adjust: exact !important;
-              print-color-adjust: exact !important;
-              color-adjust: exact !important;
-              /* Simplify gradients and complex backgrounds */
-              background-image: none !important;
-            }
-            
-            /* Optimize resume container for PDF generation */
-            .resume-container,
-            .page,
-            .main-content,
-            .sidebar,
-            .content,
-            .header {
-              -webkit-print-color-adjust: exact !important;
-              print-color-adjust: exact !important;
-              color-adjust: exact !important;
-              /* Ensure text remains selectable */
-              -webkit-text-stroke: 0.01em transparent;
-              text-rendering: optimizeLegibility;
-            }
-            
-            /* Remove unnecessary visual elements for smaller file size */
-            .no-print,
-            .print-hidden {
-              display: none !important;
-            }
-            
-            /* Optimize borders and shadows for PDF */
-            * {
-              box-shadow: none !important;
-              text-shadow: none !important;
-            }
-            
-            /* Ensure proper font embedding for text selectability */
-            @font-face {
-              font-family: 'system-ui';
-              font-display: swap;
-            }
+      const printCSS = `
+        @media print {
+          @page {
+            size: ${pageWidthMm}mm ${pageHeightMm}mm;
+            margin: 0;
           }
-        </style>
+          body {
+            margin: 0;
+            padding: 0;
+            height: ${pageHeightMm}mm;
+            width: ${pageWidthMm}mm;
+            overflow: hidden;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
+          .resume-container {
+            width: ${pageWidthMm}mm;
+            margin: 0;
+            padding: 0;
+            height: ${pageHeightMm}mm;
+            overflow: hidden;
+          }
+          .page,
+          .main-content,
+          .sidebar,
+          .content,
+          .header {
+            margin: 0 !important;
+            padding: 0 !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
+          img {
+            max-width: 100% !important;
+            height: auto !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+          }
+          [style*="background"],
+          [class*="bg-"] {
+            background-image: none !important;
+          }
+          .no-print,
+          .print-hidden {
+            display: none !important;
+          }
+          * {
+            box-shadow: none !important;
+            text-shadow: none !important;
+          }
+        }
       `
-
-      // Inject the print styles
       const styleElement = iframeDoc.createElement('style')
-      styleElement.innerHTML = printStyles
+      styleElement.textContent = printCSS
       iframeDoc.head.appendChild(styleElement)
 
-      // Enable background graphics and optimize for file size
-      try {
-        // Add additional CSS for file size optimization
-        const optimizationStyle = iframeDoc.createElement('style')
-        optimizationStyle.innerHTML = `
-          @media print {
-            * {
-              -webkit-print-color-adjust: exact !important;
-              print-color-adjust: exact !important;
-              color-adjust: exact !important;
-            }
-            body {
-              -webkit-print-color-adjust: exact !important;
-              print-color-adjust: exact !important;
-              color-adjust: exact !important;
-              /* Optimize for smaller file size */
-              font-size: 12px !important;
-              line-height: 1.4 !important;
-            }
-            /* Ensure text remains selectable and crisp */
-            p, span, div, h1, h2, h3, h4, h5, h6 {
-              -webkit-text-stroke: 0.01em transparent !important;
-              text-rendering: optimizeLegibility !important;
-            }
-            /* Remove complex visual effects for smaller file size */
-            * {
-              box-shadow: none !important;
-              text-shadow: none !important;
-              filter: none !important;
-              transform: none !important;
-            }
-          }
-        `
-        iframeDoc.head.appendChild(optimizationStyle)
-        
-        // Add print optimization meta tags
-        const metaViewport = iframeDoc.createElement('meta')
-        metaViewport.setAttribute('name', 'viewport')
-        metaViewport.setAttribute('content', 'width=device-width, initial-scale=1.0')
-        iframeDoc.head.appendChild(metaViewport)
-        
-        // Small delay to ensure styles are applied
-        setTimeout(() => {
-          iframe.contentWindow?.print()
-        }, 150)
-      } catch (error) {
-        // Fallback: just print normally
+      // Small delay to ensure styles are applied
+      setTimeout(() => {
         iframe.contentWindow?.print()
-      }
+      }, 150)
 
       // Clean up iframe after a delay
       setTimeout(() => {
