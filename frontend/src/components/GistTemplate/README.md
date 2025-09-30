@@ -209,16 +209,24 @@ Per-placeholder “raw” filters are not supported. Prefer keeping escaping on.
 
 ```tsx
 import { createFileRoute } from '@tanstack/react-router'
-import { GistTemplateDemo } from '@/components' // or '@/components/GistTemplateDemo'
+import { GistTemplate } from '@/components/GistTemplate'
 
-export const Route = createFileRoute('/gist-demo')({
-  component: GistDemo,
+export const Route = createFileRoute('/resume')({
+  component: ResumePage,
 })
 
-function GistDemo() {
+function ResumePage() {
+  const resumeData = {
+    basics: { name: 'John Doe', email: 'john@example.com' },
+    // ...rest of your JSON Resume
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
-      <GistTemplateDemo />
+      <GistTemplate
+        gistUrl="https://gist.github.com/username/gistId#file-template-html"
+        resumeData={resumeData}
+      />
     </div>
   )
 }
@@ -233,15 +241,3 @@ Templates are processed in this deterministic order:
 - No inline comparisons (e.g., `==`, `>`) — keep logic in data shaping.
 
 - Prefer loops over array indexing in templates for clarity.
-
-## Demo
-
-A ready-to-use demo page is included:
-
-```tsx
-import { GistTemplateDemo } from './GistTemplateDemo'
-
-export default function App() {
-  return <GistTemplateDemo />
-}
-```

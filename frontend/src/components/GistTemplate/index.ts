@@ -4,11 +4,10 @@
  * Purpose
  *   Re-export public modules so consumers can import from a single entrypoint.
  *
- * What’s exported
+ * What's exported
  *   - UI components + hook (GistTemplate)
- *   - Template engine’s main API (render/compile + types)
+ *   - Template engine's main API (render/compile + types)
  *   - Gist fetch utilities
- *   - Demo component (optional for apps that want to embed it)
  */
 
 export {
