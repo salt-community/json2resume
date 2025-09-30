@@ -161,24 +161,32 @@ export default function Basic({ resumeData, setResumeData }: Props) {
               )}
             </div>
             <div className="flex flex-col gap-1">
-              <Button
-                type="button"
-                variant={imageMode === 'url' ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => setImageMode('url')}
-                className="text-xs px-3 py-2 h-8"
-              >
-                URL
-              </Button>
-              <Button
-                type="button"
-                variant={imageMode === 'upload' ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => setImageMode('upload')}
-                className="text-xs px-3 py-2 h-8"
-              >
-                Upload
-              </Button>
+               <Button
+                 type="button"
+                 variant="outline"
+                 size="sm"
+                 onClick={() => setImageMode('url')}
+                 className={`text-xs px-3 py-2 h-8 ${
+                   imageMode === 'url' 
+                     ? 'bg-[var(--color-selected)] text-[var(--color-on-selected)] border-[var(--color-selected)]' 
+                     : ''
+                 }`}
+               >
+                 URL
+               </Button>
+               <Button
+                 type="button"
+                 variant="outline"
+                 size="sm"
+                 onClick={() => setImageMode('upload')}
+                 className={`text-xs px-3 py-2 h-8 ${
+                   imageMode === 'upload' 
+                     ? 'bg-[var(--color-selected)] text-[var(--color-on-selected)] border-[var(--color-selected)]' 
+                     : ''
+                 }`}
+               >
+                 Upload
+               </Button>
             </div>
           </div>
         </div>

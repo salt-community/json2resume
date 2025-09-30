@@ -17,6 +17,10 @@
   /* Accent */
   --color-accent: var(--theme-accent);
   --color-on-accent: var(--theme-on-accent);
+  
+  /* Selected state */
+  --color-selected: var(--theme-selected);
+  --color-on-selected: var(--theme-on-selected);
 }
 
 /* Light theme defaults */
@@ -39,6 +43,10 @@
   /* Accent */
   --theme-accent: #4f46e5;          /* indigo-600 */
   --theme-on-accent: #ffffff;       /* white */
+  
+  /* Selected state (light) */
+  --theme-selected: #e5e5e5;        /* neutral-200 */
+  --theme-on-selected: #171717;     /* neutral-900 */
 }
 
 /* Dark theme overrides: follow system preference */
@@ -61,6 +69,10 @@
     /* Accent */
     --theme-accent: #4f46e5;          /* indigo-600 */
     --theme-on-accent: #ffffff;       /* white */
+    
+    /* Selected state (dark) */
+    --theme-selected: #404040;        /* neutral-700 */
+    --theme-on-selected: #f5f5f5;     /* neutral-100 */
   }
 }
 
