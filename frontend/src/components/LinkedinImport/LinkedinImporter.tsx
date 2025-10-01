@@ -211,15 +211,23 @@ function convertToResumeData(unifiedData: any): ResumeData {
         return [...linkedIn, ...filteredWebsites]
       })(),
     },
-    work: (unifiedData.positions || []).map((pos: any) => ({
-      name: pos.company_name || pos.organization || '',
-      position: pos.title || pos.position || '',
-      location: pos.location || '',
-      startDate: pos.start_date || pos.start_date_month_year || '',
-      endDate: pos.end_date || pos.end_date_month_year || '',
-      summary: pos.description || pos.summary || '',
-      highlights: pos.description ? [pos.description] : [],
-    })),
+    work: (unifiedData.positions || []).map((pos: any) => {
+      const start =
+        pos.started_on || pos.start_date || pos.start_date_month_year || ''
+      const endRaw = (pos.finished_on ??
+        pos.end_date ??
+        pos.end_date_month_year) as string | null | undefined
+      const end = endRaw == null || endRaw === '' ? 'Present' : endRaw
+      return {
+        name: pos.company_name || pos.organization || '',
+        position: pos.title || pos.position || '',
+        location: pos.location || '',
+        startDate: start,
+        endDate: end,
+        summary: pos.description || pos.summary || '',
+        highlights: pos.description ? [pos.description] : [],
+      }
+    }),
     education: (unifiedData.education || []).map((edu: any) => ({
       institution: edu.school_name || edu.institution || '',
       area: edu.field_of_study || edu.degree_name || '',
