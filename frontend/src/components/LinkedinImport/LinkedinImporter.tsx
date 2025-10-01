@@ -236,13 +236,25 @@ function convertToResumeData(unifiedData: any): ResumeData {
       endDate: edu.end_date || edu.end_date_month_year || '',
       score: edu.grade || '',
     })),
-    skills: (unifiedData.skills || []).map((skill: any) => ({
-      name:
-        typeof skill === 'string'
-          ? skill
-          : skill.name || skill.skill_name || '',
-      level: skill.level || '',
-    })),
+    skills: (() => {
+      const raw = unifiedData.skills || []
+      const keywords: string[] = raw
+        .map((s: any) =>
+          typeof s === 'string' ? s : s.name || s.skill_name || '',
+        )
+        .map((s: string) => String(s).trim())
+        .filter((s: string) => s.length > 0)
+      const deduped: string[] = Array.from(new Set(keywords))
+      return deduped.length
+        ? [
+            {
+              name: 'Software Development',
+              level: '',
+              keywords: deduped,
+            },
+          ]
+        : []
+    })(),
     languages: (unifiedData.languages || []).map((lang: any) => ({
       language: lang.language_name || lang.name || '',
       fluency: lang.proficiency || lang.level || '',
