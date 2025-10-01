@@ -14,8 +14,8 @@ import Projects from './accordionComponents/Projects'
 import Export from './accordionComponents/Export'
 import ResumeTranslator from './accordionComponents/ResumeTranslator'
 import { LinkedinImporter } from './LinkedinImport'
-import SectionHeadersComponent from './accordionComponents/SectionHeaders'
 import Themes from './accordionComponents/Themes'
+import SectionHeadersComponent from './accordionComponents/SectionHeaders'
 import type { ResumeData } from '@/types'
 import {
   Accordion,

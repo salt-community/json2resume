@@ -107,7 +107,10 @@ export function useGistTemplate(
 
       // 2) Render final HTML with the new engine
       //    - The engine escapes injected values by default.
-      const processedHtml = renderTemplate(fetchResult.content, resumeData)
+      const processedHtml = renderTemplate(
+        fetchResult.content || '',
+        resumeData,
+      )
 
       // 3) Update UI state
       setState((prev) => ({
