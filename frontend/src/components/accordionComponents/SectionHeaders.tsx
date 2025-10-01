@@ -24,7 +24,7 @@ const defaultHeaders: SectionHeaders = {
   projects: 'Projects',
 }
 
-function SectionHeaders({ resumeData, setResumeData }: Props) {
+function SectionHeadersComponent({ resumeData, setResumeData }: Props) {
   const [headers, setHeaders] = useState<SectionHeaders>(
     resumeData.meta?.sectionHeaders || defaultHeaders,
   )
@@ -116,7 +116,7 @@ function SectionHeaders({ resumeData, setResumeData }: Props) {
   ]
 
   return (
-    <div className="space-y-6">
+    <div className="p-4 space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h3 className="text-lg font-medium">Section Headers</h3>
@@ -170,4 +170,4 @@ function SectionHeaders({ resumeData, setResumeData }: Props) {
   )
 }
 
-export default SectionHeaders
+export default SectionHeadersComponent

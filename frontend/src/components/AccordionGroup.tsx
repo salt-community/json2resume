@@ -160,7 +160,7 @@ function AccordionGroup({
     ],
   )
   return (
-    <Accordion type="single" collapsible>
+    <Accordion type="single" collapsible className="space-y-2">
       {items.map((item, index) => (
         <AccordionItem
           className={index === 13 ? 'mb-16' : ''}

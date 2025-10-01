@@ -99,9 +99,9 @@ function Work({ resumeData, setResumeData }: Props) {
 
   return (
     <div className="p-4 space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <h3 className="text-lg font-medium">Work Experience</h3>
-        <Button onClick={addWork} size="sm">
+        <Button onClick={addWork} size="sm" className="flex-shrink-0">
           Add Work Experience
         </Button>
       </div>

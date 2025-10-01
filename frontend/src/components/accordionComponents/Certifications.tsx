@@ -65,9 +65,9 @@ export default function Certifications({ resumeData, setResumeData }: Props) {
 
   return (
     <div className="p-4 space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <h3 className="text-lg font-medium">Certificates</h3>
-        <Button onClick={addCertificate} size="sm">
+        <Button onClick={addCertificate} size="sm" className="flex-shrink-0">
           Add Certificate
         </Button>
       </div>
