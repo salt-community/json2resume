@@ -93,7 +93,7 @@ describe('Template Engine', () => {
       const template = '[[#each work]]>>[.]<< [[/each]]'
       const result = renderTemplate(template, sampleResumeData)
       const expected =
-        '{"company":"Tech Corp","position":"Senior Developer","startDate":"2020-01","endDate":"2023-12","summary":"Led development of key features","highlights":["Improved performance by 50%","Mentored junior developers"]} {"company":"Startup Inc","position":"Full Stack Developer","startDate":"2018-06","endDate":"2019-12","summary":"Built web applications from scratch"} '
+        '{&quot;company&quot;:&quot;Tech Corp&quot;,&quot;position&quot;:&quot;Senior Developer&quot;,&quot;startDate&quot;:&quot;2020-01&quot;,&quot;endDate&quot;:&quot;2023-12&quot;,&quot;summary&quot;:&quot;Led development of key features&quot;,&quot;highlights&quot;:[&quot;Improved performance by 50%&quot;,&quot;Mentored junior developers&quot;]} {&quot;company&quot;:&quot;Startup Inc&quot;,&quot;position&quot;:&quot;Full Stack Developer&quot;,&quot;startDate&quot;:&quot;2018-06&quot;,&quot;endDate&quot;:&quot;2019-12&quot;,&quot;summary&quot;:&quot;Built web applications from scratch&quot;} '
       expect(result).toBe(expected)
     })
 
