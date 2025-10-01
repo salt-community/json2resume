@@ -16,11 +16,9 @@
  *   - The template’s *own* HTML/CSS is rendered as-is (trusted template).
  */
 
-import React, { memo, useCallback, useEffect, useMemo, useState } from 'react'
-import { renderTemplate } from './templateEngine'
-import { fetchAndValidateGistTemplate } from './gistFetcher'
+import React, { memo, useEffect } from 'react'
 import type { ResumeData } from './templateEngine'
-import type { GistFetchResult } from './gistFetcher'
+import { useGistTemplate } from '@/hooks'
 
 export interface GistTemplateProps {
   /** URL to the Gist that contains an HTML template */
@@ -37,133 +35,6 @@ export interface GistTemplateProps {
   onError?: (error: string) => void
   /** Whether to show a loading placeholder while fetching */
   showLoading?: boolean
-}
-
-export interface GistTemplateState {
-  /** Final rendered HTML */
-  processedHtml: string
-  /** Is the template currently being fetched/processed? */
-  loading: boolean
-  /** Any error message from fetching or rendering */
-  error: string | null
-  /** Raw template text (before rendering) */
-  rawTemplate: string
-  /** True once we have fetched the template at least once */
-  templateFetched: boolean
-}
-
-/**
- * useGistTemplate
- * ---------------
- * A reusable hook that:
- *  1) fetches the Gist template,
- *  2) renders it with the provided resume data,
- *  3) returns the UI state + a refetch function.
- */
-export function useGistTemplate(
-  gistUrl: string,
-  resumeData: ResumeData,
-  filename?: string,
-) {
-  const [state, setState] = useState<GistTemplateState>({
-    processedHtml: '',
-    loading: false,
-    error: null,
-    rawTemplate: '',
-    templateFetched: false,
-  })
-
-  // Separate template fetching from data rendering
-  const fetchTemplate = useCallback(async () => {
-    // Guard against missing inputs
-    if (!gistUrl) {
-      setState((prev) => ({
-        ...prev,
-        error: 'Missing required props: gistUrl is required',
-        loading: false,
-      }))
-      return
-    }
-
-    setState((prev) => ({ ...prev, loading: true, error: null }))
-
-    try {
-      // 1) Fetch validated HTML template from the Gist
-      const fetchResult: GistFetchResult = await fetchAndValidateGistTemplate(
-        gistUrl,
-        filename,
-      )
-
-      if (!fetchResult.success) {
-        setState((prev) => ({
-          ...prev,
-          loading: false,
-          error: fetchResult.error || 'Failed to fetch template',
-        }))
-        return
-      }
-
-      // 2) Store the raw template and mark as fetched
-      setState((prev) => ({
-        ...prev,
-        rawTemplate: fetchResult.content || '',
-        templateFetched: true,
-        loading: false,
-        error: null,
-      }))
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : 'An unexpected error occurred'
-      setState((prev) => ({
-        ...prev,
-        loading: false,
-        error: errorMessage,
-      }))
-    }
-  }, [gistUrl, filename])
-
-  // Use useMemo to efficiently render template with data
-  const processedHtml = useMemo(() => {
-    if (!state.rawTemplate || !state.templateFetched) {
-      return state.processedHtml
-    }
-
-    try {
-      return renderTemplate(state.rawTemplate, resumeData)
-    } catch (error) {
-      console.error('Failed to render template:', error)
-      return state.processedHtml
-    }
-  }, [
-    state.rawTemplate,
-    state.templateFetched,
-    resumeData,
-    state.processedHtml,
-  ])
-
-  // Update state when processed HTML changes
-  useEffect(() => {
-    if (processedHtml !== state.processedHtml) {
-      setState((prev) => ({
-        ...prev,
-        processedHtml,
-      }))
-    }
-  }, [processedHtml, state.processedHtml])
-
-  // Fetch template only when URL or filename changes
-  useEffect(() => {
-    fetchTemplate()
-  }, [fetchTemplate])
-
-  const refetch = useCallback(async () => {
-    await fetchTemplate()
-  }, [fetchTemplate])
-
-  return {
-    ...state,
-    refetch,
-  }
 }
 
 /** Small presentational loading component */

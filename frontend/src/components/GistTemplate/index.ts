@@ -13,10 +13,8 @@
 export {
   GistTemplate,
   ClassicGistTemplate,
-  useGistTemplate,
   DEFAULT_CLASSIC_TEMPLATE_URL,
   type GistTemplateProps,
-  type GistTemplateState,
 } from './GistTemplate'
 
 // New engine API (replaces previous processTemplate/sanitizeTemplate)
