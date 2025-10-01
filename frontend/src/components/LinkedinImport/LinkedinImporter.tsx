@@ -225,7 +225,7 @@ function convertToResumeData(unifiedData: any): ResumeData {
         startDate: start,
         endDate: end,
         summary: pos.description || pos.summary || '',
-        highlights: pos.description ? [pos.description] : [],
+        highlights: [],
       }
     }),
     education: (unifiedData.education || []).map((edu: any) => ({
