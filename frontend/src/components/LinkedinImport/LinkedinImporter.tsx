@@ -314,6 +314,7 @@ export default function LinkedinImporter({
   const [collections, setCollections] = useState<Record<string, any[]>>({})
   const [logs, setLogs] = useState<string[]>([])
   const [busy, setBusy] = useState(false)
+  const [dragOver, setDragOver] = useState(false)
   const fileInputRef = useRef<HTMLInputElement | null>(null)
 
   const addLog = useCallback(
@@ -358,6 +359,7 @@ export default function LinkedinImporter({
     (e: React.DragEvent) => {
       e.preventDefault()
       e.stopPropagation()
+      setDragOver(false)
       const files = e.dataTransfer.files
       void handleFiles(files)
     },
@@ -417,8 +419,14 @@ export default function LinkedinImporter({
             onDragOver={(e) => {
               e.preventDefault()
               e.dataTransfer.dropEffect = 'copy'
+              setDragOver(true)
             }}
-            className="border-2 border-dashed rounded-2xl p-8 text-center cursor-pointer hover:bg-muted/50"
+            onDragLeave={() => setDragOver(false)}
+            className={`border-2 border-dashed rounded-2xl p-8 text-center cursor-pointer transition-colors ${
+              dragOver
+                ? 'border-primary bg-primary/5'
+                : 'border-border hover:bg-muted/50'
+            }`}
             onClick={onBrowse}
           >
             <div className="flex flex-col items-center gap-2">
