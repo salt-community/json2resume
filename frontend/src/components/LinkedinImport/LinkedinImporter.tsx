@@ -464,41 +464,12 @@ export default function LinkedinImporter({
       {!!Object.keys(collections).length && (
         <Card>
           <CardHeader>
-            <CardTitle>Preview</CardTitle>
+            <CardTitle>Converted Resume Data</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-              {Object.entries(collections)
-                .filter(([k]) =>
-                  [
-                    'profile',
-                    'education',
-                    'skills',
-                    'recommendations',
-                    'positions',
-                  ].includes(k),
-                )
-                .map(([k, rows]) => (
-                  <div
-                    key={k}
-                    className="p-4 rounded-xl border bg-card text-card-foreground shadow-sm"
-                  >
-                    <div className="font-semibold mb-2">{k}</div>
-                    <div className="text-xs text-muted-foreground mb-2">
-                      {rows.length} rows
-                    </div>
-                    <pre className="text-xs max-h-56 overflow-auto whitespace-pre-wrap">
-                      {JSON.stringify(rows, null, 2)}
-                    </pre>
-                  </div>
-                ))}
-            </div>
-            <div className="p-4 rounded-xl border bg-muted/30">
-              <div className="font-semibold mb-2">Converted Resume Data</div>
-              <pre className="text-xs max-h-64 overflow-auto whitespace-pre-wrap">
-                {JSON.stringify(resumeData, null, 2)}
-              </pre>
-            </div>
+            <pre className="text-xs max-h-64 overflow-auto whitespace-pre-wrap">
+              {JSON.stringify(resumeData, null, 2)}
+            </pre>
           </CardContent>
         </Card>
       )}
