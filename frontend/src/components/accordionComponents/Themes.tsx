@@ -1,4 +1,4 @@
-import { memo, useCallback, useState } from 'react'
+import { memo, useState } from 'react'
 import { ExternalLink, Eye, Github, Palette } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -152,32 +152,72 @@ function Themes({ onThemeChange, currentTheme }: Props) {
                 key={theme.id}
                 className={`relative border rounded-lg p-4 cursor-pointer transition-all hover:shadow-md ${
                   selectedTheme === theme.id
-                    ? 'border-orange-500 bg-orange-50 ring-2 ring-orange-200'
-                    : 'border-gray-200 hover:border-gray-300'
+                    ? 'border-orange-500 ring-2 ring-orange-200'
+                    : 'border-gray-200 hover:border-gray-300 dark:border-gray-700 dark:hover:border-gray-600'
                 }`}
+                style={{
+                  backgroundColor:
+                    selectedTheme === theme.id
+                      ? 'var(--theme-selected)'
+                      : 'var(--theme-surface)',
+                  color:
+                    selectedTheme === theme.id
+                      ? 'var(--theme-on-selected)'
+                      : 'var(--theme-text-strong)',
+                }}
                 onClick={() => handlePresetSelect(theme)}
               >
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex items-start gap-3 flex-1 min-w-0">
-                    <div className="p-2 rounded-lg bg-orange-100 flex-shrink-0">
-                      <Palette className="w-5 h-5 text-orange-600" />
+                    <div
+                      className="p-2 rounded-lg flex-shrink-0"
+                      style={{
+                        backgroundColor:
+                          selectedTheme === theme.id
+                            ? 'var(--theme-accent)'
+                            : 'var(--theme-surface-strong)',
+                      }}
+                    >
+                      <Palette
+                        className="w-5 h-5"
+                        style={{
+                          color:
+                            selectedTheme === theme.id
+                              ? 'var(--theme-on-accent)'
+                              : 'var(--theme-accent)',
+                        }}
+                      />
                     </div>
                     <div className="flex-1 min-w-0">
                       <h4 className="font-medium text-sm break-words">
                         {theme.id}
                       </h4>
-                      <p className="text-xs text-muted-foreground mt-1 break-words">
+                      <p
+                        className="text-xs mt-1 break-words"
+                        style={{
+                          color:
+                            selectedTheme === theme.id
+                              ? 'var(--theme-text-muted)'
+                              : 'var(--theme-text-muted)',
+                        }}
+                      >
                         {theme.description}
                       </p>
                     </div>
                   </div>
                   {selectedTheme === theme.id && (
-                    <div className="w-2 h-2 bg-orange-500 rounded-full flex-shrink-0 ml-2"></div>
+                    <div
+                      className="w-2 h-2 rounded-full flex-shrink-0 ml-2"
+                      style={{ backgroundColor: 'var(--theme-accent)' }}
+                    ></div>
                   )}
                 </div>
 
                 <div className="flex items-center justify-between gap-2">
-                  <span className="text-xs text-gray-500 font-mono truncate flex-1 min-w-0">
+                  <span
+                    className="text-xs font-mono truncate flex-1 min-w-0"
+                    style={{ color: 'var(--theme-text-muted)' }}
+                  >
                     gist.github.com/...
                   </span>
                   <div className="flex gap-1 flex-shrink-0">
@@ -212,10 +252,22 @@ function Themes({ onThemeChange, currentTheme }: Props) {
 
         {/* Current Theme Status */}
         {selectedTheme && (
-          <div className="p-3 rounded-md bg-green-50 border border-green-200">
+          <div
+            className="p-3 rounded-md border"
+            style={{
+              backgroundColor: 'var(--theme-surface-strong)',
+              borderColor: 'var(--theme-border)',
+            }}
+          >
             <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-              <span className="text-sm text-green-700">
+              <div
+                className="w-2 h-2 rounded-full"
+                style={{ backgroundColor: 'var(--theme-accent)' }}
+              ></div>
+              <span
+                className="text-sm"
+                style={{ color: 'var(--theme-text-strong)' }}
+              >
                 Theme applied successfully! The preview will update with your
                 selected theme.
               </span>
