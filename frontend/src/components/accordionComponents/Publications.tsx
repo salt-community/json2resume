@@ -1,3 +1,4 @@
+import { memo, useCallback } from 'react'
 import type { Publication, ResumeData } from '@/types'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -9,7 +10,7 @@ type Props = {
   setResumeData: (data: ResumeData) => void
 }
 
-export default function Publications({ resumeData, setResumeData }: Props) {
+function Publications({ resumeData, setResumeData }: Props) {
   const addPublication = () => {
     const newPublication: Publication = {
       name: '',
@@ -201,3 +202,5 @@ export default function Publications({ resumeData, setResumeData }: Props) {
     </div>
   )
 }
+
+export default memo(Publications)

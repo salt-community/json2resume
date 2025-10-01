@@ -1,9 +1,9 @@
 import { useState } from 'react'
+import { RotateCcw } from 'lucide-react'
 import type { ResumeData, SectionHeaders } from '@/types'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
-import { RotateCcw } from 'lucide-react'
 
 type Props = {
   resumeData: ResumeData

@@ -116,7 +116,7 @@ function parse(template: string): Array<Node> {
       .filter((n) => n !== -1)
       .sort((a, b) => a - b)[0]
 
-    if (next === undefined) {
+    if (next === -1) {
       // No more tags; flush remaining text
       pushNode({ type: 'text', value: template.slice(i) })
       break
@@ -223,7 +223,7 @@ function htmlEscape(s: unknown): string {
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
-    .replace(/\"/g, '&quot;')
+    .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;')
 }
 
@@ -341,10 +341,11 @@ function renderNodes(
         break
       }
 
-      default:
+      default: {
         // exhaustive check
         const _ex: never = n
         void _ex
+      }
     }
   }
 
@@ -352,7 +353,7 @@ function renderNodes(
 }
 
 export interface CompiledTemplate {
-  render(data: JsonLike, options?: RenderOptions): string
+  render: (data: JsonLike, options?: RenderOptions) => string
 }
 
 const compileCache = new Map<string, Array<Node>>()

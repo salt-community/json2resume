@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { memo, useCallback, useState } from 'react'
 import type { ResumeData, Skill } from '@/types'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -9,7 +9,7 @@ type Props = {
   setResumeData: (data: ResumeData) => void
 }
 
-export default function Skills({ resumeData, setResumeData }: Props) {
+function Skills({ resumeData, setResumeData }: Props) {
   const [keywordInputs, setKeywordInputs] = useState<Record<number, string>>({})
 
   const addSkill = () => {
@@ -197,3 +197,5 @@ export default function Skills({ resumeData, setResumeData }: Props) {
     </div>
   )
 }
+
+export default memo(Skills)

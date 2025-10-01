@@ -16,12 +16,11 @@
  *   - The template’s *own* HTML/CSS is rendered as-is (trusted template).
  */
 
-import React, { useState, useEffect, useCallback } from 'react'
-import { renderTemplate, type ResumeData } from './templateEngine'
-import {
-  fetchAndValidateGistTemplate,
-  type GistFetchResult,
-} from './gistFetcher'
+import React, { memo, useCallback, useEffect, useState } from 'react'
+import { renderTemplate } from './templateEngine'
+import { fetchAndValidateGistTemplate } from './gistFetcher'
+import type { ResumeData } from './templateEngine'
+import type { GistFetchResult } from './gistFetcher'
 
 export interface GistTemplateProps {
   /** URL to the Gist that contains an HTML template */
@@ -76,10 +75,10 @@ export function useGistTemplate(
 
   const fetchAndProcessTemplate = useCallback(async () => {
     // Guard against missing inputs
-    if (!gistUrl || !resumeData) {
+    if (!gistUrl) {
       setState((prev) => ({
         ...prev,
-        error: 'Missing required props: gistUrl and resumeData are required',
+        error: 'Missing required props: gistUrl is required',
         loading: false,
       }))
       return
@@ -97,9 +96,7 @@ export function useGistTemplate(
         filename,
       )
 
-      if (cancelled) return
-
-      if (!fetchResult.success || !fetchResult.content) {
+      if (!fetchResult.success) {
         setState((prev) => ({
           ...prev,
           loading: false,
@@ -124,13 +121,11 @@ export function useGistTemplate(
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : 'An unexpected error occurred'
-      if (!cancelled) {
-        setState((prev) => ({
-          ...prev,
-          loading: false,
-          error: errorMessage,
-        }))
-      }
+      setState((prev) => ({
+        ...prev,
+        loading: false,
+        error: errorMessage,
+      }))
     }
 
     return () => {
@@ -206,62 +201,65 @@ const ErrorState: React.FC<{ error: string; onRetry?: () => void }> = ({
  * ------------
  * Thin wrapper that renders loading/error states, and injects the processed HTML.
  */
-export const GistTemplate: React.FC<GistTemplateProps> = ({
-  gistUrl,
-  resumeData,
-  filename,
-  className = '',
-  onProcessed,
-  onError,
-  showLoading = true,
-}) => {
-  const { processedHtml, loading, error, refetch } = useGistTemplate(
+const GistTemplate: React.FC<GistTemplateProps> = memo(
+  ({
     gistUrl,
     resumeData,
     filename,
-  )
-
-  // Bubble up the processed HTML if a callback is provided
-  useEffect(() => {
-    if (processedHtml && onProcessed) onProcessed(processedHtml)
-  }, [processedHtml, onProcessed])
-
-  // Bubble up errors if a callback is provided
-  useEffect(() => {
-    if (error && onError) onError(error)
-  }, [error, onError])
-
-  if (loading && showLoading) return <LoadingState />
-  if (error) return <ErrorState error={error} onRetry={refetch} />
-
-  if (processedHtml) {
-    return (
-      <div
-        className={`gist-template-container ${className}`}
-        data-resume-content="true"
-        // Safe because values were HTML-escaped by the engine;
-        // the template *structure* is trusted by you (from your gist).
-        dangerouslySetInnerHTML={{ __html: processedHtml }}
-      />
+    className = '',
+    onProcessed,
+    onError,
+    showLoading = true,
+  }) => {
+    const { processedHtml, loading, error, refetch } = useGistTemplate(
+      gistUrl,
+      resumeData,
+      filename,
     )
-  }
 
-  return (
-    <div className="p-4 text-center text-gray-500">
-      No template content available
-    </div>
-  )
-}
+    // Bubble up the processed HTML if a callback is provided
+    useEffect(() => {
+      if (processedHtml && onProcessed) onProcessed(processedHtml)
+    }, [processedHtml, onProcessed])
+
+    // Bubble up errors if a callback is provided
+    useEffect(() => {
+      if (error && onError) onError(error)
+    }, [error, onError])
+
+    if (loading && showLoading) return <LoadingState />
+    if (error) return <ErrorState error={error} onRetry={refetch} />
+
+    if (processedHtml) {
+      return (
+        <div
+          className={`gist-template-container ${className}`}
+          data-resume-content="true"
+          // Safe because values were HTML-escaped by the engine;
+          // the template *structure* is trusted by you (from your gist).
+          dangerouslySetInnerHTML={{ __html: processedHtml }}
+        />
+      )
+    }
+
+    return (
+      <div className="p-4 text-center text-gray-500">
+        No template content available
+      </div>
+    )
+  },
+)
+
+export { GistTemplate }
 
 /** Sensible default template URL (your shared classic template) */
 export const DEFAULT_CLASSIC_TEMPLATE_URL =
   'https://gist.github.com/samuel-kar/11b0969ab91989b64650ac9361c8103b'
 
 /** Convenience wrapper that pre-binds the default template URL */
-export const ClassicGistTemplate: React.FC<
-  Omit<GistTemplateProps, 'gistUrl'>
-> = (props) => (
-  <GistTemplate {...props} gistUrl={DEFAULT_CLASSIC_TEMPLATE_URL} />
-)
+export const ClassicGistTemplate: React.FC<Omit<GistTemplateProps, 'gistUrl'>> =
+  memo((props) => (
+    <GistTemplate {...props} gistUrl={DEFAULT_CLASSIC_TEMPLATE_URL} />
+  ))
 
 export default GistTemplate

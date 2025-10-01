@@ -1,7 +1,7 @@
+import { memo, useCallback } from 'react'
 import type { Education, ResumeData } from '@/types'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
 
 type Props = {
@@ -9,7 +9,7 @@ type Props = {
   setResumeData: (data: ResumeData) => void
 }
 
-export default function Education({ resumeData, setResumeData }: Props) {
+function Education({ resumeData, setResumeData }: Props) {
   const addEducation = () => {
     const newEducation: Education = {
       institution: '',
@@ -299,3 +299,5 @@ export default function Education({ resumeData, setResumeData }: Props) {
     </div>
   )
 }
+
+export default memo(Education)

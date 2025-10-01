@@ -1,3 +1,4 @@
+import { memo, useCallback } from 'react'
 import type { ResumeData, Work } from '@/types'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -9,8 +10,8 @@ type Props = {
   setResumeData: (data: ResumeData) => void
 }
 
-export default function Work({ resumeData, setResumeData }: Props) {
-  const addWork = () => {
+function Work({ resumeData, setResumeData }: Props) {
+  const addWork = useCallback(() => {
     const newWork: Work = {
       name: '',
       position: '',
@@ -24,7 +25,7 @@ export default function Work({ resumeData, setResumeData }: Props) {
       ...resumeData,
       work: [...(resumeData.work || []), newWork],
     })
-  }
+  }, [resumeData, setResumeData])
 
   const updateWork = (
     index: number,
@@ -303,3 +304,5 @@ export default function Work({ resumeData, setResumeData }: Props) {
     </div>
   )
 }
+
+export default memo(Work)

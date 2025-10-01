@@ -1,17 +1,17 @@
-import { useState, useMemo, useEffect } from 'react'
+import { memo, useCallback, useEffect, useMemo, useState } from 'react'
+import { CheckCircle, Languages, RotateCcw, Search, X } from 'lucide-react'
+import type { ResumeData } from '@/types'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { useTranslate } from '@/useTranslate'
-import type { ResumeData } from '@/types'
-import { Languages, RotateCcw, Search, CheckCircle, X } from 'lucide-react'
 
 interface ResumeTranslatorProps {
   resumeData: ResumeData
   onTranslationComplete: (translatedData: ResumeData) => void
 }
 
-export default function ResumeTranslator({
+function ResumeTranslator({
   resumeData,
   onTranslationComplete,
 }: ResumeTranslatorProps) {
@@ -230,8 +230,7 @@ export default function ResumeTranslator({
           {translateMutation.isError && (
             <div className="p-3 bg-red-50 border border-red-200 rounded-md">
               <p className="text-red-700 text-sm">
-                Error:{' '}
-                {translateMutation.error?.message || 'Translation failed'}
+                Error: {translateMutation.error.message || 'Translation failed'}
               </p>
             </div>
           )}
@@ -264,3 +263,5 @@ export default function ResumeTranslator({
     </div>
   )
 }
+
+export default memo(ResumeTranslator)

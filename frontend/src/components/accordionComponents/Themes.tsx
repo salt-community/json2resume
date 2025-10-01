@@ -1,8 +1,8 @@
-import { useState } from 'react'
+import { memo, useCallback, useState } from 'react'
+import { ExternalLink, Eye, Github, Palette } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { ExternalLink, Palette, Github, Eye } from 'lucide-react'
 
 interface Theme {
   id: string
@@ -48,7 +48,7 @@ interface Props {
   currentTheme?: string
 }
 
-export default function Themes({ onThemeChange, currentTheme }: Props) {
+function Themes({ onThemeChange, currentTheme }: Props) {
   const [customUrl, setCustomUrl] = useState('')
   const [selectedTheme, setSelectedTheme] = useState<string | null>(() => {
     // Find the theme that matches the current theme URL
@@ -69,7 +69,7 @@ export default function Themes({ onThemeChange, currentTheme }: Props) {
     if (!customUrl.trim()) return
 
     // Validate GitHub Gist URL
-    const gistUrlPattern = /^https:\/\/gist\.github\.com\/[^\/]+\/[a-f0-9]+$/
+    const gistUrlPattern = /^https:\/\/gist\.github\.com\/[^/]+\/[a-f0-9]+$/
     if (!gistUrlPattern.test(customUrl)) {
       alert('Please enter a valid GitHub Gist URL')
       return
@@ -226,3 +226,5 @@ export default function Themes({ onThemeChange, currentTheme }: Props) {
     </div>
   )
 }
+
+export default memo(Themes)

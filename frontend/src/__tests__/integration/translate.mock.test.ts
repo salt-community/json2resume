@@ -1,6 +1,6 @@
-import { describe, test, expect, vi, afterEach } from 'vitest'
-import { translateText } from '@/useTranslate.ts'
+import { afterEach, describe, expect, test, vi } from 'vitest'
 import type { ResumeData } from '@/types.ts'
+import { translateText } from '@/useTranslate.ts'
 
 afterEach(() => {
   vi.restoreAllMocks()

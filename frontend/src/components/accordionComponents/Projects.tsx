@@ -1,3 +1,4 @@
+import { memo, useCallback } from 'react'
 import type { Project, ResumeData } from '@/types'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -9,7 +10,7 @@ type Props = {
   setResumeData: (data: ResumeData) => void
 }
 
-export default function Projects({ resumeData, setResumeData }: Props) {
+function Projects({ resumeData, setResumeData }: Props) {
   const addProject = () => {
     const newProject: Project = {
       name: '',
@@ -298,3 +299,5 @@ export default function Projects({ resumeData, setResumeData }: Props) {
     </div>
   )
 }
+
+export default memo(Projects)

@@ -1,3 +1,4 @@
+import { memo, useCallback } from 'react'
 import type { ResumeData, Volunteer } from '@/types'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -9,7 +10,7 @@ type Props = {
   setResumeData: (data: ResumeData) => void
 }
 
-export default function Volunteering({ resumeData, setResumeData }: Props) {
+function Volunteering({ resumeData, setResumeData }: Props) {
   const addVolunteer = () => {
     const newVolunteer: Volunteer = {
       organization: '',
@@ -293,3 +294,5 @@ export default function Volunteering({ resumeData, setResumeData }: Props) {
     </div>
   )
 }
+
+export default memo(Volunteering)
