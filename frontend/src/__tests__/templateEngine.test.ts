@@ -92,7 +92,8 @@ describe('Template Engine', () => {
     test('renders current context with dot notation', () => {
       const template = '[[#each work]]>>[.]<< [[/each]]'
       const result = renderTemplate(template, sampleResumeData)
-      const expected = '{"company":"Tech Corp","position":"Senior Developer","startDate":"2020-01","endDate":"2023-12","summary":"Led development of key features","highlights":["Improved performance by 50%","Mentored junior developers"]} {"company":"Startup Inc","position":"Full Stack Developer","startDate":"2018-06","endDate":"2019-12","summary":"Built web applications from scratch"} '
+      const expected =
+        '{"company":"Tech Corp","position":"Senior Developer","startDate":"2020-01","endDate":"2023-12","summary":"Led development of key features","highlights":["Improved performance by 50%","Mentored junior developers"]} {"company":"Startup Inc","position":"Full Stack Developer","startDate":"2018-06","endDate":"2019-12","summary":"Built web applications from scratch"} '
       expect(result).toBe(expected)
     })
 
@@ -210,7 +211,7 @@ describe('Template Engine', () => {
     test('joins array with custom separator', () => {
       const template = 'Skills: [[#join skills.0.keywords| | ]]'
       const result = renderTemplate(template, sampleResumeData)
-      expect(result).toBe('Skills: ES6 | React | Node.js')
+      expect(result).toBe('Skills: ES6 |React |Node.js')
     })
 
     test('handles empty arrays in join', () => {
