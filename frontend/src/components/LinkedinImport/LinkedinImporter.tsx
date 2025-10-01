@@ -255,10 +255,19 @@ function convertToResumeData(unifiedData: any): ResumeData {
           ]
         : []
     })(),
-    languages: (unifiedData.languages || []).map((lang: any) => ({
-      language: lang.language_name || lang.name || '',
-      fluency: lang.proficiency || lang.level || '',
-    })),
+    languages: (() => {
+      const mapped = (unifiedData.languages || []).map((lang: any) => ({
+        language: lang.language_name || lang.name || '',
+        fluency: lang.proficiency || lang.level || '',
+      }))
+      const hasEnglish = mapped.some(
+        (l: any) => (l.language || '').toLowerCase() === 'english',
+      )
+      if (!hasEnglish) {
+        mapped.push({ language: 'English', fluency: 'Full Professional' })
+      }
+      return mapped
+    })(),
     certificates: (unifiedData.certifications || []).map((cert: any) => ({
       name: cert.name || cert.certification_name || '',
       issuer: cert.issuing_organization || cert.issuer || '',
