@@ -5,6 +5,17 @@ import { Save, Upload, FileUp, FileArchive, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import type { ResumeData } from '@/types'
+import ReactCodeMirror from '@uiw/react-codemirror'
+import { jsonLanguage } from '@codemirror/lang-json'
+import { oneDark } from '@codemirror/theme-one-dark'
+import {
+  EditorView,
+  drawSelection,
+  highlightActiveLine,
+  highlightActiveLineGutter,
+  lineNumbers,
+} from '@codemirror/view'
+import { history } from '@codemirror/commands'
 
 /**
  * LinkedIn CSV/ZIP → JSON Importer
@@ -370,6 +381,10 @@ export default function LinkedinImporter({
 
   const unified = useMemo(() => buildUnifiedJson(collections), [collections])
   const resumeData = useMemo(() => convertToResumeData(unified), [unified])
+  const formattedPreviewJson = useMemo(
+    () => JSON.stringify(resumeData, null, 2),
+    [resumeData],
+  )
 
   const handleDownloadJson = useCallback(() => {
     const blob = new Blob([JSON.stringify(unified, null, 2)], {
@@ -489,9 +504,23 @@ export default function LinkedinImporter({
             <CardTitle>Converted Resume Data</CardTitle>
           </CardHeader>
           <CardContent>
-            <pre className="text-xs max-h-64 overflow-auto whitespace-pre-wrap">
-              {JSON.stringify(resumeData, null, 2)}
-            </pre>
+            <ReactCodeMirror
+              value={formattedPreviewJson}
+              onChange={() => {}}
+              theme={oneDark}
+              basicSetup={false}
+              extensions={[
+                lineNumbers(),
+                highlightActiveLineGutter(),
+                history(),
+                drawSelection(),
+                highlightActiveLine(),
+                jsonLanguage,
+                EditorView.lineWrapping,
+                EditorView.editable.of(false),
+              ]}
+              height="600px"
+            />
           </CardContent>
         </Card>
       )}
