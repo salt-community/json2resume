@@ -6,10 +6,8 @@ WORKDIR /app
 COPY package*.json ./
 
 # Optional backend URLs injected at build time (Vite reads VITE_* at build)
-ARG BACKEND_BASE_URL
-ARG BACKEND_VITE_API_URL
-ENV VITE_BACKEND_BASE_URL=${BACKEND_BASE_URL}
-ENV VITE_API_URL=${BACKEND_VITE_API_URL}
+ARG VITE_BACKEND_URL
+ENV VITE_BACKEND_URL=${VITE_BACKEND_URL}
 
 # Install dependencies
 RUN npm ci
