@@ -81,7 +81,7 @@ describe('Resume Data Conversion Tests', () => {
   })
 
   describe('JSON String to JSON String roundtrip conversion', () => {
-    test('should maintain data integrity through full conversion cycle', () => {
+    test('should preserve data through complete conversion cycle', () => {
       const originalJsonString = JSON.stringify(mockedResumeData)
 
       // Convert: JSON string → JSON object → ResumeData → JSON object → JSON string
@@ -105,7 +105,7 @@ describe('Resume Data Conversion Tests', () => {
       expect(final.languages).toHaveLength(original.languages.length)
     })
 
-    test('should handle complex nested data structures', () => {
+    test('should preserve complex nested data structures', () => {
       const complexResumeData: ResumeData = {
         $schema: 'https://example.com/schema.json',
         basics: {
@@ -167,7 +167,7 @@ describe('Resume Data Conversion Tests', () => {
       )
     })
 
-    test('should preserve array structures correctly', () => {
+    test('should maintain array structures during conversion', () => {
       const resumeWithArrays: ResumeData = {
         basics: { name: 'Array Test' },
         work: [
