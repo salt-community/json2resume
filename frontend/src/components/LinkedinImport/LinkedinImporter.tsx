@@ -398,6 +398,20 @@ export default function LinkedinImporter({
           </CardTitle>
         </CardHeader>
         <CardContent>
+          <div className="mb-4 text-sm text-muted-foreground">
+            To use this importer, first request and download your data export
+            from LinkedIn’s
+            <a
+              href="https://www.linkedin.com/mypreferences/d/download-my-data"
+              target="_blank"
+              rel="noreferrer noopener"
+              className="underline ml-1"
+            >
+              data download page
+            </a>
+            . It typically takes 10–15 minutes after requesting before the ZIP
+            is available.
+          </div>
           <div
             onDrop={onDrop}
             onDragOver={(e) => {
