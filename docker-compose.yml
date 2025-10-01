@@ -1,20 +1,12 @@
 services:
   backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    env_file:
-      - ./backend/.env
-    ports:
-      - "8080:8080"
-    restart: unless-stopped
+    extends:
+      file: ./backend/docker-compose.yml
+      service: backend
 
   frontend:
-    build:
-      context: ./frontend
-    # If your frontend performs API calls to the backend, ensure it points to http://backend:8080
+    extends:
+      file: ./frontend/docker-compose.yml
+      service: frontend
     depends_on:
       - backend
-    ports:
-      - "3000:80"
-    restart: unless-stopped

@@ -17,9 +17,6 @@ RUN ./mvnw -q -B -DskipTests=true package
 FROM eclipse-temurin:21-jre-jammy
 WORKDIR /app
 
-# Default to empty; override via runtime env or docker-compose
-ENV GOOGLE_API_KEY=""
-
 # Copy the built jar and rename to a stable name
 # Assumes a single jar is built in target/
 COPY --from=builder /app/target/*.jar /app/app.jar
