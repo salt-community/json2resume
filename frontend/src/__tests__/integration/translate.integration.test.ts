@@ -1,6 +1,6 @@
-import { describe, test, expect } from 'vitest'
-import { translateText } from '@/useTranslate.ts'
+import { describe, expect, test } from 'vitest'
 import type { ResumeData } from '@/types.ts'
+import { translateText } from '@/useTranslate.ts'
 
 // Only run if explicitly requested: RUN_INTEGRATION=true npm test
 const itIntegration = process.env.RUN_INTEGRATION === 'true' ? test : test.skip

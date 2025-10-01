@@ -1,3 +1,4 @@
+import { memo, useCallback } from 'react'
 import type { ResumeData, Work } from '@/types'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -9,8 +10,8 @@ type Props = {
   setResumeData: (data: ResumeData) => void
 }
 
-export default function Work({ resumeData, setResumeData }: Props) {
-  const addWork = () => {
+function Work({ resumeData, setResumeData }: Props) {
+  const addWork = useCallback(() => {
     const newWork: Work = {
       name: '',
       position: '',
@@ -24,7 +25,7 @@ export default function Work({ resumeData, setResumeData }: Props) {
       ...resumeData,
       work: [...(resumeData.work || []), newWork],
     })
-  }
+  }, [resumeData, setResumeData])
 
   const updateWork = (
     index: number,
@@ -98,9 +99,9 @@ export default function Work({ resumeData, setResumeData }: Props) {
 
   return (
     <div className="p-4 space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <h3 className="text-lg font-medium">Work Experience</h3>
-        <Button onClick={addWork} size="sm">
+        <Button onClick={addWork} size="sm" className="flex-shrink-0">
           Add Work Experience
         </Button>
       </div>
@@ -109,17 +110,17 @@ export default function Work({ resumeData, setResumeData }: Props) {
         <div className="space-y-3">
           {resumeData.work.map((work, index) => (
             <div key={index} className="border rounded-md p-4 space-y-4">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <h4 className="text-sm font-medium text-muted-foreground">
                   Work Experience {index + 1}
                 </h4>
-                <div className="flex items-center space-x-2">
+                <div className="flex flex-wrap items-center gap-2">
                   {/* Move Up Button */}
                   <Button
                     onClick={() => moveWork(index, 'up')}
                     variant="outline"
                     size="sm"
-                    className="h-7 px-2 text-xs"
+                    className="h-7 px-2 text-xs flex-shrink-0"
                     disabled={index === 0}
                   >
                     ↑
@@ -129,7 +130,7 @@ export default function Work({ resumeData, setResumeData }: Props) {
                     onClick={() => moveWork(index, 'down')}
                     variant="outline"
                     size="sm"
-                    className="h-7 px-2 text-xs"
+                    className="h-7 px-2 text-xs flex-shrink-0"
                     disabled={index === (resumeData.work?.length || 0) - 1}
                   >
                     ↓
@@ -139,7 +140,7 @@ export default function Work({ resumeData, setResumeData }: Props) {
                     onClick={() => removeWork(index)}
                     variant="outline"
                     size="sm"
-                    className="h-7 px-2 text-xs"
+                    className="h-7 px-2 text-xs flex-shrink-0"
                   >
                     Remove
                   </Button>
@@ -303,3 +304,5 @@ export default function Work({ resumeData, setResumeData }: Props) {
     </div>
   )
 }
+
+export default memo(Work)

@@ -1,7 +1,7 @@
+import { memo } from 'react'
 import type { Education, ResumeData } from '@/types'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
 
 type Props = {
@@ -9,7 +9,7 @@ type Props = {
   setResumeData: (data: ResumeData) => void
 }
 
-export default function Education({ resumeData, setResumeData }: Props) {
+function Education({ resumeData, setResumeData }: Props) {
   const addEducation = () => {
     const newEducation: Education = {
       institution: '',
@@ -98,9 +98,9 @@ export default function Education({ resumeData, setResumeData }: Props) {
 
   return (
     <div className="p-4 space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <h3 className="text-lg font-medium">Education</h3>
-        <Button onClick={addEducation} size="sm">
+        <Button onClick={addEducation} size="sm" className="flex-shrink-0">
           Add Education
         </Button>
       </div>
@@ -299,3 +299,5 @@ export default function Education({ resumeData, setResumeData }: Props) {
     </div>
   )
 }
+
+export default memo(Education)

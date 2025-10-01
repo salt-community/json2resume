@@ -1,7 +1,8 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react'
 import Papa from 'papaparse'
 import JSZip from 'jszip'
-import { Save, Upload, FileUp, FileArchive, Trash2 } from 'lucide-react'
+import { FileArchive, FileUp, Save, Trash2, Upload } from 'lucide-react'
+import type { ResumeData } from '@/types'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import type { ResumeData } from '@/types'
@@ -83,22 +84,23 @@ const PAPA_CFG: Papa.ParseConfig = {
   header: true,
   dynamicTyping: true,
   skipEmptyLines: true,
+  encoding: 'utf-8',
   transformHeader: normalizeHeader,
 }
 
 // Parse a single CSV file into an array of objects
 async function parseCsvFile(file: File) {
   const text = await file.text()
-  return new Promise<any[]>((resolve, reject) => {
+  return new Promise<Array<any>>((resolve, reject) => {
     Papa.parse(text, {
       ...PAPA_CFG,
       complete: (res) => {
         if (res.errors && res.errors.length) {
           console.warn('CSV parse errors:', res.errors)
         }
-        resolve(res.data as any[])
+        resolve(res.data)
       },
-      error: (err: any) => reject(err),
+      error: (err) => reject(err),
     })
   })
 }
@@ -106,17 +108,17 @@ async function parseCsvFile(file: File) {
 // Read a ZIP and parse all CSV entries into collections
 async function parseZip(file: File) {
   const zip = await JSZip.loadAsync(file)
-  const out: Record<string, any[]> = {}
+  const out: Record<string, Array<any>> = {}
 
   for (const relPath of Object.keys(zip.files)) {
     if (!relPath.toLowerCase().endsWith('.csv')) continue
     const entry = zip.files[relPath]
     if (!entry) continue
     const csvText = await entry.async('text')
-    const data = await new Promise<any[]>((resolve, reject) => {
+    const data = await new Promise<Array<any>>((resolve, reject) => {
       Papa.parse(csvText, {
         ...PAPA_CFG,
-        complete: (res) => resolve(res.data as any[]),
+        complete: (res) => resolve(res.data),
         error: (err: any) => reject(err),
       })
     })
@@ -127,8 +129,11 @@ async function parseZip(file: File) {
 }
 
 // Merge two collection maps
-function mergeCollections(a: Record<string, any[]>, b: Record<string, any[]>) {
-  const out: Record<string, any[]> = { ...a }
+function mergeCollections(
+  a: Record<string, Array<any>>,
+  b: Record<string, Array<any>>,
+) {
+  const out: Record<string, Array<any>> = { ...a }
   for (const [k, v] of Object.entries(b)) {
     out[k] = (out[k] || []).concat(v)
   }
@@ -136,13 +141,13 @@ function mergeCollections(a: Record<string, any[]>, b: Record<string, any[]>) {
 }
 
 // Build the unified JSON shape we want to work with downstream
-function buildUnifiedJson(collections: Record<string, any[]>) {
+function buildUnifiedJson(collections: Record<string, Array<any>>) {
   const unified = {
     meta: {
       generatedAt: new Date().toISOString(),
       source: 'linkedin-export',
     },
-    profile: (collections.profile || [])[0] || {},
+    profile: collections.profile?.[0] || {},
     positions: collections.positions || [],
     education: collections.education || [],
     skills: (collections.skills || []).map(
@@ -322,8 +327,8 @@ function convertToResumeData(unifiedData: any): ResumeData {
 export default function LinkedinImporter({
   onDataImported,
 }: LinkedinImporterProps) {
-  const [collections, setCollections] = useState<Record<string, any[]>>({})
-  const [logs, setLogs] = useState<string[]>([])
+  const [collections, setCollections] = useState<Record<string, Array<any>>>({})
+  const [logs, setLogs] = useState<Array<string>>([])
   const [busy, setBusy] = useState(false)
   const [dragOver, setDragOver] = useState(false)
   const fileInputRef = useRef<HTMLInputElement | null>(null)
@@ -338,7 +343,7 @@ export default function LinkedinImporter({
       if (!files || !files.length) return
       setBusy(true)
       try {
-        let merged: Record<string, any[]> = { ...collections }
+        let merged: Record<string, Array<any>> = { ...collections }
         for (const file of Array.from(files)) {
           const lower = file.name.toLowerCase()
           if (lower.endsWith('.zip')) {
@@ -469,13 +474,14 @@ export default function LinkedinImporter({
             />
           </div>
 
-          <div className="mt-6 flex items-center justify-between">
-            <div />
-            <div className="flex gap-2">
+          <div className="mt-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="text-sm text-muted-foreground">{summary}</div>
+            <div className="flex flex-wrap gap-2">
               <Button
                 onClick={handleImportToResume}
                 disabled={!Object.keys(collections).length || busy}
                 variant="default"
+                className="flex-shrink-0"
               >
                 <Upload className="w-4 h-4 mr-2" /> Import to Resume
               </Button>
@@ -483,6 +489,7 @@ export default function LinkedinImporter({
                 onClick={handleDownloadJson}
                 disabled={!Object.keys(collections).length || busy}
                 variant="outline"
+                className="flex-shrink-0"
               >
                 <Save className="w-4 h-4 mr-2" /> Download JSON
               </Button>
@@ -490,6 +497,7 @@ export default function LinkedinImporter({
                 variant="ghost"
                 onClick={handleClear}
                 disabled={!Object.keys(collections).length || busy}
+                className="flex-shrink-0"
               >
                 <Trash2 className="w-4 h-4 mr-2" /> Clear
               </Button>

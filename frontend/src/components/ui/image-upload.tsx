@@ -1,8 +1,8 @@
 import React, { useRef, useState } from 'react'
+import { Image as ImageIcon, Upload, X } from 'lucide-react'
 import { Button } from './button'
 import { Label } from './label'
 import { Input } from './input'
-import { X, Upload, Image as ImageIcon } from 'lucide-react'
 
 interface ImageUploadProps {
   value?: string // Base64 data URI
@@ -12,7 +12,13 @@ interface ImageUploadProps {
   showLabel?: boolean // Whether to show the "Profile Image" label
 }
 
-export function ImageUpload({ value, onChange, placeholder, className, showLabel = true }: ImageUploadProps) {
+export function ImageUpload({
+  value,
+  onChange,
+  placeholder,
+  className,
+  showLabel = true,
+}: ImageUploadProps) {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [dragOver, setDragOver] = useState(false)
 
@@ -51,11 +57,9 @@ export function ImageUpload({ value, onChange, placeholder, className, showLabel
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault()
     setDragOver(false)
-    
+
     const file = e.dataTransfer.files[0]
-    if (file) {
-      handleFileSelect(file)
-    }
+    handleFileSelect(file)
   }
 
   const handleDragOver = (e: React.DragEvent) => {
@@ -81,7 +85,7 @@ export function ImageUpload({ value, onChange, placeholder, className, showLabel
   return (
     <div className={`space-y-2 ${className}`}>
       {showLabel && <Label>Profile Image</Label>}
-      
+
       {value ? (
         <div className="space-y-2">
           {/* Image Preview */}
@@ -101,7 +105,7 @@ export function ImageUpload({ value, onChange, placeholder, className, showLabel
               <X className="h-3 w-3" />
             </Button>
           </div>
-          
+
           {/* Upload New Button */}
           <Button
             type="button"

@@ -2,6 +2,7 @@ package salt.backend.e2e;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -28,8 +29,9 @@ class CorsE2ETest {
     @Autowired
     private TestRestTemplate restTemplate;
 
-    private static final String FRONTEND_ORIGIN = "http://localhost:5173";
-    private static final String BLOCKED_ORIGIN = "http://localhost:5172";
+    @Value("${cors.allowed-origins}")
+    private static String FRONTEND_ORIGIN;
+    private static final String BLOCKED_ORIGIN = "http://localhost:3001";
 
     @Test
     void preflight_Translate_AllowsPostAndContentType() {

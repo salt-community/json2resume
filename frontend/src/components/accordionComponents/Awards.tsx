@@ -59,9 +59,9 @@ export default function Awards({ resumeData, setResumeData }: Props) {
 
   return (
     <div className="p-4 space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <h3 className="text-lg font-medium">Awards & Recognition</h3>
-        <Button onClick={addAward} size="sm">
+        <Button onClick={addAward} size="sm" className="flex-shrink-0">
           Add Award
         </Button>
       </div>
@@ -70,15 +70,15 @@ export default function Awards({ resumeData, setResumeData }: Props) {
         <div className="space-y-6">
           {resumeData.awards.map((award, index) => (
             <div key={index} className="border rounded-lg p-6 space-y-6">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <h4 className="text-lg font-medium">Award {index + 1}</h4>
-                <div className="flex items-center space-x-2">
+                <div className="flex flex-wrap items-center gap-2">
                   {/* Move Up Button */}
                   <Button
                     onClick={() => moveAward(index, 'up')}
                     variant="outline"
                     size="sm"
-                    className="h-7 px-2 text-xs"
+                    className="h-7 px-2 text-xs flex-shrink-0"
                     disabled={index === 0}
                   >
                     ↑
@@ -88,7 +88,7 @@ export default function Awards({ resumeData, setResumeData }: Props) {
                     onClick={() => moveAward(index, 'down')}
                     variant="outline"
                     size="sm"
-                    className="h-7 px-2 text-xs"
+                    className="h-7 px-2 text-xs flex-shrink-0"
                     disabled={index === (resumeData.awards?.length || 0) - 1}
                   >
                     ↓
@@ -98,6 +98,7 @@ export default function Awards({ resumeData, setResumeData }: Props) {
                     onClick={() => removeAward(index)}
                     variant="outline"
                     size="sm"
+                    className="flex-shrink-0"
                   >
                     Remove
                   </Button>

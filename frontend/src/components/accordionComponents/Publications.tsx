@@ -1,3 +1,4 @@
+import { memo, useCallback } from 'react'
 import type { Publication, ResumeData } from '@/types'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -9,7 +10,7 @@ type Props = {
   setResumeData: (data: ResumeData) => void
 }
 
-export default function Publications({ resumeData, setResumeData }: Props) {
+function Publications({ resumeData, setResumeData }: Props) {
   const addPublication = () => {
     const newPublication: Publication = {
       name: '',
@@ -67,9 +68,9 @@ export default function Publications({ resumeData, setResumeData }: Props) {
 
   return (
     <div className="p-4 space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <h3 className="text-lg font-medium">Publications</h3>
-        <Button onClick={addPublication} size="sm">
+        <Button onClick={addPublication} size="sm" className="flex-shrink-0">
           Add Publication
         </Button>
       </div>
@@ -78,15 +79,15 @@ export default function Publications({ resumeData, setResumeData }: Props) {
         <div className="space-y-6">
           {resumeData.publications.map((publication, index) => (
             <div key={index} className="border rounded-lg p-6 space-y-6">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <h4 className="text-lg font-medium">Publication {index + 1}</h4>
-                <div className="flex items-center space-x-2">
+                <div className="flex flex-wrap items-center gap-2">
                   {/* Move Up Button */}
                   <Button
                     onClick={() => movePublication(index, 'up')}
                     variant="outline"
                     size="sm"
-                    className="h-7 px-2 text-xs"
+                    className="h-7 px-2 text-xs flex-shrink-0"
                     disabled={index === 0}
                   >
                     ↑
@@ -96,7 +97,7 @@ export default function Publications({ resumeData, setResumeData }: Props) {
                     onClick={() => movePublication(index, 'down')}
                     variant="outline"
                     size="sm"
-                    className="h-7 px-2 text-xs"
+                    className="h-7 px-2 text-xs flex-shrink-0"
                     disabled={
                       index === (resumeData.publications?.length || 0) - 1
                     }
@@ -108,6 +109,7 @@ export default function Publications({ resumeData, setResumeData }: Props) {
                     onClick={() => removePublication(index)}
                     variant="outline"
                     size="sm"
+                    className="flex-shrink-0"
                   >
                     Remove
                   </Button>
@@ -200,3 +202,5 @@ export default function Publications({ resumeData, setResumeData }: Props) {
     </div>
   )
 }
+
+export default memo(Publications)
