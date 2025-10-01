@@ -1,0 +1,11 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      # Require GOOGLE_API_KEY from host or .env; compose will error if not provided
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY:?GOOGLE_API_KEY is required}
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
