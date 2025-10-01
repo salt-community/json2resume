@@ -48,7 +48,9 @@ function mapCsvNameToCollection(name: string) {
   if (n.includes('project')) return 'projects'
   if (n.includes('course')) return 'courses'
   if (n.includes('accomplishment')) return 'accomplishments'
-  if (n.includes('recommendation')) return 'recommendations'
+  // Only include received recommendations, not given ones
+  if (n.includes('recommendation') && n.includes('received'))
+    return 'recommendations'
   if (n.includes('connection')) return 'connections'
   if (n.includes('profile')) return 'profile'
   // fallback: use base name without .csv, snake_cased
