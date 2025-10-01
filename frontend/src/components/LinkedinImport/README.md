@@ -325,5 +325,3 @@ Downloads a Blob as a file from the browser.
 - **Privacy**: Client-side processing with no external dependencies
 
 ---
-
-_This documentation is maintained by the development team. For questions or contributions, please refer to the project repository._
