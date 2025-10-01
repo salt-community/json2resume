@@ -70,7 +70,6 @@ const PAPA_CFG: Papa.ParseConfig = {
   header: true,
   dynamicTyping: true,
   skipEmptyLines: true,
-  encoding: 'utf-8',
   transformHeader: normalizeHeader,
 }
 
@@ -86,7 +85,7 @@ async function parseCsvFile(file: File) {
         }
         resolve(res.data as any[])
       },
-      error: (err) => reject(err),
+      error: (err: any) => reject(err),
     })
   })
 }
@@ -105,7 +104,7 @@ async function parseZip(file: File) {
       Papa.parse(csvText, {
         ...PAPA_CFG,
         complete: (res) => resolve(res.data as any[]),
-        error: (err) => reject(err),
+        error: (err: any) => reject(err),
       })
     })
     const key = mapCsvNameToCollection(relPath.split('/').pop() || relPath)
@@ -219,6 +218,14 @@ function convertToResumeData(unifiedData: any): ResumeData {
       startDate: proj.start_date || '',
       endDate: proj.end_date || '',
       url: proj.url || '',
+    })),
+    references: (unifiedData.recommendations || []).map((rec: any) => ({
+      name:
+        rec.recommender_name ||
+        rec.name ||
+        `${rec.first_name || ''} ${rec.last_name || ''}`.trim() ||
+        'Unknown',
+      reference: rec.recommendation_text || rec.message || rec.text || '',
     })),
   }
 }
@@ -390,20 +397,30 @@ export default function LinkedinImporter({
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-              {Object.entries(collections).map(([k, rows]) => (
-                <div
-                  key={k}
-                  className="p-4 rounded-xl border bg-card text-card-foreground shadow-sm"
-                >
-                  <div className="font-semibold mb-2">{k}</div>
-                  <div className="text-xs text-muted-foreground mb-2">
-                    {rows.length} rows
+              {Object.entries(collections)
+                .filter(([k]) =>
+                  [
+                    'profile',
+                    'education',
+                    'skills',
+                    'recommendations',
+                    'positions',
+                  ].includes(k),
+                )
+                .map(([k, rows]) => (
+                  <div
+                    key={k}
+                    className="p-4 rounded-xl border bg-card text-card-foreground shadow-sm"
+                  >
+                    <div className="font-semibold mb-2">{k}</div>
+                    <div className="text-xs text-muted-foreground mb-2">
+                      {rows.length} rows
+                    </div>
+                    <pre className="text-xs max-h-56 overflow-auto whitespace-pre-wrap">
+                      {JSON.stringify(rows.slice(0, 5), null, 2)}
+                    </pre>
                   </div>
-                  <pre className="text-xs max-h-56 overflow-auto whitespace-pre-wrap">
-                    {JSON.stringify(rows.slice(0, 5), null, 2)}
-                  </pre>
-                </div>
-              ))}
+                ))}
             </div>
             <div className="p-4 rounded-xl border bg-muted/30">
               <div className="font-semibold mb-2">Converted Resume Data</div>
