@@ -16,7 +16,7 @@
  *   - The template’s *own* HTML/CSS is rendered as-is (trusted template).
  */
 
-import React, { memo, useCallback, useEffect, useState } from 'react'
+import React, { memo, useCallback, useEffect, useMemo, useState } from 'react'
 import { renderTemplate } from './templateEngine'
 import { fetchAndValidateGistTemplate } from './gistFetcher'
 import type { ResumeData } from './templateEngine'
@@ -73,7 +73,8 @@ export function useGistTemplate(
     templateFetched: false,
   })
 
-  const fetchAndProcessTemplate = useCallback(async () => {
+  // Separate template fetching from data rendering
+  const fetchTemplate = useCallback(async () => {
     // Guard against missing inputs
     if (!gistUrl) {
       setState((prev) => ({
@@ -85,9 +86,6 @@ export function useGistTemplate(
     }
 
     setState((prev) => ({ ...prev, loading: true, error: null }))
-
-    // A simple cancellation flag (for safety if parent unmounts quickly)
-    let cancelled = false
 
     try {
       // 1) Fetch validated HTML template from the Gist
@@ -105,17 +103,9 @@ export function useGistTemplate(
         return
       }
 
-      // 2) Render final HTML with the new engine
-      //    - The engine escapes injected values by default.
-      const processedHtml = renderTemplate(
-        fetchResult.content || '',
-        resumeData,
-      )
-
-      // 3) Update UI state
+      // 2) Store the raw template and mark as fetched
       setState((prev) => ({
         ...prev,
-        processedHtml,
         rawTemplate: fetchResult.content || '',
         templateFetched: true,
         loading: false,
@@ -130,21 +120,49 @@ export function useGistTemplate(
         error: errorMessage,
       }))
     }
+  }, [gistUrl, filename])
 
-    return () => {
-      // Flip the flag if a consumer wants to treat this as a cleanup fn
-      cancelled = true
+  // Use useMemo to efficiently render template with data
+  const processedHtml = useMemo(() => {
+    if (!state.rawTemplate || !state.templateFetched) {
+      return state.processedHtml
     }
-  }, [gistUrl, resumeData, filename])
 
-  // Kick off initial fetch + render whenever inputs change
+    try {
+      return renderTemplate(state.rawTemplate, resumeData)
+    } catch (error) {
+      console.error('Failed to render template:', error)
+      return state.processedHtml
+    }
+  }, [
+    state.rawTemplate,
+    state.templateFetched,
+    resumeData,
+    state.processedHtml,
+  ])
+
+  // Update state when processed HTML changes
   useEffect(() => {
-    fetchAndProcessTemplate()
-  }, [fetchAndProcessTemplate])
+    if (processedHtml !== state.processedHtml) {
+      setState((prev) => ({
+        ...prev,
+        processedHtml,
+      }))
+    }
+  }, [processedHtml, state.processedHtml])
+
+  // Fetch template only when URL or filename changes
+  useEffect(() => {
+    fetchTemplate()
+  }, [fetchTemplate])
+
+  const refetch = useCallback(async () => {
+    await fetchTemplate()
+  }, [fetchTemplate])
 
   return {
     ...state,
-    refetch: fetchAndProcessTemplate,
+    refetch,
   }
 }
 
