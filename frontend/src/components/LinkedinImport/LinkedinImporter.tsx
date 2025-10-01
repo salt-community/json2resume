@@ -5,7 +5,6 @@ import { FileArchive, FileUp, Save, Trash2, Upload } from 'lucide-react'
 import type { ResumeData } from '@/types'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import type { ResumeData } from '@/types'
 import ReactCodeMirror from '@uiw/react-codemirror'
 import { jsonLanguage } from '@codemirror/lang-json'
 import { oneDark } from '@codemirror/theme-one-dark'
@@ -84,7 +83,6 @@ const PAPA_CFG: Papa.ParseConfig = {
   header: true,
   dynamicTyping: true,
   skipEmptyLines: true,
-  encoding: 'utf-8',
   transformHeader: normalizeHeader,
 }
 
@@ -100,7 +98,7 @@ async function parseCsvFile(file: File) {
         }
         resolve(res.data)
       },
-      error: (err) => reject(err),
+      error: (err: unknown) => reject(err as Error),
     })
   })
 }
@@ -119,7 +117,7 @@ async function parseZip(file: File) {
       Papa.parse(csvText, {
         ...PAPA_CFG,
         complete: (res) => resolve(res.data),
-        error: (err: any) => reject(err),
+        error: (err: unknown) => reject(err as Error),
       })
     })
     const key = mapCsvNameToCollection(relPath.split('/').pop() || relPath)
@@ -475,7 +473,7 @@ export default function LinkedinImporter({
           </div>
 
           <div className="mt-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div className="text-sm text-muted-foreground">{summary}</div>
+            <div />
             <div className="flex flex-wrap gap-2">
               <Button
                 onClick={handleImportToResume}
