@@ -154,6 +154,26 @@ function buildUnifiedJson(collections: Record<string, any[]>) {
 function convertToResumeData(unifiedData: any): ResumeData {
   const profile = unifiedData.profile || {}
 
+  function parseWebsitesField(websites: unknown) {
+    if (typeof websites !== 'string' || !websites.trim()) return []
+    const inner = websites.trim().replace(/^\[/, '').replace(/\]$/, '')
+    return inner
+      .split(',')
+      .map((part) => part.trim())
+      .map((part) => {
+        const idx = part.indexOf(':')
+        if (idx === -1) return null
+        const type = part.slice(0, idx).trim()
+        const url = part.slice(idx + 1).trim()
+        if (!url) return null
+        const network = type
+          ? type.charAt(0).toUpperCase() + type.slice(1).toLowerCase()
+          : ''
+        return { network, url }
+      })
+      .filter(Boolean) as Array<{ network: string; url: string }>
+  }
+
   return {
     basics: {
       name:
@@ -163,22 +183,33 @@ function convertToResumeData(unifiedData: any): ResumeData {
       label: profile.headline || profile.title || '',
       email: profile.email_address || profile.email || '',
       phone: profile.phone_numbers || '',
-      url: profile.websites || profile.linkedin_url || '',
+      url: (() => {
+        const websiteEntries = parseWebsitesField(profile.websites)
+        return profile.linkedin_url || websiteEntries[0]?.url || ''
+      })(),
       summary: profile.summary || profile.about || '',
       location: {
         city: profile.city || '',
         region: profile.state || profile.region || '',
         countryCode: profile.country || '',
       },
-      profiles: profile.linkedin_url
-        ? [
-            {
-              network: 'LinkedIn',
-              url: profile.linkedin_url,
-              username: profile.linkedin_url.split('/').pop() || '',
-            },
-          ]
-        : [],
+      profiles: (() => {
+        const websiteEntries = parseWebsitesField(profile.websites)
+        const primaryUrl = profile.linkedin_url || websiteEntries[0]?.url || ''
+        const filteredWebsites = websiteEntries.filter(
+          (w) => w.url !== primaryUrl,
+        )
+        const linkedIn = profile.linkedin_url
+          ? [
+              {
+                network: 'LinkedIn',
+                url: profile.linkedin_url,
+                username: profile.linkedin_url.split('/').pop() || '',
+              },
+            ]
+          : []
+        return [...linkedIn, ...filteredWebsites]
+      })(),
     },
     work: (unifiedData.positions || []).map((pos: any) => ({
       name: pos.company_name || pos.organization || '',
