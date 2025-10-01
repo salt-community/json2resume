@@ -230,7 +230,7 @@ function convertToResumeData(unifiedData: any): ResumeData {
     }),
     education: (unifiedData.education || []).map((edu: any) => ({
       institution: edu.school_name || edu.institution || '',
-      area: edu.field_of_study || edu.degree_name || '',
+      area: edu.field_of_study || 'FIELD OF STUDY',
       studyType: edu.degree_name || edu.degree || '',
       startDate: edu.start_date || edu.start_date_month_year || '',
       endDate: edu.end_date || edu.end_date_month_year || '',
