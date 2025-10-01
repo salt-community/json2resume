@@ -366,13 +366,6 @@ export default function LinkedinImporter({
 
   const onBrowse = useCallback(() => fileInputRef.current?.click(), [])
 
-  const summary = useMemo(() => {
-    const entries = Object.entries(collections)
-    return entries.length
-      ? entries.map(([k, v]) => `${k}: ${v.length} rows`).join(' • ')
-      : 'Nothing loaded yet'
-  }, [collections])
-
   const unified = useMemo(() => buildUnifiedJson(collections), [collections])
   const resumeData = useMemo(() => convertToResumeData(unified), [unified])
 
@@ -440,7 +433,7 @@ export default function LinkedinImporter({
           </div>
 
           <div className="mt-6 flex items-center justify-between">
-            <div className="text-sm text-muted-foreground">{summary}</div>
+            <div />
             <div className="flex gap-2">
               <Button
                 onClick={handleImportToResume}
@@ -495,7 +488,7 @@ export default function LinkedinImporter({
                       {rows.length} rows
                     </div>
                     <pre className="text-xs max-h-56 overflow-auto whitespace-pre-wrap">
-                      {JSON.stringify(rows.slice(0, 5), null, 2)}
+                      {JSON.stringify(rows, null, 2)}
                     </pre>
                   </div>
                 ))}
