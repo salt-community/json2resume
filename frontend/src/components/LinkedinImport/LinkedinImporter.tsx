@@ -249,7 +249,7 @@ function convertToResumeData(unifiedData: any): ResumeData {
         ? [
             {
               name: 'Software Development',
-              level: '',
+              level: 'Expert',
               keywords: deduped,
             },
           ]
