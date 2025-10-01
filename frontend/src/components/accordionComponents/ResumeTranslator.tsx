@@ -11,16 +11,16 @@ interface ResumeTranslatorProps {
   onTranslationComplete: (translatedData: ResumeData) => void
 }
 
-export default function ResumeTranslator({ 
-  resumeData, 
-  onTranslationComplete 
+export default function ResumeTranslator({
+  resumeData,
+  onTranslationComplete,
 }: ResumeTranslatorProps) {
   const [targetLanguage, setTargetLanguage] = useState('spanish')
   const [isTranslated, setIsTranslated] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [showToast, setShowToast] = useState(false)
   const [toastMessage, setToastMessage] = useState('')
-  
+
   const translateMutation = useTranslate()
 
   // Auto-hide toast after 4 seconds
@@ -38,20 +38,24 @@ export default function ResumeTranslator({
       {
         resumeData,
         targetLanguage,
-        sourceLanguage: 'english'
+        sourceLanguage: 'english',
       },
       {
         onSuccess: (translatedData) => {
           onTranslationComplete(translatedData)
           setIsTranslated(true)
-          const selectedLang = languageOptions.find(lang => lang.value === targetLanguage)
-          setToastMessage(`Resume translated to ${selectedLang?.label} successfully!`)
+          const selectedLang = languageOptions.find(
+            (lang) => lang.value === targetLanguage,
+          )
+          setToastMessage(
+            `Resume translated to ${selectedLang?.label} successfully!`,
+          )
           setShowToast(true)
         },
         onError: (error) => {
           console.error('Translation failed:', error)
-        }
-      }
+        },
+      },
     )
   }
 
@@ -137,22 +141,24 @@ export default function ResumeTranslator({
 
   const filteredLanguages = useMemo(() => {
     if (!searchQuery) return languageOptions
-    return languageOptions.filter(option =>
-      option.label.toLowerCase().includes(searchQuery.toLowerCase())
+    return languageOptions.filter((option) =>
+      option.label.toLowerCase().includes(searchQuery.toLowerCase()),
     )
   }, [searchQuery])
 
-  const selectedLanguage = languageOptions.find(lang => lang.value === targetLanguage)
+  const selectedLanguage = languageOptions.find(
+    (lang) => lang.value === targetLanguage,
+  )
 
   return (
     <div className="p-4 space-y-6">
       <div className="space-y-4">
         <h3 className="text-lg font-medium">Resume Translation</h3>
-        
+
         <div className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="targetLanguage">Target Language</Label>
-            
+
             {/* Search Bar */}
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -171,7 +177,9 @@ export default function ResumeTranslator({
                   <div
                     key={option.value}
                     className={`px-3 py-2 text-sm cursor-pointer hover:bg-gray-100 hover:text-gray-900 border-b last:border-b-0 ${
-                      targetLanguage === option.value ? 'bg-gray-200 text-gray-900' : ''
+                      targetLanguage === option.value
+                        ? 'bg-gray-200 text-gray-900'
+                        : ''
                     }`}
                     onClick={() => setTargetLanguage(option.value)}
                   >
@@ -188,26 +196,30 @@ export default function ResumeTranslator({
             {/* Selected Language Display */}
             {selectedLanguage && (
               <div className="p-2 bg-muted rounded-md">
-                <p className="text-sm font-medium">Selected: {selectedLanguage.label}</p>
+                <p className="text-sm font-medium">
+                  Selected: {selectedLanguage.label}
+                </p>
               </div>
             )}
           </div>
 
-          <div className="flex gap-3">
+          <div className="flex flex-col gap-3 sm:flex-row">
             <Button
               onClick={handleTranslate}
               disabled={translateMutation.isPending}
               className="flex items-center gap-2 flex-1"
             >
               <Languages className="w-4 h-4" />
-              {translateMutation.isPending ? 'Translating...' : 'Translate Resume'}
+              {translateMutation.isPending
+                ? 'Translating...'
+                : 'Translate Resume'}
             </Button>
-            
+
             {isTranslated && (
               <Button
                 onClick={handleReset}
                 variant="outline"
-                className="flex items-center gap-2"
+                className="flex items-center gap-2 flex-shrink-0"
               >
                 <RotateCcw className="w-4 h-4" />
                 Reset
@@ -218,14 +230,17 @@ export default function ResumeTranslator({
           {translateMutation.isError && (
             <div className="p-3 bg-red-50 border border-red-200 rounded-md">
               <p className="text-red-700 text-sm">
-                Error: {translateMutation.error?.message || 'Translation failed'}
+                Error:{' '}
+                {translateMutation.error?.message || 'Translation failed'}
               </p>
             </div>
           )}
 
-
           <div className="text-sm text-muted-foreground">
-            <p>This will translate your resume content using AI and update the preview.</p>
+            <p>
+              This will translate your resume content using AI and update the
+              preview.
+            </p>
             <p>Current target: {selectedLanguage?.label}</p>
           </div>
         </div>

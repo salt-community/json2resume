@@ -63,9 +63,9 @@ export default function Languages({ resumeData, setResumeData }: Props) {
 
   return (
     <div className="p-4 space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <h3 className="text-lg font-medium">Languages</h3>
-        <Button onClick={addLanguage} size="sm">
+        <Button onClick={addLanguage} size="sm" className="flex-shrink-0">
           Add Language
         </Button>
       </div>
@@ -74,17 +74,17 @@ export default function Languages({ resumeData, setResumeData }: Props) {
         <div className="space-y-3">
           {resumeData.languages.map((language, index) => (
             <div key={index} className="border rounded-md p-4 space-y-4">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <h4 className="text-sm font-medium text-muted-foreground">
                   Language {index + 1}
                 </h4>
-                <div className="flex items-center space-x-2">
+                <div className="flex flex-wrap items-center gap-2">
                   {/* Move Up Button */}
                   <Button
                     onClick={() => moveLanguage(index, 'up')}
                     variant="outline"
                     size="sm"
-                    className="h-7 px-2 text-xs"
+                    className="h-7 px-2 text-xs flex-shrink-0"
                     disabled={index === 0}
                   >
                     ↑
@@ -94,7 +94,7 @@ export default function Languages({ resumeData, setResumeData }: Props) {
                     onClick={() => moveLanguage(index, 'down')}
                     variant="outline"
                     size="sm"
-                    className="h-7 px-2 text-xs"
+                    className="h-7 px-2 text-xs flex-shrink-0"
                     disabled={index === (resumeData.languages?.length || 0) - 1}
                   >
                     ↓
@@ -104,7 +104,7 @@ export default function Languages({ resumeData, setResumeData }: Props) {
                     onClick={() => removeLanguage(index)}
                     variant="outline"
                     size="sm"
-                    className="h-7 px-2 text-xs"
+                    className="h-7 px-2 text-xs flex-shrink-0"
                   >
                     Remove
                   </Button>

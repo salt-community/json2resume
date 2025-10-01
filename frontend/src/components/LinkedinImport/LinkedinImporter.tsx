@@ -354,13 +354,14 @@ export default function LinkedinImporter({
             />
           </div>
 
-          <div className="mt-6 flex items-center justify-between">
+          <div className="mt-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="text-sm text-muted-foreground">{summary}</div>
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
               <Button
                 onClick={handleImportToResume}
                 disabled={!Object.keys(collections).length || busy}
                 variant="default"
+                className="flex-shrink-0"
               >
                 <Upload className="w-4 h-4 mr-2" /> Import to Resume
               </Button>
@@ -368,6 +369,7 @@ export default function LinkedinImporter({
                 onClick={handleDownloadJson}
                 disabled={!Object.keys(collections).length || busy}
                 variant="outline"
+                className="flex-shrink-0"
               >
                 <Save className="w-4 h-4 mr-2" /> Download JSON
               </Button>
@@ -375,6 +377,7 @@ export default function LinkedinImporter({
                 variant="ghost"
                 onClick={handleClear}
                 disabled={!Object.keys(collections).length || busy}
+                className="flex-shrink-0"
               >
                 <Trash2 className="w-4 h-4 mr-2" /> Clear
               </Button>
