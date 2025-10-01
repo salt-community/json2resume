@@ -289,6 +289,22 @@ function convertToResumeData(unifiedData: any): ResumeData {
         'Unknown',
       reference: rec.recommendation_text || rec.message || rec.text || '',
     })),
+    meta: {
+      version: 'v1.0.0',
+      sectionHeaders: {
+        work: 'Work',
+        volunteer: 'Volunteer',
+        education: 'Education',
+        awards: 'Awards',
+        certificates: 'Certificates',
+        publications: 'Publications',
+        skills: 'Skills',
+        languages: 'Languages',
+        interests: 'Interests',
+        references: 'References',
+        projects: 'Projects',
+      },
+    },
   }
 }
 
