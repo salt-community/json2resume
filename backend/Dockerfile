@@ -9,6 +9,9 @@ COPY .mvn/ .mvn/
 COPY mvnw pom.xml ./
 RUN chmod +x mvnw
 
+ARG CORS_ALLOWED_ORIGINS
+ENV CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS}
+
 # Copy sources and build
 COPY src ./src
 RUN ./mvnw -q -B -DskipTests=true package

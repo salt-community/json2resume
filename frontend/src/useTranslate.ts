@@ -8,7 +8,7 @@ interface TranslationRequest {
   sourceLanguage?: string
 }
 
-const API_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8080/api'
+const API_URL = (import.meta.env.VITE_BACKEND_URL || 'http://localhost:8080') + '/api'
 
 // API function to handle the translation request
 export async function translateText(payload: TranslationRequest): Promise<ResumeData> {
