@@ -1,0 +1,1 @@
+export { useGistTemplate } from './useGistTemplate'

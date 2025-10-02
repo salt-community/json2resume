@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 import Basic from './accordionComponents/Basic'
 import Work from './accordionComponents/Work'
 import Volunteering from './accordionComponents/Volunteering'
@@ -23,120 +23,228 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion'
+import { Checkbox } from '@/components/ui/checkbox'
+import { saveResumeData } from '@/storage/resumeStorage'
+
+// Theme selection can be a URL or inline HTML
+type ThemeSource =
+  | { kind: 'url'; url: string }
+  | { kind: 'inline'; html: string }
 
 type Props = {
   resumeData: ResumeData
   setResumeData: (data: ResumeData) => void
   onThemeChange?: (themeUrl: string) => void
+  onThemeChangeV2?: (theme: ThemeSource) => void
   onTranslationComplete?: (data: ResumeData) => void
-  currentTheme?: string
+  currentTheme?: string | ThemeSource
 }
 
 function AccordionGroup({
   resumeData,
   setResumeData,
   onThemeChange,
+  onThemeChangeV2,
   onTranslationComplete,
   currentTheme,
 }: Props) {
-  const items: Array<{ title: string; content: React.ReactNode }> = useMemo(
+  // Wrap updates so any field change (including de-select) persists to storage
+  const setResumeDataAndSave = useCallback(
+    (data: ResumeData) => {
+      saveResumeData(data)
+      setResumeData(data)
+    },
+    [setResumeData],
+  )
+
+  const sectionKeyMap: Record<string, keyof ResumeData | null> = {
+    Basics: 'basics',
+    'Work Experience': 'work',
+    Education: 'education',
+    Projects: 'projects',
+    Skills: 'skills',
+    Certifications: 'certificates',
+    Awards: 'awards',
+    Publications: 'publications',
+    Volunteering: 'volunteer',
+    Languages: 'languages',
+    Interests: 'interests',
+    References: 'references',
+  }
+
+  function isSectionChecked(title: string): boolean {
+    const key = sectionKeyMap[title]
+    if (!key) return false
+    if (key === 'basics') return (resumeData.basics?.enabled ?? true) !== false
+    const arr = (resumeData as any)[key] as
+      | Array<{ enabled?: boolean }>
+      | undefined
+    return Boolean(arr?.some((x) => x.enabled !== false))
+  }
+
+  function setSectionEnabled(title: string, enabled: boolean) {
+    const key = sectionKeyMap[title]
+    if (!key) return
+    if (key === 'basics') {
+      setResumeData({
+        ...resumeData,
+        basics: { ...(resumeData.basics ?? {}), enabled },
+      })
+      return
+    }
+    const arr = ((resumeData as any)[key] ?? []) as Array<any>
+    setResumeData({
+      ...(resumeData as any),
+      [key]: arr.map((x) => ({ ...x, enabled })),
+    })
+  }
+  const items: Array<{
+    title: string
+    content: React.ReactNode
+    checkbox: boolean
+  }> = useMemo(
     () => [
       {
         title: 'LinkedIn Import',
-        content: <LinkedinImporter onDataImported={setResumeData} />,
+        content: <LinkedinImporter onDataImported={setResumeDataAndSave} />,
+        checkbox: false,
       },
       {
         title: 'Section Headers',
         content: (
           <SectionHeadersComponent
             resumeData={resumeData}
-            setResumeData={setResumeData}
+            setResumeData={setResumeDataAndSave}
           />
         ),
+        checkbox: false,
       },
       {
         title: 'Basics',
         content: (
-          <Basic resumeData={resumeData} setResumeData={setResumeData} />
+          <Basic resumeData={resumeData} setResumeData={setResumeDataAndSave} />
         ),
+        checkbox: true,
       },
       {
         title: 'Work Experience',
-        content: <Work resumeData={resumeData} setResumeData={setResumeData} />,
+        content: (
+          <Work resumeData={resumeData} setResumeData={setResumeDataAndSave} />
+        ),
+        checkbox: true,
       },
       {
         title: 'Education',
         content: (
-          <Education resumeData={resumeData} setResumeData={setResumeData} />
+          <Education
+            resumeData={resumeData}
+            setResumeData={setResumeDataAndSave}
+          />
         ),
+        checkbox: true,
       },
       {
         title: 'Projects',
         content: (
-          <Projects resumeData={resumeData} setResumeData={setResumeData} />
+          <Projects
+            resumeData={resumeData}
+            setResumeData={setResumeDataAndSave}
+          />
         ),
+        checkbox: true,
       },
       {
         title: 'Skills',
         content: (
-          <Skills resumeData={resumeData} setResumeData={setResumeData} />
+          <Skills
+            resumeData={resumeData}
+            setResumeData={setResumeDataAndSave}
+          />
         ),
+        checkbox: true,
       },
       {
         title: 'Certifications',
         content: (
           <Certifications
             resumeData={resumeData}
-            setResumeData={setResumeData}
+            setResumeData={setResumeDataAndSave}
           />
         ),
+        checkbox: true,
       },
       {
         title: 'Awards',
         content: (
-          <Awards resumeData={resumeData} setResumeData={setResumeData} />
+          <Awards
+            resumeData={resumeData}
+            setResumeData={setResumeDataAndSave}
+          />
         ),
+        checkbox: true,
       },
       {
         title: 'Publications',
         content: (
-          <Publications resumeData={resumeData} setResumeData={setResumeData} />
+          <Publications
+            resumeData={resumeData}
+            setResumeData={setResumeDataAndSave}
+          />
         ),
+        checkbox: true,
       },
       {
         title: 'Volunteering',
         content: (
-          <Volunteering resumeData={resumeData} setResumeData={setResumeData} />
+          <Volunteering
+            resumeData={resumeData}
+            setResumeData={setResumeDataAndSave}
+          />
         ),
+        checkbox: true,
       },
       {
         title: 'Languages',
         content: (
-          <Languages resumeData={resumeData} setResumeData={setResumeData} />
+          <Languages
+            resumeData={resumeData}
+            setResumeData={setResumeDataAndSave}
+          />
         ),
+        checkbox: true,
       },
       {
         title: 'Interests',
         content: (
-          <Interests resumeData={resumeData} setResumeData={setResumeData} />
+          <Interests
+            resumeData={resumeData}
+            setResumeData={setResumeDataAndSave}
+          />
         ),
+        checkbox: true,
       },
       {
         title: 'References',
         content: (
-          <References resumeData={resumeData} setResumeData={setResumeData} />
+          <References
+            resumeData={resumeData}
+            setResumeData={setResumeDataAndSave}
+          />
         ),
+        checkbox: true,
       },
       {
         title: 'Themes',
         content: (
-          <Themes onThemeChange={onThemeChange} currentTheme={currentTheme} />
+          <Themes
+            onThemeChange={onThemeChange}
+            onThemeChangeV2={onThemeChangeV2}
+            currentTheme={currentTheme}
+          />
         ),
+        checkbox: false,
       },
-      {
-        title: 'Export',
-        content: <Export resumeData={resumeData} />,
-      },
+
       {
         title: 'Translation',
         content: onTranslationComplete ? (
@@ -149,12 +257,20 @@ function AccordionGroup({
             <p>Translation feature not available</p>
           </div>
         ),
+        checkbox: false,
+      },
+      {
+        title: 'Export',
+        content: <Export resumeData={resumeData} />,
+        checkbox: false,
       },
     ],
+
     [
       resumeData,
-      setResumeData,
+      setResumeDataAndSave,
       onThemeChange,
+      onThemeChangeV2,
       onTranslationComplete,
       currentTheme,
     ],
@@ -162,13 +278,27 @@ function AccordionGroup({
   return (
     <Accordion type="single" collapsible className="space-y-2">
       {items.map((item, index) => (
-        <AccordionItem
-          className={index === 13 ? 'mb-16' : ''}
-          value={`item-${index}`}
-        >
-          <AccordionTrigger>{item.title}</AccordionTrigger>
-          <AccordionContent>{item.content}</AccordionContent>
-        </AccordionItem>
+        <>
+          <AccordionItem
+            className={index === 13 ? 'mb-16' : index === 1 ? 'mb-16' : ''}
+            value={`item-${index}`}
+          >
+            <AccordionTrigger className="flex items-center w-full">
+              <span className="flex-1 text-left">{item.title}</span>
+              {item.checkbox && (
+                <Checkbox
+                  className=" ml-4 flex-shrink-0 order-last"
+                  checked={isSectionChecked(item.title)}
+                  onCheckedChange={(val) =>
+                    setSectionEnabled(item.title, Boolean(val))
+                  }
+                  onClick={(e) => e.stopPropagation()}
+                />
+              )}
+            </AccordionTrigger>
+            <AccordionContent>{item.content}</AccordionContent>
+          </AccordionItem>
+        </>
       ))}
     </Accordion>
   )

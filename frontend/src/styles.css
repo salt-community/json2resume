@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 /* App color tokens (routed through theme CSS variables) */
 @theme {
@@ -17,7 +17,7 @@
   /* Accent */
   --color-accent: var(--theme-accent);
   --color-on-accent: var(--theme-on-accent);
-  
+
   /* Selected state */
   --color-selected: var(--theme-selected);
   --color-on-selected: var(--theme-on-selected);
@@ -25,28 +25,28 @@
 
 /* Light theme defaults */
 :root,
-[data-theme="light"] {
+[data-theme='light'] {
   color-scheme: light;
 
   /* Surfaces and borders (light) */
   --theme-surface: #ffffff;
-  --theme-surface-strong: #f5f5f5;  /* neutral-100 */
-  --theme-border: #e5e5e5;          /* neutral-200 */
+  --theme-surface-strong: #f5f5f5; /* neutral-100 */
+  --theme-border: #e5e5e5; /* neutral-200 */
 
   /* Text (light) */
-  --theme-text-muted: #525252;      /* neutral-600 */
-  --theme-text-subtle: #404040;     /* neutral-700 */
-  --theme-text-strong: #171717;     /* neutral-900 */
-  --theme-link: #2563eb;            /* blue-600 */
-  --theme-text-highlight: #ca8a04;  /* yellow-600-ish */
+  --theme-text-muted: #525252; /* neutral-600 */
+  --theme-text-subtle: #404040; /* neutral-700 */
+  --theme-text-strong: #171717; /* neutral-900 */
+  --theme-link: #2563eb; /* blue-600 */
+  --theme-text-highlight: #ca8a04; /* yellow-600-ish */
 
   /* Accent */
-  --theme-accent: #4f46e5;          /* indigo-600 */
-  --theme-on-accent: #ffffff;       /* white */
-  
+  --theme-accent: #4f46e5; /* indigo-600 */
+  --theme-on-accent: #ffffff; /* white */
+
   /* Selected state (light) */
-  --theme-selected: #e5e5e5;        /* neutral-200 */
-  --theme-on-selected: #171717;     /* neutral-900 */
+  --theme-selected: #e5e5e5; /* neutral-200 */
+  --theme-on-selected: #171717; /* neutral-900 */
 }
 
 /* Dark theme overrides: follow system preference */
@@ -55,24 +55,24 @@
     color-scheme: dark;
 
     /* Surfaces and borders (dark) */
-    --theme-surface: #262626;         /* neutral-800 */
-    --theme-surface-strong: #171717;  /* neutral-900 */
-    --theme-border: #404040;          /* neutral-700 */
+    --theme-surface: #262626; /* neutral-800 */
+    --theme-surface-strong: #171717; /* neutral-900 */
+    --theme-border: #404040; /* neutral-700 */
 
     /* Text (dark) */
-    --theme-text-muted: #d4d4d4;      /* neutral-300 */
-    --theme-text-subtle: #e5e5e5;     /* neutral-200 */
-    --theme-text-strong: #f5f5f5;     /* neutral-100 */
+    --theme-text-muted: #d4d4d4; /* neutral-300 */
+    --theme-text-subtle: #e5e5e5; /* neutral-200 */
+    --theme-text-strong: #f5f5f5; /* neutral-100 */
     --theme-link: #617ad6;
     --theme-text-highlight: #d6d061;
 
     /* Accent */
-    --theme-accent: #4f46e5;          /* indigo-600 */
-    --theme-on-accent: #ffffff;       /* white */
-    
+    --theme-accent: #4f46e5; /* indigo-600 */
+    --theme-on-accent: #ffffff; /* white */
+
     /* Selected state (dark) */
-    --theme-selected: #404040;        /* neutral-700 */
-    --theme-on-selected: #f5f5f5;     /* neutral-100 */
+    --theme-selected: #404040; /* neutral-700 */
+    --theme-on-selected: #f5f5f5; /* neutral-100 */
   }
 }
 
@@ -83,14 +83,15 @@
     color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
-  
+
   /* Ensure all backgrounds, borders, and colors are printed */
-  body, html {
+  body,
+  html {
     -webkit-print-color-adjust: exact !important;
     color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
-  
+
   /* Force background graphics for all elements */
   * {
     background: transparent !important;
@@ -98,10 +99,10 @@
     color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
-  
+
   /* Specific overrides for elements that should keep their backgrounds */
-  [style*="background"],
-  [class*="bg-"],
+  [style*='background'],
+  [class*='bg-'],
   .bg-white,
   .bg-gray,
   .bg-black,
