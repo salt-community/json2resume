@@ -1,6 +1,6 @@
+import type { ResumeData } from '@/types'
 import LinkedinImporter from '@/components/DataImport/LinkedinImport/LinkedinImporter'
 import JsonImporter from '@/components/DataImport/JsonImport/JsonImporter'
-import type { ResumeData } from '@/types'
 
 type Props = {
   onDataImported?: (data: ResumeData) => void
@@ -17,8 +17,6 @@ export default function DataImporter({ onDataImported }: Props) {
       </div>
 
       <div className="space-y-6">
-        <LinkedinImporter onDataImported={onDataImported} />
-
         <div className="p-4 border rounded-lg">
           <h4 className="font-medium mb-2">JSON Import</h4>
           <p className="text-sm text-muted-foreground mb-3">
@@ -26,6 +24,8 @@ export default function DataImporter({ onDataImported }: Props) {
           </p>
           <JsonImporter onDataImported={onDataImported} />
         </div>
+
+        <LinkedinImporter onDataImported={onDataImported} />
       </div>
     </div>
   )
