@@ -23,6 +23,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion'
+import { Checkbox } from '@/components/ui/checkbox'
 
 type Props = {
   resumeData: ResumeData
@@ -133,10 +134,7 @@ function AccordionGroup({
           <Themes onThemeChange={onThemeChange} currentTheme={currentTheme} />
         ),
       },
-      {
-        title: 'Export',
-        content: <Export resumeData={resumeData} />,
-      },
+
       {
         title: 'Translation',
         content: onTranslationComplete ? (
@@ -150,7 +148,12 @@ function AccordionGroup({
           </div>
         ),
       },
+      {
+        title: 'Export',
+        content: <Export resumeData={resumeData} />,
+      },
     ],
+
     [
       resumeData,
       setResumeData,
@@ -162,13 +165,22 @@ function AccordionGroup({
   return (
     <Accordion type="single" collapsible className="space-y-2">
       {items.map((item, index) => (
-        <AccordionItem
-          className={index === 13 ? 'mb-16' : ''}
-          value={`item-${index}`}
-        >
-          <AccordionTrigger>{item.title}</AccordionTrigger>
-          <AccordionContent>{item.content}</AccordionContent>
-        </AccordionItem>
+        <>
+          <AccordionItem
+            className={index === 13 ? 'mb-16' : ''}
+            value={`item-${index}`}
+          >
+            <AccordionTrigger className="flex items-center w-full">
+              <span className="flex-1 text-left">{item.title}</span>
+              <Checkbox
+                className="ml-4 flex-shrink-0 order-last"
+                onClick={(e) => e.stopPropagation()}
+              />
+            </AccordionTrigger>
+
+            <AccordionContent>{item.content}</AccordionContent>
+          </AccordionItem>
+        </>
       ))}
     </Accordion>
   )

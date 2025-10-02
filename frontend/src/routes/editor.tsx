@@ -17,7 +17,9 @@ export const Route = createFileRoute('/editor')({
 
 function App() {
   const [resumeData, setResumeData] = useState<ResumeData>(mockedResumeData)
-  const [selectedTheme, setSelectedTheme] = useState<string>('https://gist.github.com/david11267/b03fd23966945976472361c8e5d3e161')
+  const [selectedTheme, setSelectedTheme] = useState<string>(
+    'https://gist.github.com/david11267/b03fd23966945976472361c8e5d3e161',
+  )
   const json = jsonStringFromJsonObj(jsonObjFromResumeData(resumeData))
 
   const handleThemeChange = (themeUrl: string) => {
@@ -33,10 +35,16 @@ function App() {
       <section className="bg-surface rounded-xl border border-border shadow-sm p-4">
         <Tabs defaultValue="form">
           <TabsList className="w-full bg-surface rounded-lg border border-border">
-            <TabsTrigger className="p-8 font-bold text-2xl text-text-strong" value="form">
+            <TabsTrigger
+              className="p-8 font-bold text-2xl text-text-strong"
+              value="form"
+            >
               Form
             </TabsTrigger>
-            <TabsTrigger className="p-8 font-bold text-2xl text-text-strong" value="json">
+            <TabsTrigger
+              className="p-8 font-bold text-2xl text-text-strong"
+              value="json"
+            >
               Json
             </TabsTrigger>
           </TabsList>
@@ -63,10 +71,7 @@ function App() {
         </Tabs>
       </section>
       <section className="bg-surface-strong rounded-xl border border-border shadow-sm p-4 overflow-auto">
-        <GistTemplate
-          gistUrl={selectedTheme}
-          resumeData={resumeData}
-        />
+        <GistTemplate gistUrl={selectedTheme} resumeData={resumeData} />
       </section>
     </div>
   )
