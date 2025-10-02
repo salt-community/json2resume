@@ -1,4 +1,4 @@
-import { memo, useState, useMemo } from 'react'
+import { memo, useMemo, useState } from 'react'
 import { ExternalLink, Eye, FileCode, Github, Palette } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -168,7 +168,6 @@ function Themes({ onThemeChange, onThemeChangeV2, currentTheme }: Props) {
     }, 1000)
   }
 
-
   const handleApplyInline = () => {
     if (!customInlineHtml.trim()) {
       alert('Please paste your theme HTML first')
@@ -248,7 +247,8 @@ function Themes({ onThemeChange, onThemeChangeV2, currentTheme }: Props) {
             />
             <div className="flex items-center justify-between">
               <p className="text-xs text-muted-foreground">
-                Click “Apply Inline Theme” to use the HTML above. Selecting another preset will override it.
+                Click “Apply Inline Theme” to use the HTML above. Selecting
+                another preset will override it.
               </p>
               <Button
                 onClick={handleApplyInline}
@@ -264,7 +264,7 @@ function Themes({ onThemeChange, onThemeChangeV2, currentTheme }: Props) {
         {/* Preset Themes */}
         <div className="space-y-3">
           <Label className="text-sm font-medium">Preset Themes</Label>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2  gap-3">
             {[customInlinePreset, ...presetThemes].map((theme) => {
               const disabled =
                 theme.id === customInlinePreset.id && !customInlineHtml.trim()
@@ -272,7 +272,9 @@ function Themes({ onThemeChange, onThemeChangeV2, currentTheme }: Props) {
                 <div
                   key={theme.id}
                   className={`relative border rounded-lg p-4 transition-all hover:shadow-md ${
-                    disabled ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer'
+                    disabled
+                      ? 'opacity-60 cursor-not-allowed'
+                      : 'cursor-pointer'
                   } ${
                     selectedTheme === theme.id
                       ? 'border-orange-500 ring-2 ring-orange-200'
@@ -356,7 +358,9 @@ function Themes({ onThemeChange, onThemeChangeV2, currentTheme }: Props) {
                           onClick={(e) => {
                             e.stopPropagation()
                             window.open(
-                              theme.source.kind === 'url' ? theme.source.url : '#',
+                              theme.source.kind === 'url'
+                                ? theme.source.url
+                                : '#',
                               '_blank',
                             )
                           }}
@@ -370,7 +374,9 @@ function Themes({ onThemeChange, onThemeChangeV2, currentTheme }: Props) {
                           onClick={(e) => {
                             e.stopPropagation()
                             window.open(
-                              theme.source.kind === 'url' ? theme.source.url : '#',
+                              theme.source.kind === 'url'
+                                ? theme.source.url
+                                : '#',
                               '_blank',
                             )
                           }}
@@ -380,7 +386,12 @@ function Themes({ onThemeChange, onThemeChangeV2, currentTheme }: Props) {
                       </div>
                     ) : (
                       <div className="flex gap-1 flex-shrink-0">
-                        <Button size="sm" variant="ghost" className="h-6 px-2 text-xs" disabled>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="h-6 px-2 text-xs"
+                          disabled
+                        >
                           <FileCode className="w-3 h-3" />
                         </Button>
                       </div>

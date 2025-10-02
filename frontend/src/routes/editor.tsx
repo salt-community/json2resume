@@ -46,63 +46,67 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-surface-strong text-text-strong grid grid-cols-1 lg:grid-cols-2 gap-8 p-6 md:p-10">
-      <section className="bg-surface rounded-xl border border-border shadow-sm p-4">
-        <button
-          className="p-4 w-full cursor-pointer hover:text-red-500 transition-colors"
-          onClick={() => setResumeData(defaultResumeData)}
-        >
-          Reset to Default
-        </button>
+    <div className="flex justify-center bg-surface-strong">
+      <div className=" min-h-screen  text-text-strong grid grid-cols-1 lg:grid-cols-2 gap-8 p-6 md:p-10">
+        <section className="bg-surface rounded-xl border border-border shadow-sm p-4">
+          <button
+            className="p-4 w-full cursor-pointer hover:text-red-500 transition-colors"
+            onClick={() => setResumeData(defaultResumeData)}
+          >
+            Reset to Default
+          </button>
 
-        <Tabs defaultValue="form">
-          <TabsList className="w-full bg-surface rounded-lg border border-border">
-            <TabsTrigger
-              className="p-8 font-bold text-2xl text-text-strong"
-              value="form"
-            >
-              Form
-            </TabsTrigger>
-            <TabsTrigger
-              className="p-8 font-bold text-2xl text-text-strong"
-              value="json"
-            >
-              Json
-            </TabsTrigger>
-          </TabsList>
-          <TabsContent value="form">
-            <AccordionGroup
-              resumeData={resumeData}
-              setResumeData={setResumeData}
-              onThemeChange={handleThemeChange}
-              onThemeChangeV2={handleThemeChangeV2}
-              onTranslationComplete={handleTranslationComplete}
-              currentTheme={selectedTheme}
-            />
-          </TabsContent>
-          <TabsContent value="json">
-            <JsonCodeEditor
-              jsonState={json}
-              onChange={(jsonString: string) => {
-                const rData = resumeDataFromJsonObj(
-                  jsonObjFromJsonString(jsonString),
-                )
-                setResumeData(rData)
-              }}
-            />
-          </TabsContent>
-        </Tabs>
-      </section>
+          <Tabs defaultValue="form">
+            <TabsList className="w-full bg-surface rounded-lg border border-border">
+              <TabsTrigger
+                className="p-8 font-bold text-2xl text-text-strong"
+                value="form"
+              >
+                Form
+              </TabsTrigger>
+              <TabsTrigger
+                className="p-8 font-bold text-2xl text-text-strong"
+                value="json"
+              >
+                Json
+              </TabsTrigger>
+            </TabsList>
+            <TabsContent value="form">
+              <AccordionGroup
+                resumeData={resumeData}
+                setResumeData={setResumeData}
+                onThemeChange={handleThemeChange}
+                onThemeChangeV2={handleThemeChangeV2}
+                onTranslationComplete={handleTranslationComplete}
+                currentTheme={selectedTheme}
+              />
+            </TabsContent>
+            <TabsContent value="json">
+              <JsonCodeEditor
+                jsonState={json}
+                onChange={(jsonString: string) => {
+                  const rData = resumeDataFromJsonObj(
+                    jsonObjFromJsonString(jsonString),
+                  )
+                  setResumeData(rData)
+                }}
+              />
+            </TabsContent>
+          </Tabs>
+        </section>
 
-      <section className="bg-surface-strong rounded-xl border border-border shadow-sm p-4 overflow-auto">
-        <GistTemplate
-          resumeData={filterByEnabled(resumeData)}
-          gistUrl={selectedTheme.kind === 'url' ? selectedTheme.url : undefined}
-          inlineHtml={
-            selectedTheme.kind === 'inline' ? selectedTheme.html : undefined
-          }
-        />
-      </section>
+        <section className="bg-surface-strong rounded-xl border border-border shadow-sm p-4 overflow-auto">
+          <GistTemplate
+            resumeData={filterByEnabled(resumeData)}
+            gistUrl={
+              selectedTheme.kind === 'url' ? selectedTheme.url : undefined
+            }
+            inlineHtml={
+              selectedTheme.kind === 'inline' ? selectedTheme.html : undefined
+            }
+          />
+        </section>
+      </div>
     </div>
   )
 }
