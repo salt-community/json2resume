@@ -112,6 +112,95 @@ export const inlineThemes = {
     [[/each]]
   </section>
   [[/if]]
+
+  [[#if projects]]
+  <section class="section">
+    <h2>[[#if meta.sectionHeaders.projects]]>>[meta.sectionHeaders.projects]<<[[/if]][[#if !meta.sectionHeaders.projects]]Projects[[/if]]</h2>
+    [[#each projects]]
+      <div class="item">
+        <div><strong>>>[name]<<</strong> [[#if url]]<span class="muted">| <a href=">>[url]<<">>>[url]<<</a></span>[[/if]]</div>
+        [[#if description]]<div>>>[description]<<</div>[[/if]]
+        [[#if highlights]]
+          <ul>
+            [[#each highlights]]<li>>>[.]<<</li>[[/each]]
+          </ul>
+        [[/if]]
+      </div>
+    [[/each]]
+  </section>
+  [[/if]]
+
+  [[#if certificates]]
+  <section class="section">
+    <h2>[[#if meta.sectionHeaders.certificates]]>>[meta.sectionHeaders.certificates]<<[[/if]][[#if !meta.sectionHeaders.certificates]]Certifications[[/if]]</h2>
+    <ul>
+      [[#each certificates]]
+        <li><strong>>>[name]<<</strong> — >>[issuer]<< [[#if date]](<span class="muted">>>[date]<<</span>)[[/if]] [[#if url]]· <a href=">>[url]<<">verify</a>[[/if]]</li>
+      [[/each]]
+    </ul>
+  </section>
+  [[/if]]
+
+  [[#if awards]]
+  <section class="section">
+    <h2>[[#if meta.sectionHeaders.awards]]>>[meta.sectionHeaders.awards]<<[[/if]][[#if !meta.sectionHeaders.awards]]Awards[[/if]]</h2>
+    <ul>
+      [[#each awards]]
+        <li><strong>>>[title]<<</strong> — >>[awarder]<< [[#if date]](<span class="muted">>>[date]<<</span>)[[/if]] [[#if summary]]· >>[summary]<<[[/if]]</li>
+      [[/each]]
+    </ul>
+  </section>
+  [[/if]]
+
+  [[#if publications]]
+  <section class="section">
+    <h2>[[#if meta.sectionHeaders.publications]]>>[meta.sectionHeaders.publications]<<[[/if]][[#if !meta.sectionHeaders.publications]]Publications[[/if]]</h2>
+    <ul>
+      [[#each publications]]
+        <li>
+          <strong>>>[name]<<</strong> — >>[publisher]<< [[#if releaseDate]](<span class="muted">>>[releaseDate]<<</span>)[[/if]]
+          [[#if url]]· <a href=">>[url]<<">link</a>[[/if]]
+          [[#if summary]]<div class="muted">>>[summary]<<</div>[[/if]]
+        </li>
+      [[/each]]
+    </ul>
+  </section>
+  [[/if]]
+
+  [[#if volunteer]]
+  <section class="section">
+    <h2>[[#if meta.sectionHeaders.volunteer]]>>[meta.sectionHeaders.volunteer]<<[[/if]][[#if !meta.sectionHeaders.volunteer]]Volunteering[[/if]]</h2>
+    [[#each volunteer]]
+      <div class="item">
+        <div><strong>>>[organization]<<</strong> — >>[position]<< [[#if url]]· <a href=">>[url]<<">site</a>[[/if]]</div>
+        [[#if summary]]<div class="muted">>>[summary]<<</div>[[/if]]
+        [[#if highlights]]<ul>[[#each highlights]]<li>>>[.]<<</li>[[/each]]</ul>[[/if]]
+      </div>
+    [[/each]]
+  </section>
+  [[/if]]
+
+  [[#if interests]]
+  <section class="section">
+    <h2>[[#if meta.sectionHeaders.interests]]>>[meta.sectionHeaders.interests]<<[[/if]][[#if !meta.sectionHeaders.interests]]Interests[[/if]]</h2>
+    <ul>
+      [[#each interests]]
+        <li><strong>>>[name]<<</strong> [[#if keywords]]— [[#join keywords|, ]] [[/if]]</li>
+      [[/each]]
+    </ul>
+  </section>
+  [[/if]]
+
+  [[#if references]]
+  <section class="section">
+    <h2>[[#if meta.sectionHeaders.references]]>>[meta.sectionHeaders.references]<<[[/if]][[#if !meta.sectionHeaders.references]]References[[/if]]</h2>
+    <ul>
+      [[#each references]]
+        <li><strong>>>[name]<<</strong> — >>[reference]<<</li>
+      [[/each]]
+    </ul>
+  </section>
+  [[/if]]
 </div>`.trim(),
   },
 } as const

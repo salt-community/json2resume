@@ -46,9 +46,9 @@ function App() {
   }
 
   return (
-    <div className="flex justify-center bg-surface-strong">
-      <div className=" min-h-screen  text-text-strong grid grid-cols-1 lg:grid-cols-2 gap-8 p-6 md:p-10">
-        <section className="bg-surface rounded-xl border border-border shadow-sm p-4">
+    <div className="flex justify-center bg-surface-strong h-screen overflow-hidden">
+      <div className=" text-text-strong grid grid-cols-1 lg:grid-cols-2 gap-8 p-6 md:p-10 h-full overflow-hidden">
+        <section className="h-full overflow-auto bg-surface rounded-xl border border-border shadow-sm p-4">
           <button
             className="p-4 w-full cursor-pointer hover:text-red-500 transition-colors"
             onClick={() => setResumeData(defaultResumeData)}
@@ -95,7 +95,7 @@ function App() {
           </Tabs>
         </section>
 
-        <section className="bg-surface-strong rounded-xl border border-border shadow-sm p-4 overflow-auto">
+        <section className="h-full bg-surface-strong rounded-xl border border-border shadow-sm p-4 overflow-auto">
           <GistTemplate
             resumeData={filterByEnabled(resumeData)}
             gistUrl={
