@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import type { ResumeData } from '@/types'
 import AccordionGroup from '@/components/AccordionGroup'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -10,7 +10,7 @@ import { jsonObjFromResumeData } from '@/data/jsonObjFromResumeData.ts'
 import { resumeDataFromJsonObj } from '@/data/resumeDataFromJsonObj.ts'
 import jsonObjFromJsonString from '@/data/jsonObjFromJsonString.ts'
 import { GistTemplate } from '@/components/GistTemplate'
-import { loadResumeData } from '@/storage/resumeStorage'
+import { loadResumeData, loadResumeDataAndConfig, saveResumeData } from '@/storage/resumeStorage'
 import { inlineThemes } from '@/data/localThemes'
 
 // Theme selection can be a URL or inline HTML
@@ -23,12 +23,38 @@ export const Route = createFileRoute('/editor')({
 })
 
 function App() {
-  const [resumeData, setResumeData] = useState<ResumeData>(
-    () => loadResumeData() ?? mockedResumeData,
-  )
-  const [selectedTheme, setSelectedTheme] = useState<ThemeSource>({
-    kind: 'url',
-    url: 'https://gist.github.com/david11267/b03fd23966945976472361c8e5d3e161',
+  const [resumeData, setResumeData] = useState<ResumeData>(() => {
+    const loaded = loadResumeDataAndConfig()
+    return loaded?.resumeData ?? mockedResumeData
+  })
+  const [selectedTheme, setSelectedTheme] = useState<ThemeSource>(() => {
+    const loaded = loadResumeDataAndConfig()
+    const themeCfg = loaded?.config?.theme as
+      | { kind: 'url'; url?: string }
+      | { kind: 'inline'; html?: string }
+      | { kind: 'local'; id?: string }
+      | undefined
+
+    if (themeCfg && typeof themeCfg === 'object') {
+      if (themeCfg.kind === 'url' && typeof (themeCfg as any).url === 'string') {
+        return { kind: 'url', url: (themeCfg as any).url }
+      } else if (
+        themeCfg.kind === 'inline' &&
+        typeof (themeCfg as any).html === 'string'
+      ) {
+        return { kind: 'inline', html: (themeCfg as any).html }
+      } else if (themeCfg.kind === 'local' && typeof (themeCfg as any).id === 'string') {
+        if ((themeCfg as any).id === 'Minimal Local') {
+          return { kind: 'inline', html: inlineThemes.minimal.html }
+        }
+      }
+    }
+
+    // Fallback default
+    return {
+      kind: 'url',
+      url: 'https://gist.github.com/david11267/b03fd23966945976472361c8e5d3e161',
+    }
   })
 
   // Build config from current state (checkboxes + theme)
@@ -59,6 +85,12 @@ function App() {
       theme: themeConfig,
     },
   })
+
+  // Persist JSON (including config) whenever it changes
+  // This ensures checkbox and theme changes are reflected in storage
+  useEffect(() => {
+    saveResumeData(json)
+  }, [json])
 
   // Legacy handler: URL only
   const handleThemeChange = (themeUrl: string) => {

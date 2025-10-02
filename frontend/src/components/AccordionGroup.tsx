@@ -13,10 +13,10 @@ import References from './accordionComponents/References'
 import Projects from './accordionComponents/Projects'
 import Export from './accordionComponents/Export'
 import ResumeTranslator from './accordionComponents/ResumeTranslator'
-import DataImporter from '@/components/DataImport/DataImporter'
 import Themes from './accordionComponents/Themes'
 import SectionHeadersComponent from './accordionComponents/SectionHeaders'
 import type { ResumeData } from '@/types'
+import DataImporter from '@/components/DataImport/DataImporter'
 import {
   Accordion,
   AccordionContent,
@@ -24,7 +24,6 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion'
 import { Checkbox } from '@/components/ui/checkbox'
-import { saveResumeData } from '@/storage/resumeStorage'
 
 // Theme selection can be a URL or inline HTML
 type ThemeSource =
@@ -48,10 +47,9 @@ function AccordionGroup({
   onTranslationComplete,
   currentTheme,
 }: Props) {
-  // Wrap updates so any field change (including de-select) persists to storage
+  // Centralized saving is handled in the editor via derived JSON effect
   const setResumeDataAndSave = useCallback(
     (data: ResumeData) => {
-      saveResumeData(data)
       setResumeData(data)
     },
     [setResumeData],
