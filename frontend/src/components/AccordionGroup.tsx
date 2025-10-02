@@ -40,11 +40,16 @@ function AccordionGroup({
   onTranslationComplete,
   currentTheme,
 }: Props) {
-  const items: Array<{ title: string; content: React.ReactNode }> = useMemo(
+  const items: Array<{
+    title: string
+    content: React.ReactNode
+    checkbox: boolean
+  }> = useMemo(
     () => [
       {
         title: 'LinkedIn Import',
         content: <LinkedinImporter onDataImported={setResumeData} />,
+        checkbox: true,
       },
       {
         title: 'Section Headers',
@@ -54,34 +59,40 @@ function AccordionGroup({
             setResumeData={setResumeData}
           />
         ),
+        checkbox: true,
       },
       {
         title: 'Basics',
         content: (
           <Basic resumeData={resumeData} setResumeData={setResumeData} />
         ),
+        checkbox: true,
       },
       {
         title: 'Work Experience',
         content: <Work resumeData={resumeData} setResumeData={setResumeData} />,
+        checkbox: true,
       },
       {
         title: 'Education',
         content: (
           <Education resumeData={resumeData} setResumeData={setResumeData} />
         ),
+        checkbox: true,
       },
       {
         title: 'Projects',
         content: (
           <Projects resumeData={resumeData} setResumeData={setResumeData} />
         ),
+        checkbox: true,
       },
       {
         title: 'Skills',
         content: (
           <Skills resumeData={resumeData} setResumeData={setResumeData} />
         ),
+        checkbox: true,
       },
       {
         title: 'Certifications',
@@ -91,48 +102,56 @@ function AccordionGroup({
             setResumeData={setResumeData}
           />
         ),
+        checkbox: true,
       },
       {
         title: 'Awards',
         content: (
           <Awards resumeData={resumeData} setResumeData={setResumeData} />
         ),
+        checkbox: true,
       },
       {
         title: 'Publications',
         content: (
           <Publications resumeData={resumeData} setResumeData={setResumeData} />
         ),
+        checkbox: true,
       },
       {
         title: 'Volunteering',
         content: (
           <Volunteering resumeData={resumeData} setResumeData={setResumeData} />
         ),
+        checkbox: true,
       },
       {
         title: 'Languages',
         content: (
           <Languages resumeData={resumeData} setResumeData={setResumeData} />
         ),
+        checkbox: true,
       },
       {
         title: 'Interests',
         content: (
           <Interests resumeData={resumeData} setResumeData={setResumeData} />
         ),
+        checkbox: true,
       },
       {
         title: 'References',
         content: (
           <References resumeData={resumeData} setResumeData={setResumeData} />
         ),
+        checkbox: true,
       },
       {
         title: 'Themes',
         content: (
           <Themes onThemeChange={onThemeChange} currentTheme={currentTheme} />
         ),
+        checkbox: true,
       },
 
       {
@@ -147,10 +166,12 @@ function AccordionGroup({
             <p>Translation feature not available</p>
           </div>
         ),
+        checkbox: true,
       },
       {
         title: 'Export',
         content: <Export resumeData={resumeData} />,
+        checkbox: true,
       },
     ],
 
@@ -173,11 +194,10 @@ function AccordionGroup({
             <AccordionTrigger className="flex items-center w-full">
               <span className="flex-1 text-left">{item.title}</span>
               <Checkbox
-                className="ml-4 flex-shrink-0 order-last"
+                className=" ml-4 flex-shrink-0 order-last"
                 onClick={(e) => e.stopPropagation()}
               />
             </AccordionTrigger>
-
             <AccordionContent>{item.content}</AccordionContent>
           </AccordionItem>
         </>
