@@ -1,4 +1,4 @@
-import { memo, useState } from 'react'
+import { memo, useState, useMemo } from 'react'
 import { ExternalLink, Eye, FileCode, Github, Palette } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -94,6 +94,9 @@ interface Props {
 
 function Themes({ onThemeChange, onThemeChangeV2, currentTheme }: Props) {
   const [customUrl, setCustomUrl] = useState('')
+  const [useCustomInline, setUseCustomInline] = useState(false)
+  const [customInlineHtml, setCustomInlineHtml] = useState('')
+
   const [selectedTheme, setSelectedTheme] = useState<string | null>(() => {
     // Match by URL for legacy string or by inline content for object
     if (typeof currentTheme === 'string') {
@@ -118,14 +121,27 @@ function Themes({ onThemeChange, onThemeChangeV2, currentTheme }: Props) {
             t.source.html === currentTheme.html &&
             t.source.css === currentTheme.css,
         )
-        return matchByInline ? matchByInline.id : null
+        return matchByInline ? matchByInline.id : 'Custom (Inline)'
       }
     }
     return null
   })
   const [isLoading, setIsLoading] = useState(false)
 
+  const customInlinePreset: ThemePreset = useMemo(
+    () => ({
+      id: 'Custom (Inline)',
+      description: 'Paste your own theme HTML (uses custom template language)',
+      source: { kind: 'inline', html: customInlineHtml },
+    }),
+    [customInlineHtml],
+  )
+
   const handlePresetSelect = (theme: ThemePreset) => {
+    // If custom inline is toggled on, only allow selecting the custom inline preset
+    if (useCustomInline && theme.id !== customInlinePreset.id) {
+      return
+    }
     setSelectedTheme(theme.id)
     if (theme.source.kind === 'url') {
       setCustomUrl(theme.source.url)
@@ -155,6 +171,34 @@ function Themes({ onThemeChange, onThemeChangeV2, currentTheme }: Props) {
     setTimeout(() => {
       setIsLoading(false)
     }, 1000)
+  }
+
+  const handleToggleInline = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const checked = e.target.checked
+    setUseCustomInline(checked)
+    if (checked) {
+      if (customInlineHtml.trim()) {
+        setSelectedTheme(customInlinePreset.id)
+        onThemeChangeV2?.({ kind: 'inline', html: customInlineHtml })
+      }
+    } else {
+      // Turn off custom inline; do not force any selection — user can pick presets/URL again
+      if (selectedTheme === customInlinePreset.id) {
+        setSelectedTheme(null)
+      }
+    }
+  }
+
+  const handleApplyInline = () => {
+    if (!customInlineHtml.trim()) {
+      alert('Please paste your theme HTML first')
+      return
+    }
+    if (!useCustomInline) {
+      setUseCustomInline(true)
+    }
+    setSelectedTheme(customInlinePreset.id)
+    onThemeChangeV2?.({ kind: 'inline', html: customInlineHtml })
   }
 
   const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -215,120 +259,172 @@ function Themes({ onThemeChange, onThemeChangeV2, currentTheme }: Props) {
           </p>
         </div>
 
+        {/* Custom Inline Theme */}
+        <div className="space-y-3">
+          <Label className="text-sm font-medium flex items-center gap-3">
+            <input
+              id="use-inline-toggle"
+              type="checkbox"
+              checked={useCustomInline}
+              onChange={handleToggleInline}
+              className="h-4 w-4 accent-indigo-600"
+            />
+            Use custom inline theme
+          </Label>
+          <div className="space-y-2">
+            <textarea
+              className="w-full h-48 p-3 border rounded-md font-mono text-xs bg-surface text-text-strong border-border"
+              placeholder="Paste your template HTML here (supports >>[path]<<, [[#if]], [[#each]], [[#join]])"
+              value={customInlineHtml}
+              onChange={(e) => setCustomInlineHtml(e.target.value)}
+            />
+            <div className="flex items-center justify-between">
+              <p className="text-xs text-muted-foreground">
+                When toggled on, this HTML will override preset themes and apply immediately.
+              </p>
+              <Button
+                onClick={handleApplyInline}
+                disabled={!customInlineHtml.trim()}
+                className="px-4"
+              >
+                Apply Inline Theme
+              </Button>
+            </div>
+          </div>
+        </div>
+
         {/* Preset Themes */}
         <div className="space-y-3">
           <Label className="text-sm font-medium">Preset Themes</Label>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            {presetThemes.map((theme) => (
-              <div
-                key={theme.id}
-                className={`relative border rounded-lg p-4 cursor-pointer transition-all hover:shadow-md ${
-                  selectedTheme === theme.id
-                    ? 'border-orange-500 ring-2 ring-orange-200'
-                    : 'border-gray-200 hover:border-gray-300 dark:border-gray-700 dark:hover:border-gray-600'
-                }`}
-                style={{
-                  backgroundColor:
+            {[customInlinePreset, ...presetThemes].map((theme) => {
+              const disabled =
+                useCustomInline
+                  ? theme.id !== customInlinePreset.id
+                  : theme.id === customInlinePreset.id // disable custom card if toggle is off
+              return (
+                <div
+                  key={theme.id}
+                  className={`relative border rounded-lg p-4 transition-all hover:shadow-md ${
+                    disabled ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer'
+                  } ${
                     selectedTheme === theme.id
-                      ? 'var(--theme-selected)'
-                      : 'var(--theme-surface)',
-                  color:
-                    selectedTheme === theme.id
-                      ? 'var(--theme-on-selected)'
-                      : 'var(--theme-text-strong)',
-                }}
-                onClick={() => handlePresetSelect(theme)}
-              >
-                <div className="flex items-start justify-between mb-3">
-                  <div className="flex items-start gap-3 flex-1 min-w-0">
-                    <div
-                      className="p-2 rounded-lg flex-shrink-0"
-                      style={{
-                        backgroundColor:
-                          selectedTheme === theme.id
-                            ? 'var(--theme-accent)'
-                            : 'var(--theme-surface-strong)',
-                      }}
-                    >
-                      <Palette
-                        className="w-5 h-5"
+                      ? 'border-orange-500 ring-2 ring-orange-200'
+                      : 'border-gray-200 hover:border-gray-300 dark:border-gray-700 dark:hover:border-gray-600'
+                  }`}
+                  style={{
+                    backgroundColor:
+                      selectedTheme === theme.id
+                        ? 'var(--theme-selected)'
+                        : 'var(--theme-surface)',
+                    color:
+                      selectedTheme === theme.id
+                        ? 'var(--theme-on-selected)'
+                        : 'var(--theme-text-strong)',
+                  }}
+                  onClick={() => {
+                    if (disabled) return
+                    handlePresetSelect(theme)
+                  }}
+                >
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex items-start gap-3 flex-1 min-w-0">
+                      <div
+                        className="p-2 rounded-lg flex-shrink-0"
                         style={{
-                          color:
+                          backgroundColor:
                             selectedTheme === theme.id
-                              ? 'var(--theme-on-accent)'
-                              : 'var(--theme-accent)',
-                        }}
-                      />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <h4 className="font-medium text-sm break-words">
-                        {theme.id}
-                      </h4>
-                      <p
-                        className="text-xs mt-1 break-words"
-                        style={{
-                          color:
-                            selectedTheme === theme.id
-                              ? 'var(--theme-text-muted)'
-                              : 'var(--theme-text-muted)',
+                              ? 'var(--theme-accent)'
+                              : 'var(--theme-surface-strong)',
                         }}
                       >
-                        {theme.description}
-                      </p>
+                        <Palette
+                          className="w-5 h-5"
+                          style={{
+                            color:
+                              selectedTheme === theme.id
+                                ? 'var(--theme-on-accent)'
+                                : 'var(--theme-accent)',
+                          }}
+                        />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-medium text-sm break-words">
+                          {theme.id}
+                        </h4>
+                        <p
+                          className="text-xs mt-1 break-words"
+                          style={{
+                            color: 'var(--theme-text-muted)',
+                          }}
+                        >
+                          {theme.description}
+                        </p>
+                      </div>
                     </div>
+                    {selectedTheme === theme.id && (
+                      <div
+                        className="w-2 h-2 rounded-full flex-shrink-0 ml-2"
+                        style={{ backgroundColor: 'var(--theme-accent)' }}
+                      ></div>
+                    )}
                   </div>
-                  {selectedTheme === theme.id && (
-                    <div
-                      className="w-2 h-2 rounded-full flex-shrink-0 ml-2"
-                      style={{ backgroundColor: 'var(--theme-accent)' }}
-                    ></div>
-                  )}
-                </div>
 
-                <div className="flex items-center justify-between gap-2">
-                  <span
-                    className="text-xs font-mono truncate flex-1 min-w-0"
-                    style={{ color: 'var(--theme-text-muted)' }}
-                  >
-                    {theme.source.kind === 'url'
-                      ? `${new URL(theme.source.url).host}/...`
-                      : 'local theme'}
-                  </span>
-                  {theme.source.kind === 'url' ? (
-                    <div className="flex gap-1 flex-shrink-0">
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        className="h-6 px-2 text-xs"
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          window.open(theme.source.kind === 'url' ? theme.source.url : '#', '_blank')
-                        }}
-                      >
-                        <Eye className="w-3 h-3" />
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        className="h-6 px-2 text-xs"
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          window.open(theme.source.kind === 'url' ? theme.source.url : '#', '_blank')
-                        }}
-                      >
-                        <ExternalLink className="w-3 h-3" />
-                      </Button>
-                    </div>
-                  ) : (
-                    <div className="flex gap-1 flex-shrink-0">
-                      <Button size="sm" variant="ghost" className="h-6 px-2 text-xs" disabled>
-                        <FileCode className="w-3 h-3" />
-                      </Button>
-                    </div>
-                  )}
+                  <div className="flex items-center justify-between gap-2">
+                    <span
+                      className="text-xs font-mono truncate flex-1 min-w-0"
+                      style={{ color: 'var(--theme-text-muted)' }}
+                    >
+                      {theme.source.kind === 'url'
+                        ? `${new URL(theme.source.url).host}/...`
+                        : theme.id === customInlinePreset.id
+                          ? 'custom inline'
+                          : 'local theme'}
+                    </span>
+                    {theme.source.kind === 'url' ? (
+                      <div className="flex gap-1 flex-shrink-0">
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="h-6 px-2 text-xs"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            window.open(
+                              theme.source.kind === 'url' ? theme.source.url : '#',
+                              '_blank',
+                            )
+                          }}
+                          disabled={disabled}
+                        >
+                          <Eye className="w-3 h-3" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="h-6 px-2 text-xs"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            window.open(
+                              theme.source.kind === 'url' ? theme.source.url : '#',
+                              '_blank',
+                            )
+                          }}
+                          disabled={disabled}
+                        >
+                          <ExternalLink className="w-3 h-3" />
+                        </Button>
+                      </div>
+                    ) : (
+                      <div className="flex gap-1 flex-shrink-0">
+                        <Button size="sm" variant="ghost" className="h-6 px-2 text-xs" disabled>
+                          <FileCode className="w-3 h-3" />
+                        </Button>
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
-            ))}
+              )
+            })}
           </div>
         </div>
 
