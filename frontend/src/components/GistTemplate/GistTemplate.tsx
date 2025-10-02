@@ -10,7 +10,7 @@
  *   - The template’s own HTML/CSS is rendered as-is (trusted template).
  */
 
-import React, { memo, useEffect } from 'react'
+import React, { memo, useEffect, useMemo } from 'react'
 import type { ResumeData } from './templateEngine'
 import { useGistTemplate } from '@/hooks'
 

@@ -25,6 +25,7 @@ export function useGistTemplate(
   gistUrl: string,
   resumeData: ResumeData,
   filename?: string,
+  inlineHtml?: string,
 ) {
   const [state, setState] = useState<GistTemplateState>({
     processedHtml: '',
@@ -36,6 +37,18 @@ export function useGistTemplate(
 
   // Separate template fetching from data rendering
   const fetchTemplate = useCallback(async () => {
+    // Use inline HTML if provided, otherwise fetch from Gist
+    if (inlineHtml) {
+      setState((prev) => ({
+        ...prev,
+        rawTemplate: inlineHtml,
+        templateFetched: true,
+        loading: false,
+        error: null,
+      }))
+      return
+    }
+
     // Guard against missing inputs
     if (!gistUrl) {
       setState((prev) => ({
@@ -81,7 +94,7 @@ export function useGistTemplate(
         error: errorMessage,
       }))
     }
-  }, [gistUrl, filename])
+  }, [gistUrl, filename, inlineHtml])
 
   // Use useMemo to efficiently render template with data
   const processedHtml = useMemo(() => {
