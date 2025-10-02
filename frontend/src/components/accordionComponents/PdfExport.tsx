@@ -115,7 +115,7 @@ export default function PdfExport({ resumeData }: Props) {
 
         <Button
           onClick={exportToPdf}
-          disabled={isExporting || !resumeData.basics.name || !processedHtml}
+          disabled={isExporting || !resumeData.basics?.name || !processedHtml}
           className="w-full max-w-sm"
           size="lg"
         >
@@ -132,13 +132,13 @@ export default function PdfExport({ resumeData }: Props) {
           )}
         </Button>
 
-        {!resumeData.basics.name && (
+        {!resumeData.basics?.name && (
           <p className="text-sm text-orange-600 font-medium">
             Please fill in your basic information first
           </p>
         )}
 
-        {!processedHtml && resumeData.basics.name && (
+        {!processedHtml && resumeData.basics?.name && (
           <p className="text-sm text-blue-600 font-medium">
             Loading template...
           </p>
