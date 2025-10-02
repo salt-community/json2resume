@@ -189,10 +189,22 @@ const resumeData: ResumeData = {
 ## Security
 
 - Escaping by default: The engine HTML-escapes all injected values to avoid XSS.
-- Templates are trusted: Your Gist template’s HTML/CSS is injected as-is.
+- Templates are trusted: Your Gist template's HTML/CSS is injected as-is.
+- CSS Isolation: Theme styles are automatically scoped to prevent leakage into the main page.
 - Opt-out (rare): You can disable escaping for a render call ({ htmlEscape: false }) if all values are trusted.
 
-Per-placeholder “raw” filters are not supported. Prefer keeping escaping on.
+Per-placeholder "raw" filters are not supported. Prefer keeping escaping on.
+
+### CSS Isolation
+
+The component automatically isolates theme styles to prevent them from affecting the rest of your application:
+
+- **Global selectors** (`:root`, `body`, `*`) are scoped to the template container
+- **CSS custom properties** are scoped to the container instead of `:root`
+- **Media queries** are preserved but their inner rules are scoped
+- **Print styles** (`@page`) remain global for proper PDF generation
+
+This prevents theme styles from "leaking" out and affecting your main application UI.
 
 ## Error Handling
 

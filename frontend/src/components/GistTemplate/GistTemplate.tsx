@@ -218,9 +218,156 @@ const ErrorState: React.FC<{ error: string; onRetry?: () => void }> = ({
 )
 
 /**
+ * Extracts and scopes CSS from HTML content to prevent style leakage
+ */
+function extractAndScopeStyles(
+  html: string,
+  containerId: string,
+): { html: string; css: string } {
+  // Create a temporary DOM element to parse the HTML
+  const tempDiv = document.createElement('div')
+  tempDiv.innerHTML = html
+
+  // Extract the style tag content
+  const styleTag = tempDiv.querySelector('style')
+  let css = ''
+  if (styleTag) {
+    css = styleTag.textContent || ''
+    // Remove the style tag from the HTML
+    styleTag.remove()
+  }
+
+  // Extract body content if it exists
+  const bodyTag = tempDiv.querySelector('body')
+  let bodyContent = ''
+  if (bodyTag) {
+    bodyContent = bodyTag.innerHTML
+  } else {
+    // If no body tag, use the entire content
+    bodyContent = tempDiv.innerHTML
+  }
+
+  // Scope CSS selectors to the container
+  const scopedCss = scopeCssSelectors(css, containerId)
+
+  return {
+    html: bodyContent,
+    css: scopedCss,
+  }
+}
+
+/**
+ * Scopes CSS selectors to a specific container to prevent global style leakage
+ */
+function scopeCssSelectors(css: string, containerId: string): string {
+  if (!css.trim()) return ''
+
+  // Split CSS into rules
+  const rules = css
+    .split('}')
+    .filter((rule) => rule.trim())
+    .map((rule) => rule.trim() + '}')
+
+  const scopedRules = rules
+    .map((rule) => {
+      // Skip empty rules
+      if (!rule.trim() || rule === '}') return ''
+
+      // Handle @media queries and other at-rules
+      if (rule.startsWith('@')) {
+        return scopeAtRule(rule, containerId)
+      }
+
+      // Handle regular CSS rules
+      return scopeRegularRule(rule, containerId)
+    })
+    .filter((rule) => rule.trim())
+
+  return scopedRules.join('\n')
+}
+
+/**
+ * Scopes at-rules like @media, @page, etc.
+ */
+function scopeAtRule(rule: string, containerId: string): string {
+  // Handle @media queries
+  if (rule.startsWith('@media')) {
+    const mediaMatch = rule.match(/^(@media[^{]+)\{([^}]+)\}/)
+    if (mediaMatch) {
+      const mediaQuery = mediaMatch[1]
+      const innerRules = mediaMatch[2]
+      const scopedInnerRules = scopeCssSelectors(innerRules, containerId)
+      return `${mediaQuery} { ${scopedInnerRules} }`
+    }
+  }
+
+  // Handle @page rules
+  if (rule.startsWith('@page')) {
+    // @page rules should remain global for print styles
+    return rule
+  }
+
+  // For other at-rules, scope the inner content
+  const atRuleMatch = rule.match(/^(@[^{]+)\{([^}]+)\}/)
+  if (atRuleMatch) {
+    const atRule = atRuleMatch[1]
+    const innerRules = atRuleMatch[2]
+    const scopedInnerRules = scopeCssSelectors(innerRules, containerId)
+    return `${atRule} { ${scopedInnerRules} }`
+  }
+
+  return rule
+}
+
+/**
+ * Scopes regular CSS rules
+ */
+function scopeRegularRule(rule: string, containerId: string): string {
+  // Extract selector and declaration
+  const ruleMatch = rule.match(/^([^{]+)\{([^}]+)\}/)
+  if (!ruleMatch) return rule
+
+  const selector = ruleMatch[1].trim()
+  const declaration = ruleMatch[2]
+
+  // Skip if already scoped
+  if (selector.includes(`#${containerId}`)) return rule
+
+  // Handle :root selector - convert to CSS custom properties on the container
+  if (selector === ':root') {
+    return `#${containerId} { ${declaration} }`
+  }
+
+  // Handle body selector - scope to container
+  if (selector === 'body') {
+    return `#${containerId} { ${declaration} }`
+  }
+
+  // Handle universal selector
+  if (selector === '*') {
+    return `#${containerId} * { ${declaration} }`
+  }
+
+  // Handle other selectors - scope them to the container
+  const scopedSelector = selector
+    .split(',')
+    .map((sel) => {
+      const trimmedSel = sel.trim()
+      // Skip if already scoped
+      if (trimmedSel.includes(`#${containerId}`)) return trimmedSel
+      // Scope the selector
+      return `#${containerId} ${trimmedSel}`
+    })
+    .join(', ')
+
+  return `${scopedSelector} { ${declaration} }`
+}
+
+/**
  * GistTemplate
  * ------------
  * Thin wrapper that renders loading/error states, and injects the processed HTML.
+ * Now with CSS isolation to prevent style leakage.
  */
 const GistTemplate: React.FC<GistTemplateProps> = memo(
   ({
@@ -238,6 +385,18 @@ const GistTemplate: React.FC<GistTemplateProps> = memo(
       filename,
     )
 
+    // Generate a unique container ID for CSS scoping
+    const containerId = useMemo(
+      () => `gist-template-${Math.random().toString(36).substr(2, 9)}`,
+      [],
+    )
+
+    // Extract and scope styles from the processed HTML
+    const { html: scopedHtml, css: scopedCss } = useMemo(() => {
+      if (!processedHtml) return { html: '', css: '' }
+      return extractAndScopeStyles(processedHtml, containerId)
+    }, [processedHtml, containerId])
+
     // Bubble up the processed HTML if a callback is provided
     useEffect(() => {
       if (processedHtml && onProcessed) onProcessed(processedHtml)
@@ -254,12 +413,17 @@ const GistTemplate: React.FC<GistTemplateProps> = memo(
     if (processedHtml) {
       return (
         <div
+          id={containerId}
           className={`gist-template-container ${className}`}
           data-resume-content="true"
-          // Safe because values were HTML-escaped by the engine;
-          // the template *structure* is trusted by you (from your gist).
-          dangerouslySetInnerHTML={{ __html: processedHtml }}
-        />
+        >
+          {/* Inject scoped CSS */}
+          {scopedCss && (
+            <style dangerouslySetInnerHTML={{ __html: scopedCss }} />
+          )}
+          {/* Inject scoped HTML content */}
+          <div dangerouslySetInnerHTML={{ __html: scopedHtml }} />
+        </div>
       )
     }
 
