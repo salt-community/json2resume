@@ -88,13 +88,11 @@ function App() {
       </section>
       <section className="bg-surface-strong rounded-xl border border-border shadow-sm p-4 overflow-auto">
         <GistTemplate
-          gistUrl={selectedTheme}
           resumeData={filterByEnabled(resumeData)}
           gistUrl={selectedTheme.kind === 'url' ? selectedTheme.url : undefined}
           inlineHtml={
             selectedTheme.kind === 'inline' ? selectedTheme.html : undefined
           }
-          resumeData={resumeData}
         />
       </section>
     </div>

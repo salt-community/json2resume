@@ -1,4 +1,4 @@
-import { useMemo, useCallback } from 'react'
+import { useCallback, useMemo } from 'react'
 import Basic from './accordionComponents/Basic'
 import Work from './accordionComponents/Work'
 import Volunteering from './accordionComponents/Volunteering'
@@ -27,7 +27,9 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { saveResumeData } from '@/storage/resumeStorage'
 
 // Theme selection can be a URL or inline HTML
-type ThemeSource = { kind: 'url'; url: string } | { kind: 'inline'; html: string }
+type ThemeSource =
+  | { kind: 'url'; url: string }
+  | { kind: 'inline'; html: string }
 
 type Props = {
   resumeData: ResumeData
@@ -55,7 +57,6 @@ function AccordionGroup({
     [setResumeData],
   )
 
-  const items: Array<{ title: string; content: React.ReactNode }> = useMemo(
   const sectionKeyMap: Record<string, keyof ResumeData | null> = {
     Basics: 'basics',
     'Work Experience': 'work',
@@ -106,7 +107,6 @@ function AccordionGroup({
       {
         title: 'LinkedIn Import',
         content: <LinkedinImporter onDataImported={setResumeDataAndSave} />,
-        content: <LinkedinImporter onDataImported={setResumeData} />,
         checkbox: false,
       },
       {
@@ -156,7 +156,10 @@ function AccordionGroup({
       {
         title: 'Skills',
         content: (
-          <Skills resumeData={resumeData} setResumeData={setResumeDataAndSave} />
+          <Skills
+            resumeData={resumeData}
+            setResumeData={setResumeDataAndSave}
+          />
         ),
         checkbox: true,
       },
