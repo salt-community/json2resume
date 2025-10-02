@@ -10,7 +10,6 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TemplatesGuideRouteImport } from './routes/templates-guide'
-import { Route as LinkedinTestRouteImport } from './routes/linkedin-test'
 import { Route as HtmlInterpreterStandardRouteImport } from './routes/html-interpreter-standard'
 import { Route as EditorRouteImport } from './routes/editor'
 import { Route as IndexRouteImport } from './routes/index'
@@ -18,11 +17,6 @@ import { Route as IndexRouteImport } from './routes/index'
 const TemplatesGuideRoute = TemplatesGuideRouteImport.update({
   id: '/templates-guide',
   path: '/templates-guide',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LinkedinTestRoute = LinkedinTestRouteImport.update({
-  id: '/linkedin-test',
-  path: '/linkedin-test',
   getParentRoute: () => rootRouteImport,
 } as any)
 const HtmlInterpreterStandardRoute = HtmlInterpreterStandardRouteImport.update({
@@ -45,14 +39,12 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/editor': typeof EditorRoute
   '/html-interpreter-standard': typeof HtmlInterpreterStandardRoute
-  '/linkedin-test': typeof LinkedinTestRoute
   '/templates-guide': typeof TemplatesGuideRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/editor': typeof EditorRoute
   '/html-interpreter-standard': typeof HtmlInterpreterStandardRoute
-  '/linkedin-test': typeof LinkedinTestRoute
   '/templates-guide': typeof TemplatesGuideRoute
 }
 export interface FileRoutesById {
@@ -60,30 +52,18 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/editor': typeof EditorRoute
   '/html-interpreter-standard': typeof HtmlInterpreterStandardRoute
-  '/linkedin-test': typeof LinkedinTestRoute
   '/templates-guide': typeof TemplatesGuideRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths:
-    | '/'
-    | '/editor'
-    | '/html-interpreter-standard'
-    | '/linkedin-test'
-    | '/templates-guide'
+  fullPaths: '/' | '/editor' | '/html-interpreter-standard' | '/templates-guide'
   fileRoutesByTo: FileRoutesByTo
-  to:
-    | '/'
-    | '/editor'
-    | '/html-interpreter-standard'
-    | '/linkedin-test'
-    | '/templates-guide'
+  to: '/' | '/editor' | '/html-interpreter-standard' | '/templates-guide'
   id:
     | '__root__'
     | '/'
     | '/editor'
     | '/html-interpreter-standard'
-    | '/linkedin-test'
     | '/templates-guide'
   fileRoutesById: FileRoutesById
 }
@@ -91,7 +71,6 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   EditorRoute: typeof EditorRoute
   HtmlInterpreterStandardRoute: typeof HtmlInterpreterStandardRoute
-  LinkedinTestRoute: typeof LinkedinTestRoute
   TemplatesGuideRoute: typeof TemplatesGuideRoute
 }
 
@@ -102,13 +81,6 @@ declare module '@tanstack/react-router' {
       path: '/templates-guide'
       fullPath: '/templates-guide'
       preLoaderRoute: typeof TemplatesGuideRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/linkedin-test': {
-      id: '/linkedin-test'
-      path: '/linkedin-test'
-      fullPath: '/linkedin-test'
-      preLoaderRoute: typeof LinkedinTestRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/html-interpreter-standard': {
@@ -139,7 +111,6 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   EditorRoute: EditorRoute,
   HtmlInterpreterStandardRoute: HtmlInterpreterStandardRoute,
-  LinkedinTestRoute: LinkedinTestRoute,
   TemplatesGuideRoute: TemplatesGuideRoute,
 }
 export const routeTree = rootRouteImport

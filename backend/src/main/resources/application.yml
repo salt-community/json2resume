@@ -1,0 +1,8 @@
+spring:
+  config:
+    import: "optional:dotenv:./.env*"
+  application:
+    name: backend
+
+cors:
+  allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000}

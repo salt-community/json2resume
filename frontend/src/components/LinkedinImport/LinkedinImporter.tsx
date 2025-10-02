@@ -1,266 +1,130 @@
-/* eslint-disable @typescript-eslint/no-unnecessary-condition */
 import React, { useCallback, useMemo, useRef, useState } from 'react'
-import Papa from 'papaparse'
-import JSZip from 'jszip'
 import { FileArchive, FileUp, Save, Trash2, Upload } from 'lucide-react'
 import type { ResumeData } from '@/types'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import ReactCodeMirror from '@uiw/react-codemirror'
+import { jsonLanguage } from '@codemirror/lang-json'
+import { oneDark } from '@codemirror/theme-one-dark'
+import {
+  EditorView,
+  drawSelection,
+  highlightActiveLine,
+  highlightActiveLineGutter,
+  lineNumbers,
+} from '@codemirror/view'
+import { history } from '@codemirror/commands'
+import {
+  parseCsvFile,
+  parseZip,
+  mergeCollections,
+  mapCsvNameToCollection,
+  buildUnifiedJson,
+} from './parserUtils'
+import { convertToResumeData } from './dataConverter'
+import { downloadBlob } from './utils'
 
 /**
- * LinkedIn CSV/ZIP → JSON Importer
- * --------------------------------------------------------------
- * What it does:
- *  - Accepts either a ZIP from LinkedIn's data export or multiple CSV files
- *  - Parses CSVs in the browser (no backend required)
- *  - Merges everything into a unified JSON object that's easy to consume
- *  - Lets the user download the merged JSON or integrate with resume data
+ * LinkedIn CSV/ZIP → JSON Importer Component
+ * ==========================================
  *
- * Libraries required:
- *   npm i papaparse jszip @types/papaparse
- * (shadcn/ui & lucide-react are used for the UI)
+ * This React component provides a complete UI for importing LinkedIn export data
+ * and converting it to ResumeData format. It handles both ZIP files (LinkedIn's
+ * standard export format) and individual CSV files.
+ *
+ * Key Features:
+ * - Drag & drop file upload interface
+ * - Support for ZIP archives and individual CSV files
+ * - Real-time parsing and data conversion
+ * - Live preview of converted ResumeData
+ * - Download functionality for raw JSON data
+ * - Integration callback for importing to resume editor
+ * - Comprehensive error handling and user feedback
+ *
+ * The component orchestrates the parsing utilities and data converter to provide
+ * a seamless user experience for LinkedIn data import.
+ *
+ * Dependencies:
+ * - papaparse: CSV parsing
+ * - jszip: ZIP file extraction
+ * - @uiw/react-codemirror: JSON preview
+ * - lucide-react: Icons
+ * - shadcn/ui: UI components
+ *
  */
 
 interface LinkedinImporterProps {
+  /** Callback function called when data is successfully imported to resume editor */
   onDataImported?: (data: ResumeData) => void
-}
-
-// Helper to download a Blob as a file from the browser
-function downloadBlob(blob: Blob, filename: string) {
-  const url = URL.createObjectURL(blob)
-  const a = document.createElement('a')
-  a.href = url
-  a.download = filename
-  document.body.appendChild(a)
-  a.click()
-  a.remove()
-  URL.revokeObjectURL(url)
-}
-
-// Heuristic: map LinkedIn CSV filenames → logical collection keys
-function mapCsvNameToCollection(name: string) {
-  const n = name.toLowerCase()
-  if (n.includes('position')) return 'positions'
-  if (n.includes('experience')) return 'positions'
-  if (n.includes('education')) return 'education'
-  if (n.includes('skill')) return 'skills'
-  if (n.includes('language')) return 'languages'
-  if (n.includes('certification')) return 'certifications'
-  if (n.includes('project')) return 'projects'
-  if (n.includes('course')) return 'courses'
-  if (n.includes('accomplishment')) return 'accomplishments'
-  if (n.includes('recommendation')) return 'recommendations'
-  if (n.includes('connection')) return 'connections'
-  if (n.includes('profile')) return 'profile'
-  // fallback: use base name without .csv, snake_cased
-  return n.replace(/\.csv$/i, '').replace(/[^a-z0-9]+/g, '_')
-}
-
-// Normalize/trim CSV header keys
-function normalizeHeader(h: string): string {
-  return h
-    .replaceAll('\uFEFF', '') // strip BOM if present
-    .trim()
-    .toLowerCase()
-    .replaceAll(/\s+/g, '_')
-    .replaceAll(/[^a-z0-9_]/g, '')
-}
-
-// Papa Parse configuration
-const PAPA_CFG: Papa.ParseConfig = {
-  header: true,
-  dynamicTyping: true,
-  skipEmptyLines: true,
-  encoding: 'utf-8',
-  transformHeader: normalizeHeader,
-}
-
-// Parse a single CSV file into an array of objects
-async function parseCsvFile(file: File) {
-  const text = await file.text()
-  return new Promise<Array<any>>((resolve, reject) => {
-    Papa.parse(text, {
-      ...PAPA_CFG,
-      complete: (res) => {
-        if (res.errors && res.errors.length) {
-          console.warn('CSV parse errors:', res.errors)
-        }
-        resolve(res.data)
-      },
-      error: (err) => reject(err),
-    })
-  })
-}
-
-// Read a ZIP and parse all CSV entries into collections
-async function parseZip(file: File) {
-  const zip = await JSZip.loadAsync(file)
-  const out: Record<string, Array<any>> = {}
-
-  for (const relPath of Object.keys(zip.files)) {
-    if (!relPath.toLowerCase().endsWith('.csv')) continue
-    const entry = zip.files[relPath]
-    if (!entry) continue
-    const csvText = await entry.async('text')
-    const data = await new Promise<Array<any>>((resolve, reject) => {
-      Papa.parse(csvText, {
-        ...PAPA_CFG,
-        complete: (res) => resolve(res.data),
-        error: (err) => reject(err),
-      })
-    })
-    const key = mapCsvNameToCollection(relPath.split('/').pop() || relPath)
-    out[key] = (out[key] || []).concat(data)
-  }
-  return out
-}
-
-// Merge two collection maps
-function mergeCollections(
-  a: Record<string, Array<any>>,
-  b: Record<string, Array<any>>,
-) {
-  const out: Record<string, Array<any>> = { ...a }
-  for (const [k, v] of Object.entries(b)) {
-    out[k] = (out[k] || []).concat(v)
-  }
-  return out
-}
-
-// Build the unified JSON shape we want to work with downstream
-function buildUnifiedJson(collections: Record<string, Array<any>>) {
-  const unified = {
-    meta: {
-      generatedAt: new Date().toISOString(),
-      source: 'linkedin-export',
-    },
-    profile: collections.profile?.[0] || {},
-    positions: collections.positions || [],
-    education: collections.education || [],
-    skills: (collections.skills || []).map(
-      (row: any) => row.skill_name || row.name || row.skill || row,
-    ),
-    languages: collections.languages || [],
-    certifications: collections.certifications || [],
-    projects: collections.projects || [],
-    courses: collections.courses || [],
-    accomplishments: collections.accomplishments || [],
-    recommendations: collections.recommendations || [],
-    connections: collections.connections || [],
-    // Keep the originals in case you need exact fields later
-    raw: collections,
-  }
-  return unified
-}
-
-// Convert LinkedIn data to ResumeData format
-function convertToResumeData(unifiedData: any): ResumeData {
-  const profile = unifiedData.profile || {}
-
-  return {
-    basics: {
-      name:
-        profile.first_name && profile.last_name
-          ? `${profile.first_name} ${profile.last_name}`
-          : profile.name || profile.full_name || 'Unknown',
-      label: profile.headline || profile.title || '',
-      email: profile.email_address || profile.email || '',
-      phone: profile.phone_numbers || '',
-      url: profile.websites || profile.linkedin_url || '',
-      summary: profile.summary || profile.about || '',
-      location: {
-        city: profile.city || '',
-        region: profile.state || profile.region || '',
-        countryCode: profile.country || '',
-      },
-      profiles: profile.linkedin_url
-        ? [
-            {
-              network: 'LinkedIn',
-              url: profile.linkedin_url,
-              username: profile.linkedin_url.split('/').pop() || '',
-            },
-          ]
-        : [],
-    },
-    work: (unifiedData.positions || []).map((pos: any) => ({
-      name: pos.company_name || pos.organization || '',
-      position: pos.title || pos.position || '',
-      location: pos.location || '',
-      startDate: pos.start_date || pos.start_date_month_year || '',
-      endDate: pos.end_date || pos.end_date_month_year || '',
-      summary: pos.description || pos.summary || '',
-      highlights: pos.description ? [pos.description] : [],
-    })),
-    education: (unifiedData.education || []).map((edu: any) => ({
-      institution: edu.school_name || edu.institution || '',
-      area: edu.field_of_study || edu.degree_name || '',
-      studyType: edu.degree_name || edu.degree || '',
-      startDate: edu.start_date || edu.start_date_month_year || '',
-      endDate: edu.end_date || edu.end_date_month_year || '',
-      score: edu.grade || '',
-    })),
-    skills: (unifiedData.skills || []).map((skill: any) => ({
-      name:
-        typeof skill === 'string'
-          ? skill
-          : skill.name || skill.skill_name || '',
-      level: skill.level || '',
-    })),
-    languages: (unifiedData.languages || []).map((lang: any) => ({
-      language: lang.language_name || lang.name || '',
-      fluency: lang.proficiency || lang.level || '',
-    })),
-    certificates: (unifiedData.certifications || []).map((cert: any) => ({
-      name: cert.name || cert.certification_name || '',
-      issuer: cert.issuing_organization || cert.issuer || '',
-      date: cert.issue_date || cert.date || '',
-      url: cert.credential_url || cert.url || '',
-    })),
-    projects: (unifiedData.projects || []).map((proj: any) => ({
-      name: proj.name || proj.title || '',
-      description: proj.description || '',
-      startDate: proj.start_date || '',
-      endDate: proj.end_date || '',
-      url: proj.url || '',
-    })),
-  }
 }
 
 export default function LinkedinImporter({
   onDataImported,
 }: LinkedinImporterProps) {
+  // State management for parsed data collections
   const [collections, setCollections] = useState<Record<string, Array<any>>>({})
+
+  // Activity logs for user feedback
   const [logs, setLogs] = useState<Array<string>>([])
+
+  // Loading state for async operations
   const [busy, setBusy] = useState(false)
+
+  // Drag & drop visual feedback
+  const [dragOver, setDragOver] = useState(false)
+
+  // Reference to hidden file input for programmatic access
   const fileInputRef = useRef<HTMLInputElement | null>(null)
 
+  /**
+   * Adds a log message to the activity log with automatic cleanup
+   * Keeps only the most recent 200 log entries to prevent memory issues
+   */
   const addLog = useCallback(
     (m: string) => setLogs((l) => [m, ...l].slice(0, 200)),
     [],
   )
 
+  /**
+   * Handles file processing for both ZIP and CSV files
+   *
+   * This function processes uploaded files and merges them with existing collections.
+   * It supports both ZIP archives (LinkedIn's standard export) and individual CSV files.
+   * The function maintains state across multiple file uploads, allowing users to
+   * upload files incrementally.
+   *
+   * @param files - FileList from file input or drag & drop
+   */
   const handleFiles = useCallback(
     async (files: FileList | null) => {
       if (!files || !files.length) return
       setBusy(true)
       try {
+        // Start with existing collections to support incremental uploads
         let merged: Record<string, Array<any>> = { ...collections }
+
+        // Process each file individually
         for (const file of Array.from(files)) {
           const lower = file.name.toLowerCase()
+
           if (lower.endsWith('.zip')) {
+            // Handle ZIP archives (LinkedIn's standard export format)
             addLog(`Reading ZIP: ${file.name}`)
             const obj = await parseZip(file)
             merged = mergeCollections(merged, obj)
           } else if (lower.endsWith('.csv')) {
+            // Handle individual CSV files
             addLog(`Reading CSV: ${file.name}`)
             const data = await parseCsvFile(file)
             const key = mapCsvNameToCollection(file.name)
             merged[key] = (merged[key] || []).concat(data)
           } else {
+            // Skip unsupported file types
             addLog(`Ignoring ${file.name} (only .zip and .csv are supported)`)
           }
         }
+
+        // Update state with merged collections
         setCollections(merged)
         addLog('Done! Files parsed and merged.')
       } catch (e: any) {
@@ -273,28 +137,41 @@ export default function LinkedinImporter({
     [collections, addLog],
   )
 
+  /**
+   * Handles drag & drop file events
+   *
+   * Prevents default browser behavior and processes dropped files
+   */
   const onDrop = useCallback(
     (e: React.DragEvent) => {
       e.preventDefault()
       e.stopPropagation()
+      setDragOver(false)
       const files = e.dataTransfer.files
       void handleFiles(files)
     },
     [handleFiles],
   )
 
+  /**
+   * Triggers file input dialog programmatically
+   */
   const onBrowse = useCallback(() => fileInputRef.current?.click(), [])
 
-  const summary = useMemo(() => {
-    const entries = Object.entries(collections)
-    return entries.length
-      ? entries.map(([k, v]) => `${k}: ${v.length} rows`).join(' • ')
-      : 'Nothing loaded yet'
-  }, [collections])
-
+  // Memoized data transformations for performance
   const unified = useMemo(() => buildUnifiedJson(collections), [collections])
   const resumeData = useMemo(() => convertToResumeData(unified), [unified])
+  const formattedPreviewJson = useMemo(
+    () => JSON.stringify(resumeData, null, 2),
+    [resumeData],
+  )
 
+  /**
+   * Downloads the unified JSON data as a file
+   *
+   * Creates a downloadable JSON file containing the raw LinkedIn data
+   * in unified format for external use or backup purposes.
+   */
   const handleDownloadJson = useCallback(() => {
     const blob = new Blob([JSON.stringify(unified, null, 2)], {
       type: 'application/json',
@@ -302,6 +179,12 @@ export default function LinkedinImporter({
     downloadBlob(blob, 'linkedin_merged.json')
   }, [unified])
 
+  /**
+   * Imports the converted ResumeData to the parent component
+   *
+   * Calls the onDataImported callback with the converted resume data,
+   * allowing the parent component to integrate the data into the resume editor.
+   */
   const handleImportToResume = useCallback(() => {
     if (onDataImported) {
       onDataImported(resumeData)
@@ -309,6 +192,12 @@ export default function LinkedinImporter({
     }
   }, [resumeData, onDataImported, addLog])
 
+  /**
+   * Clears all imported data and logs
+   *
+   * Resets the component to its initial state, removing all parsed data
+   * and activity logs.
+   */
   const handleClear = useCallback(() => {
     setCollections({})
     setLogs([])
@@ -324,13 +213,33 @@ export default function LinkedinImporter({
           </CardTitle>
         </CardHeader>
         <CardContent>
+          <div className="mb-4 text-sm text-muted-foreground">
+            To use this importer, first request and download your data export
+            from LinkedIn's
+            <a
+              href="https://www.linkedin.com/mypreferences/d/download-my-data"
+              target="_blank"
+              rel="noreferrer noopener"
+              className="underline ml-1"
+            >
+              data download page
+            </a>
+            . It typically takes 10–15 minutes after requesting before the ZIP
+            is available.
+          </div>
           <div
             onDrop={onDrop}
             onDragOver={(e) => {
               e.preventDefault()
               e.dataTransfer.dropEffect = 'copy'
+              setDragOver(true)
             }}
-            className="border-2 border-dashed rounded-2xl p-8 text-center cursor-pointer hover:bg-muted/50"
+            onDragLeave={() => setDragOver(false)}
+            className={`border-2 border-dashed rounded-2xl p-8 text-center cursor-pointer transition-colors ${
+              dragOver
+                ? 'border-primary bg-primary/5'
+                : 'border-border hover:bg-muted/50'
+            }`}
             onClick={onBrowse}
           >
             <div className="flex flex-col items-center gap-2">
@@ -359,7 +268,7 @@ export default function LinkedinImporter({
           </div>
 
           <div className="mt-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div className="text-sm text-muted-foreground">{summary}</div>
+            <div />
             <div className="flex flex-wrap gap-2">
               <Button
                 onClick={handleImportToResume}
@@ -393,31 +302,26 @@ export default function LinkedinImporter({
       {!!Object.keys(collections).length && (
         <Card>
           <CardHeader>
-            <CardTitle>Preview</CardTitle>
+            <CardTitle>Converted Resume Data</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-              {Object.entries(collections).map(([k, rows]) => (
-                <div
-                  key={k}
-                  className="p-4 rounded-xl border bg-card text-card-foreground shadow-sm"
-                >
-                  <div className="font-semibold mb-2">{k}</div>
-                  <div className="text-xs text-muted-foreground mb-2">
-                    {rows.length} rows
-                  </div>
-                  <pre className="text-xs max-h-56 overflow-auto whitespace-pre-wrap">
-                    {JSON.stringify(rows.slice(0, 5), null, 2)}
-                  </pre>
-                </div>
-              ))}
-            </div>
-            <div className="p-4 rounded-xl border bg-muted/30">
-              <div className="font-semibold mb-2">Converted Resume Data</div>
-              <pre className="text-xs max-h-64 overflow-auto whitespace-pre-wrap">
-                {JSON.stringify(resumeData, null, 2)}
-              </pre>
-            </div>
+            <ReactCodeMirror
+              value={formattedPreviewJson}
+              onChange={() => {}}
+              theme={oneDark}
+              basicSetup={false}
+              extensions={[
+                lineNumbers(),
+                highlightActiveLineGutter(),
+                history(),
+                drawSelection(),
+                highlightActiveLine(),
+                jsonLanguage,
+                EditorView.lineWrapping,
+                EditorView.editable.of(false),
+              ]}
+              height="600px"
+            />
           </CardContent>
         </Card>
       )}
