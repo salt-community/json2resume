@@ -134,7 +134,6 @@ The system intelligently maps LinkedIn CSV filenames to logical collections:
 | `course*`                    | `courses`         | Completed courses              |
 | `accomplishment*`            | `accomplishments` | Professional achievements      |
 | `recommendation*` (received) | `recommendations` | Professional recommendations   |
-| `connection*`                | `connections`     | Professional connections       |
 | `profile*`                   | `profile`         | Basic profile information      |
 
 ## 🔧 Data Conversion
