@@ -12,6 +12,7 @@ type Props = {
 export default function Awards({ resumeData, setResumeData }: Props) {
   const addAward = () => {
     const newAward: Award = {
+      enabled: true,
       title: '',
       date: '',
       awarder: '',
