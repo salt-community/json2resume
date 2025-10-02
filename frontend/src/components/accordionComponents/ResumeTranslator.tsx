@@ -15,7 +15,7 @@ function ResumeTranslator({
   resumeData,
   onTranslationComplete,
 }: ResumeTranslatorProps) {
-  const [targetLanguage, setTargetLanguage] = useState('spanish')
+  const [targetLanguage, setTargetLanguage] = useState('chinese')
   const [isTranslated, setIsTranslated] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [showToast, setShowToast] = useState(false)
