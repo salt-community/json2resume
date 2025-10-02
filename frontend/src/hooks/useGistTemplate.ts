@@ -22,7 +22,7 @@ interface GistTemplateState {
  * - Only re-renders when data actually changes
  */
 export function useGistTemplate(
-  gistUrl: string,
+  gistUrl: string | undefined,
   resumeData: ResumeData,
   filename?: string,
   inlineHtml?: string,
