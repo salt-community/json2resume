@@ -71,8 +71,29 @@ function App() {
         </Tabs>
       </section>
       <section className="bg-surface-strong rounded-xl border border-border shadow-sm p-4 overflow-auto">
-        <GistTemplate gistUrl={selectedTheme} resumeData={resumeData} />
+        <GistTemplate
+          gistUrl={selectedTheme}
+          resumeData={filterByEnabled(resumeData)}
+        />
       </section>
     </div>
   )
+}
+
+function filterByEnabled(data: ResumeData): ResumeData {
+  return {
+    ...data,
+    basics: data.basics?.enabled === false ? undefined : data.basics,
+    work: (data.work ?? []).filter((w) => w.enabled !== false),
+    education: (data.education ?? []).filter((e) => e.enabled !== false),
+    projects: (data.projects ?? []).filter((p) => p.enabled !== false),
+    skills: (data.skills ?? []).filter((s) => s.enabled !== false),
+    certificates: (data.certificates ?? []).filter((c) => c.enabled !== false),
+    awards: (data.awards ?? []).filter((a) => a.enabled !== false),
+    publications: (data.publications ?? []).filter((p) => p.enabled !== false),
+    volunteer: (data.volunteer ?? []).filter((v) => v.enabled !== false),
+    languages: (data.languages ?? []).filter((l) => l.enabled !== false),
+    interests: (data.interests ?? []).filter((i) => i.enabled !== false),
+    references: (data.references ?? []).filter((r) => r.enabled !== false),
+  }
 }

@@ -1,6 +1,6 @@
 export interface ResumeData {
   $schema?: string
-  basics: Basics
+  basics?: Basics
   work?: Array<Work>
   volunteer?: Array<Volunteer>
   education?: Array<Education>
@@ -21,12 +21,14 @@ export interface Location {
   city?: string
   countryCode?: string
   region?: string
+  enabled: boolean
 }
 
 export interface Profile {
   network?: string
   username?: string
   url?: string
+  enabled: boolean
 }
 
 export interface Basics {
@@ -40,6 +42,7 @@ export interface Basics {
   summary?: string
   location?: Location
   profiles?: Array<Profile>
+  enabled: boolean
 }
 
 export interface Work {
@@ -52,6 +55,7 @@ export interface Work {
   endDate?: string
   summary?: string
   highlights?: Array<string>
+  enabled: boolean
 }
 
 export interface Volunteer {
@@ -62,6 +66,7 @@ export interface Volunteer {
   endDate?: string
   summary?: string
   highlights?: Array<string>
+  enabled: boolean
 }
 
 export interface Education {
@@ -73,6 +78,7 @@ export interface Education {
   endDate?: string
   score?: string
   courses?: Array<string>
+  enabled: boolean
 }
 
 export interface Award {
@@ -80,6 +86,7 @@ export interface Award {
   date?: string
   awarder?: string
   summary?: string
+  enabled: boolean
 }
 
 export interface Certificate {
@@ -87,6 +94,7 @@ export interface Certificate {
   date?: string
   issuer?: string
   url?: string
+  enabled: boolean
 }
 
 export interface Publication {
@@ -95,27 +103,32 @@ export interface Publication {
   releaseDate?: string
   url?: string
   summary?: string
+  enabled: boolean
 }
 
 export interface Skill {
   name?: string
   level?: string
   keywords?: Array<string>
+  enabled: boolean
 }
 
 export interface Language {
   language?: string
   fluency?: string
+  enabled: boolean
 }
 
 export interface Interest {
   name?: string
   keywords?: Array<string>
+  enabled: boolean
 }
 
 export interface Reference {
   name?: string
   reference?: string
+  enabled: boolean
 }
 
 export interface Project {
@@ -125,6 +138,7 @@ export interface Project {
   description?: string
   highlights?: Array<string>
   url?: string
+  enabled: boolean
 }
 
 export interface Meta {

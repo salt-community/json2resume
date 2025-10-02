@@ -38,7 +38,7 @@ export default function Export({ resumeData }: Props) {
         <html>
           <head>
             <meta charset="utf-8">
-            <title>Resume - ${resumeData.basics.name}</title>
+            <title>Resume - ${resumeData.basics?.name ?? 'Resume'}</title>
             <style>
               body {
                 margin: 0;

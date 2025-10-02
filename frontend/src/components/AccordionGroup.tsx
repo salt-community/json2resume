@@ -40,6 +40,47 @@ function AccordionGroup({
   onTranslationComplete,
   currentTheme,
 }: Props) {
+  const sectionKeyMap: Record<string, keyof ResumeData | null> = {
+    Basics: 'basics',
+    'Work Experience': 'work',
+    Education: 'education',
+    Projects: 'projects',
+    Skills: 'skills',
+    Certifications: 'certificates',
+    Awards: 'awards',
+    Publications: 'publications',
+    Volunteering: 'volunteer',
+    Languages: 'languages',
+    Interests: 'interests',
+    References: 'references',
+  }
+
+  function isSectionChecked(title: string): boolean {
+    const key = sectionKeyMap[title]
+    if (!key) return false
+    if (key === 'basics') return (resumeData.basics?.enabled ?? true) !== false
+    const arr = (resumeData as any)[key] as
+      | Array<{ enabled?: boolean }>
+      | undefined
+    return Boolean(arr?.some((x) => x.enabled !== false))
+  }
+
+  function setSectionEnabled(title: string, enabled: boolean) {
+    const key = sectionKeyMap[title]
+    if (!key) return
+    if (key === 'basics') {
+      setResumeData({
+        ...resumeData,
+        basics: { ...(resumeData.basics ?? {}), enabled },
+      })
+      return
+    }
+    const arr = ((resumeData as any)[key] ?? []) as Array<any>
+    setResumeData({
+      ...(resumeData as any),
+      [key]: arr.map((x) => ({ ...x, enabled })),
+    })
+  }
   const items: Array<{
     title: string
     content: React.ReactNode
@@ -49,7 +90,7 @@ function AccordionGroup({
       {
         title: 'LinkedIn Import',
         content: <LinkedinImporter onDataImported={setResumeData} />,
-        checkbox: true,
+        checkbox: false,
       },
       {
         title: 'Section Headers',
@@ -59,7 +100,7 @@ function AccordionGroup({
             setResumeData={setResumeData}
           />
         ),
-        checkbox: true,
+        checkbox: false,
       },
       {
         title: 'Basics',
@@ -151,7 +192,7 @@ function AccordionGroup({
         content: (
           <Themes onThemeChange={onThemeChange} currentTheme={currentTheme} />
         ),
-        checkbox: true,
+        checkbox: false,
       },
 
       {
@@ -166,12 +207,12 @@ function AccordionGroup({
             <p>Translation feature not available</p>
           </div>
         ),
-        checkbox: true,
+        checkbox: false,
       },
       {
         title: 'Export',
         content: <Export resumeData={resumeData} />,
-        checkbox: true,
+        checkbox: false,
       },
     ],
 
@@ -188,15 +229,21 @@ function AccordionGroup({
       {items.map((item, index) => (
         <>
           <AccordionItem
-            className={index === 13 ? 'mb-16' : ''}
+            className={index === 13 ? 'mb-16' : index === 1 ? 'mb-16' : ''}
             value={`item-${index}`}
           >
             <AccordionTrigger className="flex items-center w-full">
               <span className="flex-1 text-left">{item.title}</span>
-              <Checkbox
-                className=" ml-4 flex-shrink-0 order-last"
-                onClick={(e) => e.stopPropagation()}
-              />
+              {item.checkbox && (
+                <Checkbox
+                  className=" ml-4 flex-shrink-0 order-last"
+                  checked={isSectionChecked(item.title)}
+                  onCheckedChange={(val) =>
+                    setSectionEnabled(item.title, Boolean(val))
+                  }
+                  onClick={(e) => e.stopPropagation()}
+                />
+              )}
             </AccordionTrigger>
             <AccordionContent>{item.content}</AccordionContent>
           </AccordionItem>

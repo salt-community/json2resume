@@ -53,7 +53,7 @@ export default function PdfExport({ resumeData }: Props) {
   const [processedHtml, setProcessedHtml] = useState('')
 
   const exportToPdf = () => {
-    if (!resumeData.basics.name) {
+    if (!resumeData.basics?.name) {
       alert('Please fill in at least the basic information before exporting.')
       return
     }
@@ -160,10 +160,28 @@ export default function PdfExport({ resumeData }: Props) {
       <div style={{ display: 'none' }}>
         <GistTemplate
           gistUrl="https://gist.github.com/david11267/b03fd23966945976472361c8e5d3e161"
-          resumeData={resumeData}
+          resumeData={filterByEnabled(resumeData)}
           onProcessed={(html) => setProcessedHtml(html)}
         />
       </div>
     </div>
   )
+}
+
+function filterByEnabled(data: ResumeData): ResumeData {
+  return {
+    ...data,
+    basics: data.basics?.enabled === false ? undefined : data.basics,
+    work: (data.work ?? []).filter((w) => w.enabled !== false),
+    education: (data.education ?? []).filter((e) => e.enabled !== false),
+    projects: (data.projects ?? []).filter((p) => p.enabled !== false),
+    skills: (data.skills ?? []).filter((s) => s.enabled !== false),
+    certificates: (data.certificates ?? []).filter((c) => c.enabled !== false),
+    awards: (data.awards ?? []).filter((a) => a.enabled !== false),
+    publications: (data.publications ?? []).filter((p) => p.enabled !== false),
+    volunteer: (data.volunteer ?? []).filter((v) => v.enabled !== false),
+    languages: (data.languages ?? []).filter((l) => l.enabled !== false),
+    interests: (data.interests ?? []).filter((i) => i.enabled !== false),
+    references: (data.references ?? []).filter((r) => r.enabled !== false),
+  }
 }
