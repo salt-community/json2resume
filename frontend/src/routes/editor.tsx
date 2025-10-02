@@ -30,7 +30,35 @@ function App() {
     kind: 'url',
     url: 'https://gist.github.com/david11267/b03fd23966945976472361c8e5d3e161',
   })
-  const json = jsonStringFromJsonObj(jsonObjFromResumeData(resumeData))
+
+  // Build config from current state (checkboxes + theme)
+  const baseJsonObj = jsonObjFromResumeData(resumeData)
+  const sectionsConfig = {
+    basics: (resumeData.basics?.enabled ?? true) !== false,
+    work: (resumeData.work ?? []).some((w) => w.enabled !== false),
+    education: (resumeData.education ?? []).some((e) => e.enabled !== false),
+    projects: (resumeData.projects ?? []).some((p) => p.enabled !== false),
+    skills: (resumeData.skills ?? []).some((s) => s.enabled !== false),
+    certificates: (resumeData.certificates ?? []).some((c) => c.enabled !== false),
+    awards: (resumeData.awards ?? []).some((a) => a.enabled !== false),
+    publications: (resumeData.publications ?? []).some((p) => p.enabled !== false),
+    volunteer: (resumeData.volunteer ?? []).some((v) => v.enabled !== false),
+    languages: (resumeData.languages ?? []).some((l) => l.enabled !== false),
+    interests: (resumeData.interests ?? []).some((i) => i.enabled !== false),
+    references: (resumeData.references ?? []).some((r) => r.enabled !== false),
+  }
+  const themeConfig =
+    selectedTheme.kind === 'url'
+      ? { kind: 'url', url: selectedTheme.url }
+      : { kind: 'inline', html: selectedTheme.html }
+
+  const json = jsonStringFromJsonObj({
+    ...baseJsonObj,
+    config: {
+      sections: sectionsConfig,
+      theme: themeConfig,
+    },
+  })
 
   // Legacy handler: URL only
   const handleThemeChange = (themeUrl: string) => {
