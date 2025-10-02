@@ -1,4 +1,4 @@
-import type { ResumeData } from '@/types'
+import type { ResumeData } from '@/types.ts'
 
 /**
  * LinkedIn Data Converter

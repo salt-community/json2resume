@@ -17,12 +17,12 @@ import {
   mergeCollections,
   parseCsvFile,
   parseZip,
-} from './parserUtils'
-import { convertToResumeData } from './dataConverter'
-import { downloadBlob } from './utils'
-import type { ResumeData } from '@/types'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
+} from './parserUtils.ts'
+import { convertToResumeData } from './dataConverter.ts'
+import { downloadBlob } from './utils.ts'
+import type { ResumeData } from '@/types.ts'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card.tsx'
+import { Button } from '@/components/ui/button.tsx'
 
 /**
  * LinkedIn CSV/ZIP → JSON Importer Component

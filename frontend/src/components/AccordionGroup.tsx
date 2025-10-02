@@ -13,7 +13,7 @@ import References from './accordionComponents/References'
 import Projects from './accordionComponents/Projects'
 import Export from './accordionComponents/Export'
 import ResumeTranslator from './accordionComponents/ResumeTranslator'
-import { LinkedinImporter } from './LinkedinImport'
+import DataImporter from '@/components/DataImport/DataImporter'
 import Themes from './accordionComponents/Themes'
 import SectionHeadersComponent from './accordionComponents/SectionHeaders'
 import type { ResumeData } from '@/types'
@@ -105,8 +105,8 @@ function AccordionGroup({
   }> = useMemo(
     () => [
       {
-        title: 'LinkedIn Import',
-        content: <LinkedinImporter onDataImported={setResumeDataAndSave} />,
+        title: 'Data Import',
+        content: <DataImporter onDataImported={setResumeDataAndSave} />,
         checkbox: false,
       },
       {
