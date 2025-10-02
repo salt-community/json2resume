@@ -3,7 +3,7 @@ import { useState } from 'react'
 import type { ResumeData } from '@/types'
 import AccordionGroup from '@/components/AccordionGroup'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { mockedResumeData } from '@/data/resumeDataMock.ts'
+import { defaultResumeData, mockedResumeData } from '@/data/resumeDataMock.ts'
 import JsonCodeEditor from '@/components/ResumeEditor/JsonCodeEditor.tsx'
 import { jsonStringFromJsonObj } from '@/data/jsonStringFromJsonObj.ts'
 import { jsonObjFromResumeData } from '@/data/jsonObjFromResumeData.ts'
@@ -48,6 +48,13 @@ function App() {
   return (
     <div className="min-h-screen bg-surface-strong text-text-strong grid grid-cols-1 lg:grid-cols-2 gap-8 p-6 md:p-10">
       <section className="bg-surface rounded-xl border border-border shadow-sm p-4">
+        <button
+          className="p-4 w-full cursor-pointer hover:text-red-500 transition-colors"
+          onClick={() => setResumeData(defaultResumeData)}
+        >
+          Reset to Default
+        </button>
+
         <Tabs defaultValue="form">
           <TabsList className="w-full bg-surface rounded-lg border border-border">
             <TabsTrigger
@@ -86,6 +93,7 @@ function App() {
           </TabsContent>
         </Tabs>
       </section>
+
       <section className="bg-surface-strong rounded-xl border border-border shadow-sm p-4 overflow-auto">
         <GistTemplate
           resumeData={filterByEnabled(resumeData)}
