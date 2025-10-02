@@ -11,6 +11,7 @@ import { resumeDataFromJsonObj } from '@/data/resumeDataFromJsonObj.ts'
 import jsonObjFromJsonString from '@/data/jsonObjFromJsonString.ts'
 import { GistTemplate } from '@/components/GistTemplate'
 import { loadResumeData } from '@/storage/resumeStorage'
+import { inlineThemes } from '@/data/localThemes'
 
 // Theme selection can be a URL or inline HTML
 type ThemeSource =
@@ -85,10 +86,110 @@ function App() {
               <JsonCodeEditor
                 jsonState={json}
                 onChange={(jsonString: string) => {
-                  const rData = resumeDataFromJsonObj(
-                    jsonObjFromJsonString(jsonString),
-                  )
+                  const obj: any = jsonObjFromJsonString(jsonString)
+
+                  // Build ResumeData from JSON (existing behavior)
+                  let rData = resumeDataFromJsonObj(obj)
+
+                  // Apply section visibility from config.sections
+                  const sectionsCfg = obj?.config?.sections as
+                    | Partial<{
+                        basics: boolean
+                        work: boolean
+                        education: boolean
+                        projects: boolean
+                        skills: boolean
+                        certificates: boolean
+                        awards: boolean
+                        publications: boolean
+                        volunteer: boolean
+                        languages: boolean
+                        interests: boolean
+                        references: boolean
+                      }>
+                    | undefined
+
+                  if (sectionsCfg) {
+                    const apply = (arr: Array<any> | undefined, enabled: boolean) =>
+                      (arr ?? []).map((x) => ({ ...x, enabled }))
+
+                    rData = {
+                      ...rData,
+                      basics:
+                        typeof sectionsCfg.basics === 'boolean'
+                          ? { ...(rData.basics ?? {}), enabled: sectionsCfg.basics }
+                          : rData.basics,
+                      work:
+                        typeof sectionsCfg.work === 'boolean'
+                          ? (apply(rData.work as any[], sectionsCfg.work) as any)
+                          : rData.work,
+                      education:
+                        typeof sectionsCfg.education === 'boolean'
+                          ? (apply(rData.education as any[], sectionsCfg.education) as any)
+                          : rData.education,
+                      projects:
+                        typeof sectionsCfg.projects === 'boolean'
+                          ? (apply(rData.projects as any[], sectionsCfg.projects) as any)
+                          : rData.projects,
+                      skills:
+                        typeof sectionsCfg.skills === 'boolean'
+                          ? (apply(rData.skills as any[], sectionsCfg.skills) as any)
+                          : rData.skills,
+                      certificates:
+                        typeof sectionsCfg.certificates === 'boolean'
+                          ? (apply(rData.certificates as any[], sectionsCfg.certificates) as any)
+                          : rData.certificates,
+                      awards:
+                        typeof sectionsCfg.awards === 'boolean'
+                          ? (apply(rData.awards as any[], sectionsCfg.awards) as any)
+                          : rData.awards,
+                      publications:
+                        typeof sectionsCfg.publications === 'boolean'
+                          ? (apply(rData.publications as any[], sectionsCfg.publications) as any)
+                          : rData.publications,
+                      volunteer:
+                        typeof sectionsCfg.volunteer === 'boolean'
+                          ? (apply(rData.volunteer as any[], sectionsCfg.volunteer) as any)
+                          : rData.volunteer,
+                      languages:
+                        typeof sectionsCfg.languages === 'boolean'
+                          ? (apply(rData.languages as any[], sectionsCfg.languages) as any)
+                          : rData.languages,
+                      interests:
+                        typeof sectionsCfg.interests === 'boolean'
+                          ? (apply(rData.interests as any[], sectionsCfg.interests) as any)
+                          : rData.interests,
+                      references:
+                        typeof sectionsCfg.references === 'boolean'
+                          ? (apply(rData.references as any[], sectionsCfg.references) as any)
+                          : rData.references,
+                    }
+                  }
+
                   setResumeData(rData)
+
+                  // Apply theme from config.theme
+                  const themeCfg = obj?.config?.theme as
+                    | { kind: 'url'; url?: string }
+                    | { kind: 'inline'; html?: string }
+                    | { kind: 'local'; id?: string }
+                    | undefined
+
+                  if (themeCfg && typeof themeCfg === 'object') {
+                    if (themeCfg.kind === 'url' && typeof (themeCfg as any).url === 'string') {
+                      setSelectedTheme({ kind: 'url', url: (themeCfg as any).url })
+                    } else if (
+                      themeCfg.kind === 'inline' &&
+                      typeof (themeCfg as any).html === 'string'
+                    ) {
+                      setSelectedTheme({ kind: 'inline', html: (themeCfg as any).html })
+                    } else if (themeCfg.kind === 'local' && typeof (themeCfg as any).id === 'string') {
+                      // Minimal local mapping example: 'Minimal Local' -> inline theme
+                      if ((themeCfg as any).id === 'Minimal Local') {
+                        setSelectedTheme({ kind: 'inline', html: inlineThemes.minimal.html })
+                      }
+                    }
+                  }
                 }}
               />
             </TabsContent>
