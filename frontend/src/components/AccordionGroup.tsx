@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useCallback } from 'react'
 import Basic from './accordionComponents/Basic'
 import Work from './accordionComponents/Work'
 import Volunteering from './accordionComponents/Volunteering'
@@ -23,6 +23,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion'
+import { saveResumeData } from '@/storage/resumeStorage'
 
 type Props = {
   resumeData: ResumeData
@@ -39,47 +40,64 @@ function AccordionGroup({
   onTranslationComplete,
   currentTheme,
 }: Props) {
+  // Wrap updates so any field change (including de-select) persists to storage
+  const setResumeDataAndSave = useCallback(
+    (data: ResumeData) => {
+      saveResumeData(data)
+      setResumeData(data)
+    },
+    [setResumeData],
+  )
+
   const items: Array<{ title: string; content: React.ReactNode }> = useMemo(
     () => [
       {
         title: 'LinkedIn Import',
-        content: <LinkedinImporter onDataImported={setResumeData} />,
+        content: <LinkedinImporter onDataImported={setResumeDataAndSave} />,
       },
       {
         title: 'Section Headers',
         content: (
           <SectionHeadersComponent
             resumeData={resumeData}
-            setResumeData={setResumeData}
+            setResumeData={setResumeDataAndSave}
           />
         ),
       },
       {
         title: 'Basics',
         content: (
-          <Basic resumeData={resumeData} setResumeData={setResumeData} />
+          <Basic resumeData={resumeData} setResumeData={setResumeDataAndSave} />
         ),
       },
       {
         title: 'Work Experience',
-        content: <Work resumeData={resumeData} setResumeData={setResumeData} />,
+        content: (
+          <Work resumeData={resumeData} setResumeData={setResumeDataAndSave} />
+        ),
       },
       {
         title: 'Education',
         content: (
-          <Education resumeData={resumeData} setResumeData={setResumeData} />
+          <Education
+            resumeData={resumeData}
+            setResumeData={setResumeDataAndSave}
+          />
         ),
       },
       {
         title: 'Projects',
         content: (
-          <Projects resumeData={resumeData} setResumeData={setResumeData} />
+          <Projects
+            resumeData={resumeData}
+            setResumeData={setResumeDataAndSave}
+          />
         ),
       },
       {
         title: 'Skills',
         content: (
-          <Skills resumeData={resumeData} setResumeData={setResumeData} />
+          <Skills resumeData={resumeData} setResumeData={setResumeDataAndSave} />
         ),
       },
       {
@@ -87,44 +105,62 @@ function AccordionGroup({
         content: (
           <Certifications
             resumeData={resumeData}
-            setResumeData={setResumeData}
+            setResumeData={setResumeDataAndSave}
           />
         ),
       },
       {
         title: 'Awards',
         content: (
-          <Awards resumeData={resumeData} setResumeData={setResumeData} />
+          <Awards
+            resumeData={resumeData}
+            setResumeData={setResumeDataAndSave}
+          />
         ),
       },
       {
         title: 'Publications',
         content: (
-          <Publications resumeData={resumeData} setResumeData={setResumeData} />
+          <Publications
+            resumeData={resumeData}
+            setResumeData={setResumeDataAndSave}
+          />
         ),
       },
       {
         title: 'Volunteering',
         content: (
-          <Volunteering resumeData={resumeData} setResumeData={setResumeData} />
+          <Volunteering
+            resumeData={resumeData}
+            setResumeData={setResumeDataAndSave}
+          />
         ),
       },
       {
         title: 'Languages',
         content: (
-          <Languages resumeData={resumeData} setResumeData={setResumeData} />
+          <Languages
+            resumeData={resumeData}
+            setResumeData={setResumeDataAndSave}
+          />
         ),
       },
       {
         title: 'Interests',
         content: (
-          <Interests resumeData={resumeData} setResumeData={setResumeData} />
+          <Interests
+            resumeData={resumeData}
+            setResumeData={setResumeDataAndSave}
+          />
         ),
       },
       {
         title: 'References',
         content: (
-          <References resumeData={resumeData} setResumeData={setResumeData} />
+          <References
+            resumeData={resumeData}
+            setResumeData={setResumeDataAndSave}
+          />
         ),
       },
       {
@@ -153,7 +189,7 @@ function AccordionGroup({
     ],
     [
       resumeData,
-      setResumeData,
+      setResumeDataAndSave,
       onThemeChange,
       onTranslationComplete,
       currentTheme,
