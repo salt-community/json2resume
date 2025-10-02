@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { inlineThemes } from '@/data/localThemes'
+import { Link } from '@tanstack/react-router'
 
 type ThemeSource =
   | { kind: 'url'; url: string }
@@ -220,37 +221,11 @@ function Themes({ onThemeChange, onThemeChangeV2, currentTheme }: Props) {
           </p>
         </div>
 
-        {/* Custom Inline Theme */}
-        <div className="space-y-3">
-          <Label className="text-sm font-medium">Custom Inline Theme</Label>
-          <div className="space-y-2">
-            <textarea
-              className="w-full h-48 p-3 border rounded-md font-mono text-xs bg-surface text-text-strong border-border"
-              placeholder="Paste your template HTML here (supports >>[path]<<, [[#if]], [[#each]], [[#join]])"
-              value={customInlineHtml}
-              onChange={(e) => setCustomInlineHtml(e.target.value)}
-            />
-            <div className="flex items-center justify-between">
-              <p className="text-xs text-muted-foreground">
-                Click “Apply Inline Theme” to use the HTML above. Selecting
-                another preset will override it.
-              </p>
-              <Button
-                onClick={handleApplyInline}
-                disabled={!customInlineHtml.trim()}
-                className="px-4"
-              >
-                Apply Inline Theme
-              </Button>
-            </div>
-          </div>
-        </div>
-
         {/* Preset Themes */}
         <div className="space-y-3">
           <Label className="text-sm font-medium">Preset Themes</Label>
           <div className="grid grid-cols-1 sm:grid-cols-2  gap-3">
-            {[customInlinePreset, ...presetThemes].map((theme) => {
+            {[...presetThemes, customInlinePreset].map((theme) => {
               const disabled =
                 theme.id === customInlinePreset.id && !customInlineHtml.trim()
               return (
@@ -385,6 +360,35 @@ function Themes({ onThemeChange, onThemeChangeV2, currentTheme }: Props) {
                 </div>
               )
             })}
+          </div>
+        </div>
+
+        {/* Custom Inline Theme */}
+        <div className="space-y-3">
+          <Label className="text-sm font-medium">Custom Inline Theme</Label>
+          <p className="text-sm whitespace-nowrap">
+            See our <Link to="/html-interpreter-standard" className="underline">custom html interpreter language</Link>
+          </p>
+          <div className="space-y-2">
+            <textarea
+              className="w-full h-48 p-3 border rounded-md font-mono text-xs bg-surface text-text-strong border-border"
+              placeholder="Paste your template HTML here (supports >>[path]<<, [[#if]], [[#each]], [[#join]])"
+              value={customInlineHtml}
+              onChange={(e) => setCustomInlineHtml(e.target.value)}
+            />
+            <div className="flex items-center justify-between">
+              <p className="text-xs text-muted-foreground">
+                Click “Apply Inline Theme” to use the HTML above. Selecting
+                another preset will override it.
+              </p>
+              <Button
+                onClick={handleApplyInline}
+                disabled={!customInlineHtml.trim()}
+                className="px-4"
+              >
+                Apply Inline Theme
+              </Button>
+            </div>
           </div>
         </div>
 
