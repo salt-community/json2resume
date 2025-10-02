@@ -1,8 +1,5 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react'
 import { FileArchive, FileUp, Save, Trash2, Upload } from 'lucide-react'
-import type { ResumeData } from '@/types'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import ReactCodeMirror from '@uiw/react-codemirror'
 import { jsonLanguage } from '@codemirror/lang-json'
 import { oneDark } from '@codemirror/theme-one-dark'
@@ -15,14 +12,17 @@ import {
 } from '@codemirror/view'
 import { history } from '@codemirror/commands'
 import {
+  buildUnifiedJson,
+  mapCsvNameToCollection,
+  mergeCollections,
   parseCsvFile,
   parseZip,
-  mergeCollections,
-  mapCsvNameToCollection,
-  buildUnifiedJson,
 } from './parserUtils'
 import { convertToResumeData } from './dataConverter'
 import { downloadBlob } from './utils'
+import type { ResumeData } from '@/types'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
 
 /**
  * LinkedIn CSV/ZIP → JSON Importer Component
