@@ -10,13 +10,14 @@ import { jsonObjFromResumeData } from '@/data/jsonObjFromResumeData.ts'
 import { resumeDataFromJsonObj } from '@/data/resumeDataFromJsonObj.ts'
 import jsonObjFromJsonString from '@/data/jsonObjFromJsonString.ts'
 import { GistTemplate } from '@/components/GistTemplate'
+import { loadResumeData } from '@/storage/resumeStorage'
 
 export const Route = createFileRoute('/editor')({
   component: App,
 })
 
 function App() {
-  const [resumeData, setResumeData] = useState<ResumeData>(mockedResumeData)
+  const [resumeData, setResumeData] = useState<ResumeData>(() => loadResumeData() ?? mockedResumeData)
   const [selectedTheme, setSelectedTheme] = useState<string>('https://gist.github.com/david11267/b03fd23966945976472361c8e5d3e161')
   const json = jsonStringFromJsonObj(jsonObjFromResumeData(resumeData))
 
