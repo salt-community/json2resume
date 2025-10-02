@@ -54,22 +54,8 @@ function App() {
     }
   })
 
-  // Build config from current state (checkboxes + theme)
+  // Build config from current state (theme only)
   const baseJsonObj = jsonObjFromResumeData(resumeData)
-  const sectionsConfig = {
-    basics: (resumeData.basics?.enabled ?? true) !== false,
-    work: (resumeData.work ?? []).some((w) => w.enabled !== false),
-    education: (resumeData.education ?? []).some((e) => e.enabled !== false),
-    projects: (resumeData.projects ?? []).some((p) => p.enabled !== false),
-    skills: (resumeData.skills ?? []).some((s) => s.enabled !== false),
-    certificates: (resumeData.certificates ?? []).some((c) => c.enabled !== false),
-    awards: (resumeData.awards ?? []).some((a) => a.enabled !== false),
-    publications: (resumeData.publications ?? []).some((p) => p.enabled !== false),
-    volunteer: (resumeData.volunteer ?? []).some((v) => v.enabled !== false),
-    languages: (resumeData.languages ?? []).some((l) => l.enabled !== false),
-    interests: (resumeData.interests ?? []).some((i) => i.enabled !== false),
-    references: (resumeData.references ?? []).some((r) => r.enabled !== false),
-  }
   const themeConfig =
     selectedTheme.kind === 'url'
       ? { kind: 'url', url: selectedTheme.url }
@@ -78,7 +64,6 @@ function App() {
   const json = jsonStringFromJsonObj({
     ...baseJsonObj,
     config: {
-      sections: sectionsConfig,
       theme: themeConfig,
     },
   })
@@ -148,81 +133,8 @@ function App() {
                   // Build ResumeData from JSON (existing behavior)
                   let rData = resumeDataFromJsonObj(obj)
 
-                  // Apply section visibility from config.sections
-                  const sectionsCfg = obj?.config?.sections as
-                    | Partial<{
-                        basics: boolean
-                        work: boolean
-                        education: boolean
-                        projects: boolean
-                        skills: boolean
-                        certificates: boolean
-                        awards: boolean
-                        publications: boolean
-                        volunteer: boolean
-                        languages: boolean
-                        interests: boolean
-                        references: boolean
-                      }>
-                    | undefined
-
-                  if (sectionsCfg) {
-                    const apply = (arr: Array<any> | undefined, enabled: boolean) =>
-                      (arr ?? []).map((x) => ({ ...x, enabled }))
-
-                    rData = {
-                      ...rData,
-                      basics:
-                        typeof sectionsCfg.basics === 'boolean'
-                          ? { ...(rData.basics ?? {}), enabled: sectionsCfg.basics }
-                          : rData.basics,
-                      work:
-                        typeof sectionsCfg.work === 'boolean'
-                          ? (apply(rData.work as any[], sectionsCfg.work) as any)
-                          : rData.work,
-                      education:
-                        typeof sectionsCfg.education === 'boolean'
-                          ? (apply(rData.education as any[], sectionsCfg.education) as any)
-                          : rData.education,
-                      projects:
-                        typeof sectionsCfg.projects === 'boolean'
-                          ? (apply(rData.projects as any[], sectionsCfg.projects) as any)
-                          : rData.projects,
-                      skills:
-                        typeof sectionsCfg.skills === 'boolean'
-                          ? (apply(rData.skills as any[], sectionsCfg.skills) as any)
-                          : rData.skills,
-                      certificates:
-                        typeof sectionsCfg.certificates === 'boolean'
-                          ? (apply(rData.certificates as any[], sectionsCfg.certificates) as any)
-                          : rData.certificates,
-                      awards:
-                        typeof sectionsCfg.awards === 'boolean'
-                          ? (apply(rData.awards as any[], sectionsCfg.awards) as any)
-                          : rData.awards,
-                      publications:
-                        typeof sectionsCfg.publications === 'boolean'
-                          ? (apply(rData.publications as any[], sectionsCfg.publications) as any)
-                          : rData.publications,
-                      volunteer:
-                        typeof sectionsCfg.volunteer === 'boolean'
-                          ? (apply(rData.volunteer as any[], sectionsCfg.volunteer) as any)
-                          : rData.volunteer,
-                      languages:
-                        typeof sectionsCfg.languages === 'boolean'
-                          ? (apply(rData.languages as any[], sectionsCfg.languages) as any)
-                          : rData.languages,
-                      interests:
-                        typeof sectionsCfg.interests === 'boolean'
-                          ? (apply(rData.interests as any[], sectionsCfg.interests) as any)
-                          : rData.interests,
-                      references:
-                        typeof sectionsCfg.references === 'boolean'
-                          ? (apply(rData.references as any[], sectionsCfg.references) as any)
-                          : rData.references,
-                    }
-                  }
-
+                  // Enabled flags are already represented directly in the JSON;
+                  // no need to derive from config. Apply the parsed data as-is.
                   setResumeData(rData)
 
                   // Apply theme from config.theme
