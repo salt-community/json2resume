@@ -94,7 +94,6 @@ interface Props {
 
 function Themes({ onThemeChange, onThemeChangeV2, currentTheme }: Props) {
   const [customUrl, setCustomUrl] = useState('')
-  const [useCustomInline, setUseCustomInline] = useState(false)
   const [customInlineHtml, setCustomInlineHtml] = useState('')
 
   const [selectedTheme, setSelectedTheme] = useState<string | null>(() => {
@@ -138,10 +137,6 @@ function Themes({ onThemeChange, onThemeChangeV2, currentTheme }: Props) {
   )
 
   const handlePresetSelect = (theme: ThemePreset) => {
-    // If custom inline is toggled on, only allow selecting the custom inline preset
-    if (useCustomInline && theme.id !== customInlinePreset.id) {
-      return
-    }
     setSelectedTheme(theme.id)
     if (theme.source.kind === 'url') {
       setCustomUrl(theme.source.url)
@@ -173,29 +168,11 @@ function Themes({ onThemeChange, onThemeChangeV2, currentTheme }: Props) {
     }, 1000)
   }
 
-  const handleToggleInline = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const checked = e.target.checked
-    setUseCustomInline(checked)
-    if (checked) {
-      if (customInlineHtml.trim()) {
-        setSelectedTheme(customInlinePreset.id)
-        onThemeChangeV2?.({ kind: 'inline', html: customInlineHtml })
-      }
-    } else {
-      // Turn off custom inline; do not force any selection — user can pick presets/URL again
-      if (selectedTheme === customInlinePreset.id) {
-        setSelectedTheme(null)
-      }
-    }
-  }
 
   const handleApplyInline = () => {
     if (!customInlineHtml.trim()) {
       alert('Please paste your theme HTML first')
       return
-    }
-    if (!useCustomInline) {
-      setUseCustomInline(true)
     }
     setSelectedTheme(customInlinePreset.id)
     onThemeChangeV2?.({ kind: 'inline', html: customInlineHtml })
@@ -261,16 +238,7 @@ function Themes({ onThemeChange, onThemeChangeV2, currentTheme }: Props) {
 
         {/* Custom Inline Theme */}
         <div className="space-y-3">
-          <Label className="text-sm font-medium flex items-center gap-3">
-            <input
-              id="use-inline-toggle"
-              type="checkbox"
-              checked={useCustomInline}
-              onChange={handleToggleInline}
-              className="h-4 w-4 accent-indigo-600"
-            />
-            Use custom inline theme
-          </Label>
+          <Label className="text-sm font-medium">Custom Inline Theme</Label>
           <div className="space-y-2">
             <textarea
               className="w-full h-48 p-3 border rounded-md font-mono text-xs bg-surface text-text-strong border-border"
@@ -280,7 +248,7 @@ function Themes({ onThemeChange, onThemeChangeV2, currentTheme }: Props) {
             />
             <div className="flex items-center justify-between">
               <p className="text-xs text-muted-foreground">
-                When toggled on, this HTML will override preset themes and apply immediately.
+                Click “Apply Inline Theme” to use the HTML above. Selecting another preset will override it.
               </p>
               <Button
                 onClick={handleApplyInline}
@@ -299,9 +267,7 @@ function Themes({ onThemeChange, onThemeChangeV2, currentTheme }: Props) {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {[customInlinePreset, ...presetThemes].map((theme) => {
               const disabled =
-                useCustomInline
-                  ? theme.id !== customInlinePreset.id
-                  : theme.id === customInlinePreset.id // disable custom card if toggle is off
+                theme.id === customInlinePreset.id && !customInlineHtml.trim()
               return (
                 <div
                   key={theme.id}
@@ -394,7 +360,6 @@ function Themes({ onThemeChange, onThemeChangeV2, currentTheme }: Props) {
                               '_blank',
                             )
                           }}
-                          disabled={disabled}
                         >
                           <Eye className="w-3 h-3" />
                         </Button>
@@ -409,7 +374,6 @@ function Themes({ onThemeChange, onThemeChangeV2, currentTheme }: Props) {
                               '_blank',
                             )
                           }}
-                          disabled={disabled}
                         >
                           <ExternalLink className="w-3 h-3" />
                         </Button>
