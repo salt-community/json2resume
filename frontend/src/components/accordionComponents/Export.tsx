@@ -280,6 +280,26 @@ export default function Export({ resumeData }: Props) {
     }
   }
 
+  const exportToJSON = () => {
+    try {
+      const jsonString = JSON.stringify(resumeData, null, 2)
+      const blob = new Blob([jsonString], { type: 'application/json' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      const name = resumeData.basics?.name?.trim() || 'resume'
+      const safe = name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-_]/g, '')
+      a.href = url
+      a.download = `${safe || 'resume'}.json`
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+      URL.revokeObjectURL(url)
+    } catch (error) {
+      console.error('Error exporting JSON:', error)
+      alert('Error exporting JSON. Please try again.')
+    }
+  }
+
   return (
     <div className="p-4 space-y-6">
       <div className="space-y-4">
@@ -300,6 +320,19 @@ export default function Export({ resumeData }: Props) {
             >
               <Download className="w-4 h-4" />
               {isExporting ? 'Exporting...' : 'Export PDF'}
+            </Button>
+          </div>
+
+          <div className="flex items-center justify-between p-4 border rounded-lg">
+            <div className="space-y-1">
+              <h4 className="font-medium">JSON Export</h4>
+              <p className="text-sm text-muted-foreground">
+                Download your current resume data as a .json file
+              </p>
+            </div>
+            <Button onClick={exportToJSON} className="flex items-center gap-2">
+              <Download className="w-4 h-4" />
+              Export JSON
             </Button>
           </div>
         </div>
