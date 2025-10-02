@@ -96,15 +96,17 @@ function App() {
         </section>
 
         <section className="h-full bg-surface-strong rounded-xl border border-border shadow-sm p-4 overflow-auto">
-          <GistTemplate
-            resumeData={filterByEnabled(resumeData)}
-            gistUrl={
-              selectedTheme.kind === 'url' ? selectedTheme.url : undefined
-            }
-            inlineHtml={
-              selectedTheme.kind === 'inline' ? selectedTheme.html : undefined
-            }
-          />
+          <div className="origin-top-left scale-[0.5] md:scale-100 w-[200%] h-[200%] md:w-auto md:h-auto">
+            <GistTemplate
+              resumeData={filterByEnabled(resumeData)}
+              gistUrl={
+                selectedTheme.kind === 'url' ? selectedTheme.url : undefined
+              }
+              inlineHtml={
+                selectedTheme.kind === 'inline' ? selectedTheme.html : undefined
+              }
+            />
+          </div>
         </section>
       </div>
     </div>
