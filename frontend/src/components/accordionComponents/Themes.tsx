@@ -32,14 +32,7 @@ const presetThemes: Array<ThemePreset> = [
       url: 'https://gist.github.com/samuel-kar/11b0969ab91989b64650ac9361c8103b',
     },
   },
-  {
-    id: 'Classic',
-    description: 'Modern two-column layout with dark sidebar',
-    source: {
-      kind: 'url',
-      url: 'https://gist.github.com/david11267/f23e349d88017d6d0c3df09741cdf7c6',
-    },
-  },
+
   {
     id: 'Fun',
     description: 'Modern two-column layout with dark sidebar',
@@ -71,14 +64,6 @@ const presetThemes: Array<ThemePreset> = [
     source: {
       kind: 'inline',
       html: inlineThemes.minimal.html,
-    },
-  },
-  {
-    id: 'Clean Local',
-    description: 'Simple card-based layout shipped with the app',
-    source: {
-      kind: 'inline',
-      html: inlineThemes.clean.html,
     },
   },
 ]
