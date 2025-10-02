@@ -12,17 +12,29 @@ import jsonObjFromJsonString from '@/data/jsonObjFromJsonString.ts'
 import { GistTemplate } from '@/components/GistTemplate'
 import { loadResumeData } from '@/storage/resumeStorage'
 
+// Theme selection can be a URL or inline HTML
+type ThemeSource = { kind: 'url'; url: string } | { kind: 'inline'; html: string }
+
 export const Route = createFileRoute('/editor')({
   component: App,
 })
 
 function App() {
   const [resumeData, setResumeData] = useState<ResumeData>(() => loadResumeData() ?? mockedResumeData)
-  const [selectedTheme, setSelectedTheme] = useState<string>('https://gist.github.com/david11267/b03fd23966945976472361c8e5d3e161')
+  const [selectedTheme, setSelectedTheme] = useState<ThemeSource>({
+    kind: 'url',
+    url: 'https://gist.github.com/david11267/b03fd23966945976472361c8e5d3e161',
+  })
   const json = jsonStringFromJsonObj(jsonObjFromResumeData(resumeData))
 
+  // Legacy handler: URL only
   const handleThemeChange = (themeUrl: string) => {
-    setSelectedTheme(themeUrl)
+    setSelectedTheme({ kind: 'url', url: themeUrl })
+  }
+
+  // New handler: union type
+  const handleThemeChangeV2 = (theme: ThemeSource) => {
+    setSelectedTheme(theme)
   }
 
   const handleTranslationComplete = (translatedData: ResumeData) => {
@@ -46,6 +58,7 @@ function App() {
               resumeData={resumeData}
               setResumeData={setResumeData}
               onThemeChange={handleThemeChange}
+              onThemeChangeV2={handleThemeChangeV2}
               onTranslationComplete={handleTranslationComplete}
               currentTheme={selectedTheme}
             />
@@ -65,7 +78,8 @@ function App() {
       </section>
       <section className="bg-surface-strong rounded-xl border border-border shadow-sm p-4 overflow-auto">
         <GistTemplate
-          gistUrl={selectedTheme}
+          gistUrl={selectedTheme.kind === 'url' ? selectedTheme.url : undefined}
+          inlineHtml={selectedTheme.kind === 'inline' ? selectedTheme.html : undefined}
           resumeData={resumeData}
         />
       </section>

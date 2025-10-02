@@ -2,18 +2,12 @@
  * GistTemplate.tsx
  * -----------------
  * Purpose
- *   Fetch an HTML template from a GitHub Gist, render it using the lightweight
- *   template engine (with your JSON Resume data), and display the final HTML.
- *
- * Key ideas
- *   - Uses `fetchAndValidateGistTemplate` to retrieve HTML from your Gist.
- *   - Uses `renderTemplate` (our engine) to merge JSON data -> HTML.
- *   - Exposes a hook (`useGistTemplate`) for reuse and UI state management.
- *   - HTML output is escaped by default by the engine; we simply inject it.
+ *   Fetch an HTML template from a GitHub Gist OR use a provided inline HTML template,
+ *   render it using the lightweight template engine, and display the final HTML.
  *
  * Safety
  *   - The template engine HTML-escapes injected values to avoid XSS.
- *   - The template’s *own* HTML/CSS is rendered as-is (trusted template).
+ *   - The template’s own HTML/CSS is rendered as-is (trusted template).
  */
 
 import React, { memo, useCallback, useEffect, useMemo, useState } from 'react'
@@ -23,8 +17,10 @@ import type { ResumeData } from './templateEngine'
 import type { GistFetchResult } from './gistFetcher'
 
 export interface GistTemplateProps {
-  /** URL to the Gist that contains an HTML template */
-  gistUrl: string
+  /** URL to the Gist that contains an HTML template (optional if inlineHtml provided) */
+  gistUrl?: string
+  /** Inline HTML template (optional if gistUrl provided) */
+  inlineHtml?: string
   /** JSON Resume-like data structure that feeds the template */
   resumeData: ResumeData
   /** Optional filename if the Gist has multiple files */
@@ -48,7 +44,7 @@ export interface GistTemplateState {
   error: string | null
   /** Raw template text (before rendering) */
   rawTemplate: string
-  /** True once we have fetched the template at least once */
+  /** True once we have fetched/received the template at least once */
   templateFetched: boolean
 }
 
@@ -56,14 +52,15 @@ export interface GistTemplateState {
  * useGistTemplate
  * ---------------
  * A reusable hook that:
- *  1) fetches the Gist template,
- *  2) renders it with the provided resume data,
- *  3) returns the UI state + a refetch function.
+ *  - uses an inline template if provided, otherwise
+ *  - fetches the Gist template,
+ *  then renders it with the provided resume data.
  */
 export function useGistTemplate(
-  gistUrl: string,
+  gistUrl: string | undefined,
   resumeData: ResumeData,
   filename?: string,
+  inlineHtml?: string,
 ) {
   const [state, setState] = useState<GistTemplateState>({
     processedHtml: '',
@@ -75,11 +72,23 @@ export function useGistTemplate(
 
   // Separate template fetching from data rendering
   const fetchTemplate = useCallback(async () => {
-    // Guard against missing inputs
+    // 1) Inline mode: directly use provided HTML
+    if (inlineHtml && inlineHtml.trim().length > 0) {
+      setState((prev) => ({
+        ...prev,
+        loading: false,
+        error: null,
+        rawTemplate: inlineHtml,
+        templateFetched: true,
+      }))
+      return
+    }
+
+    // 2) URL mode: ensure we have a URL
     if (!gistUrl) {
       setState((prev) => ({
         ...prev,
-        error: 'Missing required props: gistUrl is required',
+        error: 'Missing required props: provide either gistUrl or inlineHtml',
         loading: false,
       }))
       return
@@ -88,7 +97,7 @@ export function useGistTemplate(
     setState((prev) => ({ ...prev, loading: true, error: null }))
 
     try {
-      // 1) Fetch validated HTML template from the Gist
+      // Fetch validated HTML template from the Gist
       const fetchResult: GistFetchResult = await fetchAndValidateGistTemplate(
         gistUrl,
         filename,
@@ -103,7 +112,7 @@ export function useGistTemplate(
         return
       }
 
-      // 2) Store the raw template and mark as fetched
+      // Store the raw template and mark as fetched
       setState((prev) => ({
         ...prev,
         rawTemplate: fetchResult.content || '',
@@ -120,9 +129,9 @@ export function useGistTemplate(
         error: errorMessage,
       }))
     }
-  }, [gistUrl, filename])
+  }, [gistUrl, filename, inlineHtml])
 
-  // Use useMemo to efficiently render template with data
+  // Render template with data
   const processedHtml = useMemo(() => {
     if (!state.rawTemplate || !state.templateFetched) {
       return state.processedHtml
@@ -151,7 +160,7 @@ export function useGistTemplate(
     }
   }, [processedHtml, state.processedHtml])
 
-  // Fetch template only when URL or filename changes
+  // Fetch or adopt inline template when inputs change
   useEffect(() => {
     fetchTemplate()
   }, [fetchTemplate])
@@ -225,6 +234,7 @@ const ErrorState: React.FC<{ error: string; onRetry?: () => void }> = ({
 const GistTemplate: React.FC<GistTemplateProps> = memo(
   ({
     gistUrl,
+    inlineHtml,
     resumeData,
     filename,
     className = '',
@@ -236,6 +246,7 @@ const GistTemplate: React.FC<GistTemplateProps> = memo(
       gistUrl,
       resumeData,
       filename,
+      inlineHtml,
     )
 
     // Bubble up the processed HTML if a callback is provided
@@ -257,7 +268,7 @@ const GistTemplate: React.FC<GistTemplateProps> = memo(
           className={`gist-template-container ${className}`}
           data-resume-content="true"
           // Safe because values were HTML-escaped by the engine;
-          // the template *structure* is trusted by you (from your gist).
+          // the template structure is trusted by you.
           dangerouslySetInnerHTML={{ __html: processedHtml }}
         />
       )

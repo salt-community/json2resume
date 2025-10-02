@@ -25,18 +25,23 @@ import {
 } from '@/components/ui/accordion'
 import { saveResumeData } from '@/storage/resumeStorage'
 
+// Theme selection can be a URL or inline HTML
+type ThemeSource = { kind: 'url'; url: string } | { kind: 'inline'; html: string }
+
 type Props = {
   resumeData: ResumeData
   setResumeData: (data: ResumeData) => void
   onThemeChange?: (themeUrl: string) => void
+  onThemeChangeV2?: (theme: ThemeSource) => void
   onTranslationComplete?: (data: ResumeData) => void
-  currentTheme?: string
+  currentTheme?: string | ThemeSource
 }
 
 function AccordionGroup({
   resumeData,
   setResumeData,
   onThemeChange,
+  onThemeChangeV2,
   onTranslationComplete,
   currentTheme,
 }: Props) {
@@ -166,7 +171,11 @@ function AccordionGroup({
       {
         title: 'Themes',
         content: (
-          <Themes onThemeChange={onThemeChange} currentTheme={currentTheme} />
+          <Themes
+            onThemeChange={onThemeChange}
+            onThemeChangeV2={onThemeChangeV2}
+            currentTheme={currentTheme}
+          />
         ),
       },
       {
@@ -191,6 +200,7 @@ function AccordionGroup({
       resumeData,
       setResumeDataAndSave,
       onThemeChange,
+      onThemeChangeV2,
       onTranslationComplete,
       currentTheme,
     ],
