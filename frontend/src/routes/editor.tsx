@@ -57,9 +57,9 @@ function App() {
           </button>
 
           <Tabs defaultValue="form">
-            <TabsList className="w-full bg-surface rounded-lg border border-border">
+            <TabsList className="w-full bg-surface rounded-lg my-4 ">
               <TabsTrigger
-                className="p-8 font-bold text-2xl text-text-strong"
+                className="p-8 font-bold text-2xl text-text-strong "
                 value="form"
               >
                 Form
