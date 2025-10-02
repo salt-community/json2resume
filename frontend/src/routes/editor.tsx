@@ -23,12 +23,9 @@ export const Route = createFileRoute('/editor')({
 })
 
 function App() {
-  const [resumeData, setResumeData] = useState<ResumeData>(() => {
-    const loaded = loadResumeDataAndConfig()
-    return loaded?.resumeData ?? mockedResumeData
-  })
+  const loaded = loadResumeDataAndConfig()
+  const [resumeData, setResumeData] = useState<ResumeData>(() => loaded?.resumeData ?? mockedResumeData)
   const [selectedTheme, setSelectedTheme] = useState<ThemeSource>(() => {
-    const loaded = loadResumeDataAndConfig()
     const themeCfg = loaded?.config?.theme as
       | { kind: 'url'; url?: string }
       | { kind: 'inline'; html?: string }

@@ -22,6 +22,7 @@ export function resumeDataFromJsonObj(jsonData: any): ResumeData {
           }
         : undefined,
       profiles: jsonData.basics?.profiles || [],
+      enabled: jsonData.basics?.enabled ?? true,
     },
     work: jsonData.work || [],
     volunteer: jsonData.volunteer || [],

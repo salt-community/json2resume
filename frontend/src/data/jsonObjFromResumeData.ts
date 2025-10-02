@@ -6,8 +6,8 @@ export function jsonObjFromResumeData(data: ResumeData) {
   // eslint-disable-next-line
   if (data === null) return {}
 
-  const basics = data.basics
-  const location = basics.location
+  const basics = (data.basics ?? {}) as NonNullable<ResumeData['basics']>
+  const location = basics?.location
     ? {
         address: basics.location.address,
         postalCode: basics.location.postalCode,
@@ -20,15 +20,16 @@ export function jsonObjFromResumeData(data: ResumeData) {
   return {
     $schema: data.$schema,
     basics: {
-      name: basics.name,
-      label: basics.label,
-      image: basics.image,
-      email: basics.email,
-      phone: basics.phone,
-      url: basics.url,
-      summary: basics.summary,
+      name: basics?.name,
+      label: basics?.label,
+      image: basics?.image,
+      email: basics?.email,
+      phone: basics?.phone,
+      url: basics?.url,
+      summary: basics?.summary,
       location,
-      profiles: Array.isArray(basics.profiles) ? basics.profiles : [],
+      profiles: Array.isArray(basics?.profiles) ? basics.profiles : [],
+      enabled: basics?.enabled ?? true,
     },
     work: Array.isArray(data.work) ? data.work : [],
     volunteer: Array.isArray(data.volunteer) ? data.volunteer : [],
