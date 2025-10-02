@@ -94,9 +94,21 @@ export function convertToResumeData(unifiedData: any): ResumeData {
       // Professional headline or title
       label: profile.headline || profile.title || '',
       // Email address with fallback options
-      email: profile.email_address || profile.email || '',
+      email: (() => {
+        // First try to get email from the dedicated emails collection
+        const emailData = unifiedData.emails?.[0]
+        if (emailData?.email_address) return emailData.email_address
+        // Fallback to profile data
+        return profile.email_address || profile.email || ''
+      })(),
       // Phone number
-      phone: profile.phone_numbers || '',
+      phone: (() => {
+        // First try to get phone from the dedicated phones collection
+        const phoneData = unifiedData.phones?.[0]
+        if (phoneData?.number) return phoneData.number
+        // Fallback to profile data
+        return profile.phone_numbers || ''
+      })(),
       // Primary website URL (LinkedIn URL takes precedence)
       url: (() => {
         const websiteEntries = parseWebsitesField(profile.websites)
