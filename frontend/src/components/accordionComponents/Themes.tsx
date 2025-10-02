@@ -1,68 +1,139 @@
 import { memo, useState } from 'react'
-import { ExternalLink, Eye, Github, Palette } from 'lucide-react'
+import { ExternalLink, Eye, FileCode, Github, Palette } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { inlineThemes } from '@/data/localThemes'
 
-interface Theme {
+type ThemeSource =
+  | { kind: 'url'; url: string }
+  | { kind: 'inline'; html: string; css?: string }
+
+interface ThemePreset {
   id: string
   description: string
-  url: string
+  source: ThemeSource
 }
 
-const presetThemes: Array<Theme> = [
+const presetThemes: Array<ThemePreset> = [
   {
     id: 'SALT Resume',
     description: 'Modern two-column layout with dark sidebar',
-    url: 'https://gist.github.com/david11267/b03fd23966945976472361c8e5d3e161',
+    source: {
+      kind: 'url',
+      url: 'https://gist.github.com/david11267/b03fd23966945976472361c8e5d3e161',
+    },
   },
   {
     id: 'AIK Resume',
     description: 'Modern two-column layout with dark sidebar',
-    url: 'https://gist.github.com/samuel-kar/11b0969ab91989b64650ac9361c8103b',
+    source: {
+      kind: 'url',
+      url: 'https://gist.github.com/samuel-kar/11b0969ab91989b64650ac9361c8103b',
+    },
   },
   {
     id: 'Classic',
     description: 'Modern two-column layout with dark sidebar',
-    url: 'https://gist.github.com/david11267/f23e349d88017d6d0c3df09741cdf7c6',
+    source: {
+      kind: 'url',
+      url: 'https://gist.github.com/david11267/f23e349d88017d6d0c3df09741cdf7c6',
+    },
   },
   {
     id: 'Fun',
     description: 'Modern two-column layout with dark sidebar',
-    url: 'https://gist.github.com/david11267/c74fd529168695a92ead6cd9976017d6',
+    source: {
+      kind: 'url',
+      url: 'https://gist.github.com/david11267/c74fd529168695a92ead6cd9976017d6',
+    },
   },
   {
     id: 'Terminal',
     description: 'Modern two-column layout with dark sidebar',
-    url: 'https://gist.github.com/david11267/8160c1ac2a49a95416c6ec991df48916',
+    source: {
+      kind: 'url',
+      url: 'https://gist.github.com/david11267/8160c1ac2a49a95416c6ec991df48916',
+    },
   },
   {
     id: 'Regular',
     description: 'Modern two-column layout with dark sidebar',
-    url: 'https://gist.github.com/david11267/deceafa6ab9de41a77833607cabd4dc0',
+    source: {
+      kind: 'url',
+      url: 'https://gist.github.com/david11267/deceafa6ab9de41a77833607cabd4dc0',
+    },
+  },
+  // Local inline themes
+  {
+    id: 'Minimal Local',
+    description: 'Clean, typography-first resume rendered from inline HTML/CSS',
+    source: {
+      kind: 'inline',
+      html: inlineThemes.minimal.html,
+    },
+  },
+  {
+    id: 'Clean Local',
+    description: 'Simple card-based layout shipped with the app',
+    source: {
+      kind: 'inline',
+      html: inlineThemes.clean.html,
+    },
   },
 ]
 
 interface Props {
+  // Backward compatible: legacy URL-based callback (still called for URL themes)
   onThemeChange?: (themeUrl: string) => void
-  currentTheme?: string
+  // New: theme source callback supporting URL or inline content
+  onThemeChangeV2?: (theme: ThemeSource) => void
+  // Accept either a legacy URL or a ThemeSource object
+  currentTheme?: string | ThemeSource
 }
 
-function Themes({ onThemeChange, currentTheme }: Props) {
+function Themes({ onThemeChange, onThemeChangeV2, currentTheme }: Props) {
   const [customUrl, setCustomUrl] = useState('')
   const [selectedTheme, setSelectedTheme] = useState<string | null>(() => {
-    // Find the theme that matches the current theme URL
-    const matchingTheme = presetThemes.find(
-      (theme) => theme.url === currentTheme,
-    )
-    return matchingTheme ? matchingTheme.id : null
+    // Match by URL for legacy string or by inline content for object
+    if (typeof currentTheme === 'string') {
+      const matchByUrl = presetThemes.find(
+        (t) => t.source.kind === 'url' && t.source.url === currentTheme,
+      )
+      return matchByUrl ? matchByUrl.id : null
+    } else if (
+      currentTheme &&
+      typeof currentTheme === 'object' &&
+      'kind' in currentTheme
+    ) {
+      if (currentTheme.kind === 'url') {
+        const matchByUrl = presetThemes.find(
+          (t) => t.source.kind === 'url' && t.source.url === currentTheme.url,
+        )
+        return matchByUrl ? matchByUrl.id : null
+      } else {
+        const matchByInline = presetThemes.find(
+          (t) =>
+            t.source.kind === 'inline' &&
+            t.source.html === currentTheme.html &&
+            t.source.css === currentTheme.css,
+        )
+        return matchByInline ? matchByInline.id : null
+      }
+    }
+    return null
   })
   const [isLoading, setIsLoading] = useState(false)
 
-  const handlePresetSelect = (theme: Theme) => {
+  const handlePresetSelect = (theme: ThemePreset) => {
     setSelectedTheme(theme.id)
-    setCustomUrl(theme.url)
-    onThemeChange?.(theme.url)
+    if (theme.source.kind === 'url') {
+      setCustomUrl(theme.source.url)
+      onThemeChange?.(theme.source.url)
+    } else {
+      setCustomUrl('')
+    }
+    onThemeChangeV2?.(theme.source)
   }
 
   const handleCustomUrlSubmit = () => {
@@ -78,6 +149,7 @@ function Themes({ onThemeChange, currentTheme }: Props) {
     setIsLoading(true)
     setSelectedTheme('custom')
     onThemeChange?.(customUrl)
+    onThemeChangeV2?.({ kind: 'url', url: customUrl })
 
     // Simulate loading
     setTimeout(() => {
@@ -218,32 +290,42 @@ function Themes({ onThemeChange, currentTheme }: Props) {
                     className="text-xs font-mono truncate flex-1 min-w-0"
                     style={{ color: 'var(--theme-text-muted)' }}
                   >
-                    gist.github.com/...
+                    {theme.source.kind === 'url'
+                      ? `${new URL(theme.source.url).host}/...`
+                      : 'local theme'}
                   </span>
-                  <div className="flex gap-1 flex-shrink-0">
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      className="h-6 px-2 text-xs"
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        window.open(theme.url, '_blank')
-                      }}
-                    >
-                      <Eye className="w-3 h-3" />
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      className="h-6 px-2 text-xs"
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        window.open(theme.url, '_blank')
-                      }}
-                    >
-                      <ExternalLink className="w-3 h-3" />
-                    </Button>
-                  </div>
+                  {theme.source.kind === 'url' ? (
+                    <div className="flex gap-1 flex-shrink-0">
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="h-6 px-2 text-xs"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          window.open(theme.source.kind === 'url' ? theme.source.url : '#', '_blank')
+                        }}
+                      >
+                        <Eye className="w-3 h-3" />
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="h-6 px-2 text-xs"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          window.open(theme.source.kind === 'url' ? theme.source.url : '#', '_blank')
+                        }}
+                      >
+                        <ExternalLink className="w-3 h-3" />
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="flex gap-1 flex-shrink-0">
+                      <Button size="sm" variant="ghost" className="h-6 px-2 text-xs" disabled>
+                        <FileCode className="w-3 h-3" />
+                      </Button>
+                    </div>
+                  )}
                 </div>
               </div>
             ))}

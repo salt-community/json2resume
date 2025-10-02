@@ -134,7 +134,8 @@ The system intelligently maps LinkedIn CSV filenames to logical collections:
 | `course*`                    | `courses`         | Completed courses              |
 | `accomplishment*`            | `accomplishments` | Professional achievements      |
 | `recommendation*` (received) | `recommendations` | Professional recommendations   |
-| `connection*`                | `connections`     | Professional connections       |
+| `email*`                     | `emails`          | Email addresses                |
+| `phone*`                     | `phones`          | Phone numbers                  |
 | `profile*`                   | `profile`         | Basic profile information      |
 
 ## 🔧 Data Conversion
@@ -144,7 +145,7 @@ The system performs comprehensive data transformation from LinkedIn format to Re
 ### Profile Data → `basics`
 
 - **Name**: Constructs full name from first/last or uses alternative fields
-- **Contact**: Maps email, phone, and location information
+- **Contact**: Maps email and phone from dedicated CSV files, with fallback to profile data
 - **Professional**: Extracts headline, summary, and social profiles
 - **Websites**: Parses complex LinkedIn website field format
 

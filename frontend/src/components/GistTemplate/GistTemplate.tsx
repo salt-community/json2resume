@@ -2,18 +2,12 @@
  * GistTemplate.tsx
  * -----------------
  * Purpose
- *   Fetch an HTML template from a GitHub Gist, render it using the lightweight
- *   template engine (with your JSON Resume data), and display the final HTML.
- *
- * Key ideas
- *   - Uses `fetchAndValidateGistTemplate` to retrieve HTML from your Gist.
- *   - Uses `renderTemplate` (our engine) to merge JSON data -> HTML.
- *   - Exposes a hook (`useGistTemplate`) for reuse and UI state management.
- *   - HTML output is escaped by default by the engine; we simply inject it.
+ *   Fetch an HTML template from a GitHub Gist OR use a provided inline HTML template,
+ *   render it using the lightweight template engine, and display the final HTML.
  *
  * Safety
  *   - The template engine HTML-escapes injected values to avoid XSS.
- *   - The template’s *own* HTML/CSS is rendered as-is (trusted template).
+ *   - The template’s own HTML/CSS is rendered as-is (trusted template).
  */
 
 import React, { memo, useEffect } from 'react'
@@ -21,8 +15,10 @@ import type { ResumeData } from './templateEngine'
 import { useGistTemplate } from '@/hooks'
 
 export interface GistTemplateProps {
-  /** URL to the Gist that contains an HTML template */
-  gistUrl: string
+  /** URL to the Gist that contains an HTML template (optional if inlineHtml provided) */
+  gistUrl?: string
+  /** Inline HTML template (optional if gistUrl provided) */
+  inlineHtml?: string
   /** JSON Resume-like data structure that feeds the template */
   resumeData: ResumeData
   /** Optional filename if the Gist has multiple files */
@@ -96,6 +92,7 @@ const ErrorState: React.FC<{ error: string; onRetry?: () => void }> = ({
 const GistTemplate: React.FC<GistTemplateProps> = memo(
   ({
     gistUrl,
+    inlineHtml,
     resumeData,
     filename,
     className = '',
@@ -107,6 +104,7 @@ const GistTemplate: React.FC<GistTemplateProps> = memo(
       gistUrl,
       resumeData,
       filename,
+      inlineHtml,
     )
 
     // Bubble up the processed HTML if a callback is provided
@@ -128,7 +126,7 @@ const GistTemplate: React.FC<GistTemplateProps> = memo(
           className={`gist-template-container ${className}`}
           data-resume-content="true"
           // Safe because values were HTML-escaped by the engine;
-          // the template *structure* is trusted by you (from your gist).
+          // the template structure is trusted by you.
           dangerouslySetInnerHTML={{ __html: processedHtml }}
         />
       )

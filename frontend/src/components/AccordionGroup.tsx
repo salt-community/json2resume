@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useCallback } from 'react'
 import Basic from './accordionComponents/Basic'
 import Work from './accordionComponents/Work'
 import Volunteering from './accordionComponents/Volunteering'
@@ -24,22 +24,38 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion'
 import { Checkbox } from '@/components/ui/checkbox'
+import { saveResumeData } from '@/storage/resumeStorage'
+
+// Theme selection can be a URL or inline HTML
+type ThemeSource = { kind: 'url'; url: string } | { kind: 'inline'; html: string }
 
 type Props = {
   resumeData: ResumeData
   setResumeData: (data: ResumeData) => void
   onThemeChange?: (themeUrl: string) => void
+  onThemeChangeV2?: (theme: ThemeSource) => void
   onTranslationComplete?: (data: ResumeData) => void
-  currentTheme?: string
+  currentTheme?: string | ThemeSource
 }
 
 function AccordionGroup({
   resumeData,
   setResumeData,
   onThemeChange,
+  onThemeChangeV2,
   onTranslationComplete,
   currentTheme,
 }: Props) {
+  // Wrap updates so any field change (including de-select) persists to storage
+  const setResumeDataAndSave = useCallback(
+    (data: ResumeData) => {
+      saveResumeData(data)
+      setResumeData(data)
+    },
+    [setResumeData],
+  )
+
+  const items: Array<{ title: string; content: React.ReactNode }> = useMemo(
   const sectionKeyMap: Record<string, keyof ResumeData | null> = {
     Basics: 'basics',
     'Work Experience': 'work',
@@ -89,6 +105,7 @@ function AccordionGroup({
     () => [
       {
         title: 'LinkedIn Import',
+        content: <LinkedinImporter onDataImported={setResumeDataAndSave} />,
         content: <LinkedinImporter onDataImported={setResumeData} />,
         checkbox: false,
       },
@@ -97,7 +114,7 @@ function AccordionGroup({
         content: (
           <SectionHeadersComponent
             resumeData={resumeData}
-            setResumeData={setResumeData}
+            setResumeData={setResumeDataAndSave}
           />
         ),
         checkbox: false,
@@ -105,33 +122,41 @@ function AccordionGroup({
       {
         title: 'Basics',
         content: (
-          <Basic resumeData={resumeData} setResumeData={setResumeData} />
+          <Basic resumeData={resumeData} setResumeData={setResumeDataAndSave} />
         ),
         checkbox: true,
       },
       {
         title: 'Work Experience',
-        content: <Work resumeData={resumeData} setResumeData={setResumeData} />,
+        content: (
+          <Work resumeData={resumeData} setResumeData={setResumeDataAndSave} />
+        ),
         checkbox: true,
       },
       {
         title: 'Education',
         content: (
-          <Education resumeData={resumeData} setResumeData={setResumeData} />
+          <Education
+            resumeData={resumeData}
+            setResumeData={setResumeDataAndSave}
+          />
         ),
         checkbox: true,
       },
       {
         title: 'Projects',
         content: (
-          <Projects resumeData={resumeData} setResumeData={setResumeData} />
+          <Projects
+            resumeData={resumeData}
+            setResumeData={setResumeDataAndSave}
+          />
         ),
         checkbox: true,
       },
       {
         title: 'Skills',
         content: (
-          <Skills resumeData={resumeData} setResumeData={setResumeData} />
+          <Skills resumeData={resumeData} setResumeData={setResumeDataAndSave} />
         ),
         checkbox: true,
       },
@@ -140,7 +165,7 @@ function AccordionGroup({
         content: (
           <Certifications
             resumeData={resumeData}
-            setResumeData={setResumeData}
+            setResumeData={setResumeDataAndSave}
           />
         ),
         checkbox: true,
@@ -148,49 +173,71 @@ function AccordionGroup({
       {
         title: 'Awards',
         content: (
-          <Awards resumeData={resumeData} setResumeData={setResumeData} />
+          <Awards
+            resumeData={resumeData}
+            setResumeData={setResumeDataAndSave}
+          />
         ),
         checkbox: true,
       },
       {
         title: 'Publications',
         content: (
-          <Publications resumeData={resumeData} setResumeData={setResumeData} />
+          <Publications
+            resumeData={resumeData}
+            setResumeData={setResumeDataAndSave}
+          />
         ),
         checkbox: true,
       },
       {
         title: 'Volunteering',
         content: (
-          <Volunteering resumeData={resumeData} setResumeData={setResumeData} />
+          <Volunteering
+            resumeData={resumeData}
+            setResumeData={setResumeDataAndSave}
+          />
         ),
         checkbox: true,
       },
       {
         title: 'Languages',
         content: (
-          <Languages resumeData={resumeData} setResumeData={setResumeData} />
+          <Languages
+            resumeData={resumeData}
+            setResumeData={setResumeDataAndSave}
+          />
         ),
         checkbox: true,
       },
       {
         title: 'Interests',
         content: (
-          <Interests resumeData={resumeData} setResumeData={setResumeData} />
+          <Interests
+            resumeData={resumeData}
+            setResumeData={setResumeDataAndSave}
+          />
         ),
         checkbox: true,
       },
       {
         title: 'References',
         content: (
-          <References resumeData={resumeData} setResumeData={setResumeData} />
+          <References
+            resumeData={resumeData}
+            setResumeData={setResumeDataAndSave}
+          />
         ),
         checkbox: true,
       },
       {
         title: 'Themes',
         content: (
-          <Themes onThemeChange={onThemeChange} currentTheme={currentTheme} />
+          <Themes
+            onThemeChange={onThemeChange}
+            onThemeChangeV2={onThemeChangeV2}
+            currentTheme={currentTheme}
+          />
         ),
         checkbox: false,
       },
@@ -218,8 +265,9 @@ function AccordionGroup({
 
     [
       resumeData,
-      setResumeData,
+      setResumeDataAndSave,
       onThemeChange,
+      onThemeChangeV2,
       onTranslationComplete,
       currentTheme,
     ],

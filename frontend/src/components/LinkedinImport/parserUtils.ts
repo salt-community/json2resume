@@ -94,7 +94,8 @@ export function mapCsvNameToCollection(name: string) {
   // Only include received recommendations, not given ones
   if (n.includes('recommendation') && n.includes('received'))
     return 'recommendations'
-  if (n.includes('connection')) return 'connections'
+  if (n.includes('email')) return 'emails'
+  if (n.includes('phone')) return 'phones'
   if (n.includes('profile')) return 'profile'
   // fallback: use base name without .csv, snake_cased
   return n.replace(/\.csv$/i, '').replace(/[^a-z0-9]+/g, '_')
@@ -241,7 +242,8 @@ export function buildUnifiedJson(collections: Record<string, Array<any>>) {
     courses: collections.courses || [],
     accomplishments: collections.accomplishments || [],
     recommendations: collections.recommendations || [],
-    connections: collections.connections || [],
+    emails: collections.emails || [],
+    phones: collections.phones || [],
     // Keep the originals in case you need exact fields later
     raw: collections,
   }
