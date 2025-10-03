@@ -2,7 +2,6 @@ import React, { useRef, useState } from 'react'
 import { Image as ImageIcon, Upload, X } from 'lucide-react'
 import { Button } from './button'
 import { Label } from './label'
-import { Input } from './input'
 
 interface ImageUploadProps {
   value?: string // Base64 data URI
@@ -15,7 +14,6 @@ interface ImageUploadProps {
 export function ImageUpload({
   value,
   onChange,
-  placeholder,
   className,
   showLabel = true,
 }: ImageUploadProps) {
