@@ -386,7 +386,7 @@ function Themes({ onThemeChange, onThemeChangeV2, currentTheme }: Props) {
             <ReactCodeMirror
               placeholder="Paste your template HTML here (supports >>[path]<<, [[#if]], [[#each]], [[#join]])"
               value={customInlineHtml}
-              onChange={(e) => setCustomInlineHtml(e.target.value)}
+              onChange={(e) => setCustomInlineHtml(e)}
               theme={oneDark}
               basicSetup={false}
               extensions={[
