@@ -1,10 +1,20 @@
 import { memo, useMemo, useState } from 'react'
 import { ExternalLink, Eye, FileCode, Github, Palette } from 'lucide-react'
+import ReactCodeMirror, {
+  EditorView,
+  drawSelection,
+  highlightActiveLine,
+  highlightActiveLineGutter,
+  lineNumbers,
+  oneDark,
+} from '@uiw/react-codemirror'
+import { Link } from '@tanstack/react-router'
+import { html } from '@codemirror/lang-html'
+import { css } from '@codemirror/lang-css'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { inlineThemes } from '@/data/localThemes'
-import { Link } from '@tanstack/react-router'
 
 type ThemeSource =
   | { kind: 'url'; url: string }
@@ -367,15 +377,30 @@ function Themes({ onThemeChange, onThemeChangeV2, currentTheme }: Props) {
         <div className="space-y-3">
           <Label className="text-sm font-medium">Custom Inline Theme</Label>
           <p className="text-sm whitespace-nowrap">
-            See our <Link to="/html-interpreter-standard" className="underline">custom html interpreter language</Link>
+            See our{' '}
+            <Link to="/html-interpreter-standard" className="underline">
+              custom html interpreter language
+            </Link>
           </p>
           <div className="space-y-2">
-            <textarea
-              className="w-full h-48 p-3 border rounded-md font-mono text-xs bg-surface text-text-strong border-border"
+            <ReactCodeMirror
               placeholder="Paste your template HTML here (supports >>[path]<<, [[#if]], [[#each]], [[#join]])"
               value={customInlineHtml}
               onChange={(e) => setCustomInlineHtml(e.target.value)}
+              theme={oneDark}
+              basicSetup={false}
+              extensions={[
+                lineNumbers(),
+                highlightActiveLineGutter(),
+                drawSelection(),
+                highlightActiveLine(),
+                EditorView.lineWrapping,
+                html({ matchClosingTags: true, autoCloseTags: true }),
+                css(),
+              ]}
+              height="720px"
             />
+
             <div className="flex items-center justify-between">
               <p className="text-xs text-muted-foreground">
                 Click “Apply Inline Theme” to use the HTML above. Selecting
