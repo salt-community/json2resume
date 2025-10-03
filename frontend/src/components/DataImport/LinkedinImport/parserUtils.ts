@@ -49,13 +49,13 @@ export function normalizeHeader(h: string): string {
  *
  * This configuration ensures all CSV files are parsed with the same settings:
  * - Headers are automatically detected and normalized
- * - Dynamic typing converts strings to appropriate types (numbers, booleans)
+ * - All values are kept as strings to preserve phone numbers and other formatted data
  * - Empty lines are skipped to avoid parsing issues
  * - Headers are transformed using our normalization function
  */
 export const PAPA_CFG: Papa.ParseConfig = {
   header: true,
-  dynamicTyping: true,
+  dynamicTyping: false, // Disable to keep phone numbers as strings
   skipEmptyLines: true,
   transformHeader: normalizeHeader,
 }
