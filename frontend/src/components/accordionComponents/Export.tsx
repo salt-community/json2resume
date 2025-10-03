@@ -81,8 +81,37 @@ export default function Export({ resumeData }: Props) {
         throw new Error('Could not access iframe document')
       }
 
-      const scrollHeight = iframeDoc.documentElement.scrollHeight
-      const pageHeightMm = scrollHeight * 0.264583
+      // Prefer measuring the actual resume container if present
+      const resumeContainer = iframeDoc.querySelector('.resume-container')
+
+      // Gather multiple measurements for robustness
+      const docScrollHeight = iframeDoc.documentElement.scrollHeight
+      const bodyScrollHeight = iframeDoc.body.scrollHeight
+      const containerScrollHeight = resumeContainer?.scrollHeight ?? 0
+      const containerRectHeight = resumeContainer?.getBoundingClientRect().height ?? 0
+
+      // Choose the best estimate of content height in px
+      const contentHeightPx = Math.max(
+        docScrollHeight,
+        bodyScrollHeight,
+        containerScrollHeight,
+        Math.ceil(containerRectHeight)
+      )
+
+      // Convert px -> mm (1px ≈ 0.264583mm)
+      const pageHeightMm = contentHeightPx * 0.264583
+
+      // Debug logs to validate content-driven height
+      // These logs help ensure we size the page to the exact content height to avoid bottom whitespace
+      console.log('[PDF Export] Measurements', {
+        docScrollHeight,
+        bodyScrollHeight,
+        containerScrollHeight,
+        containerRectHeight,
+        chosenContentHeightPx: contentHeightPx,
+        pageHeightMm,
+        devicePixelRatio: window.devicePixelRatio,
+      })
 
       // Add print-specific styles with exact height and full page coverage
       const printStyles = `
