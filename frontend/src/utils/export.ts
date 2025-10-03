@@ -5,12 +5,8 @@ import type { ResumeData } from '@/types'
  * cloning into a hidden iframe, measuring height, injecting print CSS, and printing.
  */
 export async function exportResumeToPDF(resumeData: ResumeData): Promise<void> {
-  const resumeElement = document.querySelector(
-    '[data-resume-content]',
-  ) as HTMLElement | null
-  if (!resumeElement) {
-    throw new Error('Resume content not found')
-  }
+  const resumeElement = document.querySelector('[data-resume-content]')
+  if (!resumeElement) throw new Error('Resume content not found')
 
   // Clone the resume content
   const clonedContent = resumeElement.cloneNode(true) as HTMLElement
@@ -77,9 +73,7 @@ export async function exportResumeToPDF(resumeData: ResumeData): Promise<void> {
   }
 
   // Measure height in px using multiple sources for robustness
-  const resumeContainer = iframeDoc.querySelector(
-    '.resume-container',
-  ) as HTMLElement | null
+  const resumeContainer = iframeDoc.querySelector('.resume-container')
   const docScrollHeight = iframeDoc.documentElement.scrollHeight
   const bodyScrollHeight = iframeDoc.body.scrollHeight
   const containerScrollHeight = resumeContainer?.scrollHeight ?? 0
