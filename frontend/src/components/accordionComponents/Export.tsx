@@ -16,7 +16,6 @@ export default function Export({ resumeData }: Props) {
     try {
       await exportResumeToPDF(resumeData)
     } catch (error) {
-      console.error('Error exporting PDF:', error)
       alert('Error exporting PDF. Please try again.')
     } finally {
       setIsExporting(false)
@@ -27,7 +26,6 @@ export default function Export({ resumeData }: Props) {
     try {
       exportJSON(resumeData, resumeData.basics?.name || 'resume')
     } catch (error) {
-      console.error('Error exporting JSON:', error)
       alert('Error exporting JSON. Please try again.')
     }
   }
