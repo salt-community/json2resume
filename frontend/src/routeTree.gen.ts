@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TemplatesGuideRouteImport } from './routes/templates-guide'
 import { Route as HtmlInterpreterStandardRouteImport } from './routes/html-interpreter-standard'
+import { Route as FileUploadTestRouteImport } from './routes/file-upload-test'
 import { Route as EditorRouteImport } from './routes/editor'
 import { Route as IndexRouteImport } from './routes/index'
 
@@ -22,6 +23,11 @@ const TemplatesGuideRoute = TemplatesGuideRouteImport.update({
 const HtmlInterpreterStandardRoute = HtmlInterpreterStandardRouteImport.update({
   id: '/html-interpreter-standard',
   path: '/html-interpreter-standard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FileUploadTestRoute = FileUploadTestRouteImport.update({
+  id: '/file-upload-test',
+  path: '/file-upload-test',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EditorRoute = EditorRouteImport.update({
@@ -38,12 +44,14 @@ const IndexRoute = IndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/editor': typeof EditorRoute
+  '/file-upload-test': typeof FileUploadTestRoute
   '/html-interpreter-standard': typeof HtmlInterpreterStandardRoute
   '/templates-guide': typeof TemplatesGuideRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/editor': typeof EditorRoute
+  '/file-upload-test': typeof FileUploadTestRoute
   '/html-interpreter-standard': typeof HtmlInterpreterStandardRoute
   '/templates-guide': typeof TemplatesGuideRoute
 }
@@ -51,18 +59,30 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/editor': typeof EditorRoute
+  '/file-upload-test': typeof FileUploadTestRoute
   '/html-interpreter-standard': typeof HtmlInterpreterStandardRoute
   '/templates-guide': typeof TemplatesGuideRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/editor' | '/html-interpreter-standard' | '/templates-guide'
+  fullPaths:
+    | '/'
+    | '/editor'
+    | '/file-upload-test'
+    | '/html-interpreter-standard'
+    | '/templates-guide'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/editor' | '/html-interpreter-standard' | '/templates-guide'
+  to:
+    | '/'
+    | '/editor'
+    | '/file-upload-test'
+    | '/html-interpreter-standard'
+    | '/templates-guide'
   id:
     | '__root__'
     | '/'
     | '/editor'
+    | '/file-upload-test'
     | '/html-interpreter-standard'
     | '/templates-guide'
   fileRoutesById: FileRoutesById
@@ -70,6 +90,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   EditorRoute: typeof EditorRoute
+  FileUploadTestRoute: typeof FileUploadTestRoute
   HtmlInterpreterStandardRoute: typeof HtmlInterpreterStandardRoute
   TemplatesGuideRoute: typeof TemplatesGuideRoute
 }
@@ -88,6 +109,13 @@ declare module '@tanstack/react-router' {
       path: '/html-interpreter-standard'
       fullPath: '/html-interpreter-standard'
       preLoaderRoute: typeof HtmlInterpreterStandardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/file-upload-test': {
+      id: '/file-upload-test'
+      path: '/file-upload-test'
+      fullPath: '/file-upload-test'
+      preLoaderRoute: typeof FileUploadTestRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/editor': {
@@ -110,6 +138,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   EditorRoute: EditorRoute,
+  FileUploadTestRoute: FileUploadTestRoute,
   HtmlInterpreterStandardRoute: HtmlInterpreterStandardRoute,
   TemplatesGuideRoute: TemplatesGuideRoute,
 }

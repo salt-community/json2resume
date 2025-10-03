@@ -8,6 +8,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.slf4j.Slf4j;
 import salt.backend.dto.TranslationRequestDto;
 import salt.backend.dto.ResumeDto;
+import salt.backend.dto.FileUploadRequestDto;
 
 @Slf4j
 @Service
@@ -86,6 +87,84 @@ public class TranslationService {
             
             Return the translated resume in the same JSON format:
             """, languageCode, resumeJson);
+    }
+
+    public ResumeDto convertFileToResume(FileUploadRequestDto request) throws Exception {
+        try {
+            log.info("📤 Converting {} file to resume JSON", request.getFileType());
+            
+            // Create the prompt for Gemini AI based on file type
+            String prompt = buildFileConversionPrompt(request);
+            
+            // Send request to Gemini AI with file data
+            GenerateContentResponse response = client.models.generateContent(
+                "gemini-2.0-flash-exp",
+                prompt,
+                null
+            );
+            
+            String resumeJson = response.text();
+            log.info("📥 Received response from Gemini AI for file conversion");
+            
+            // Clean up the response (remove potential markdown formatting)
+            resumeJson = cleanJsonResponse(resumeJson);
+            
+            // Parse the JSON back to ResumeDto
+            ResumeDto resume = objectMapper.readValue(resumeJson, ResumeDto.class);
+            
+            log.info("✅ Successfully converted file to resume JSON");
+            return resume;
+            
+        } catch (JsonProcessingException e) {
+            log.error("❌ JSON processing error during file conversion", e);
+            throw new Exception("Failed to process JSON during file conversion: " + e.getMessage(), e);
+        } catch (Exception e) {
+            log.error("❌ Error during file to resume conversion", e);
+            throw new Exception("File conversion service error: " + e.getMessage(), e);
+        }
+    }
+
+    private String buildFileConversionPrompt(FileUploadRequestDto request) {
+        String fileTypeDescription = getFileTypeDescription(request.getFileType());
+        
+        return String.format("""
+            You are a professional resume parser. Convert the following %s file content to JSON Resume format.
+            
+            CRITICAL INSTRUCTIONS:
+            1. Extract ALL relevant information from the file content
+            2. Structure the data according to the JSON Resume schema
+            3. Use appropriate field names: basics, work, education, skills, etc.
+            4. For dates, use YYYY-MM-DD format when possible
+            5. For contact info, extract emails, phones, URLs accurately
+            6. For work experience, extract company names, positions, dates, descriptions
+            7. For education, extract institutions, degrees, dates, courses
+            8. For skills, create meaningful skill categories with keywords
+            9. If information is missing or unclear, use null or empty strings
+            10. Ensure the output is valid JSON that can be parsed
+            11. Return ONLY the JSON, no additional text or markdown formatting
+            
+            File Type: %s
+            File Name: %s
+            File Content:
+            %s
+            
+            Return the resume in JSON Resume format:
+            """, 
+            fileTypeDescription, 
+            request.getFileType(), 
+            request.getFileName(),
+            request.getFileData()
+        );
+    }
+
+    private String getFileTypeDescription(String fileType) {
+        if (fileType.startsWith("image/")) {
+            return "image (resume photo or scanned document)";
+        } else if (fileType.equals("application/pdf")) {
+            return "PDF document";
+        } else {
+            return "document";
+        }
     }
 
     private String cleanJsonResponse(String response) {

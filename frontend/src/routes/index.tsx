@@ -13,8 +13,9 @@ function HomePage() {
             Json2Resume
           </h1>
           <p className="mt-4 text-lg text-text-muted max-w-2xl">
-            Manage all your resume information in one place.
-            Create, edit, and export a professional resume with an intuitive editor and beautiful templates.
+            Manage all your resume information in one place. Create, edit, and
+            export a professional resume with an intuitive editor and beautiful
+            templates.
           </p>
           <div className="mt-8 flex justify-center gap-4">
             <Link
@@ -22,6 +23,12 @@ function HomePage() {
               className="inline-flex items-center rounded-lg bg-accent px-5 py-3 font-medium text-on-accent hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-surface transition-colors"
             >
               Open Editor
+            </Link>
+            <Link
+              to="/file-upload-test"
+              className="inline-flex items-center rounded-lg border border-border px-5 py-3 font-medium text-text-strong hover:bg-surface-strong focus:outline-none focus:ring-2 focus:ring-border focus:ring-offset-2 focus:ring-offset-surface transition-colors"
+            >
+              Upload Resume
             </Link>
             <a
               href="/templates-guide"
