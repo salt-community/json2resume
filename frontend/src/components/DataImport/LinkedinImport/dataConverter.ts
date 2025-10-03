@@ -121,6 +121,7 @@ export function convertToResumeData(unifiedData: any): ResumeData {
         city: profile.city || '',
         region: profile.state || profile.region || '',
         countryCode: profile.country || '',
+        enabled: true,
       },
       // Social media profiles and websites
       profiles: (() => {
@@ -132,14 +133,19 @@ export function convertToResumeData(unifiedData: any): ResumeData {
         const linkedIn = profile.linkedin_url
           ? [
               {
+                enabled: true,
                 network: 'LinkedIn',
                 url: profile.linkedin_url,
                 username: profile.linkedin_url.split('/').pop() || '',
               },
             ]
           : []
-        return [...linkedIn, ...filteredWebsites]
+        return [
+          ...linkedIn,
+          ...filteredWebsites.map((w) => ({ ...w, enabled: true })),
+        ]
       })(),
+      enabled: true,
     },
     // Work experience - maps LinkedIn positions to work entries
     work: (unifiedData.positions || []).map((pos: any) => {
@@ -152,6 +158,7 @@ export function convertToResumeData(unifiedData: any): ResumeData {
       // Default to 'Present' for current positions
       const end = endRaw == null || endRaw === '' ? 'Present' : endRaw
       return {
+        enabled: true,
         name: pos.company_name || pos.organization || '',
         position: pos.title || pos.position || '',
         location: pos.location || '',
@@ -163,6 +170,7 @@ export function convertToResumeData(unifiedData: any): ResumeData {
     }),
     // Education - maps LinkedIn education records
     education: (unifiedData.education || []).map((edu: any) => ({
+      enabled: true,
       institution: edu.school_name || edu.institution || '',
       area: edu.field_of_study || 'FIELD OF STUDY',
       studyType: edu.degree_name || edu.degree || '',
@@ -186,6 +194,7 @@ export function convertToResumeData(unifiedData: any): ResumeData {
       return deduped.length
         ? [
             {
+              enabled: true,
               name: 'Software Development',
               level: 'Expert',
               keywords: deduped,
@@ -196,6 +205,7 @@ export function convertToResumeData(unifiedData: any): ResumeData {
     // Languages - processes language proficiency data
     languages: (() => {
       const mapped = (unifiedData.languages || []).map((lang: any) => ({
+        enabled: true,
         language: lang.language_name || lang.name || '',
         fluency: lang.proficiency || lang.level || '',
       }))
@@ -204,12 +214,17 @@ export function convertToResumeData(unifiedData: any): ResumeData {
         (l: any) => (l.language || '').toLowerCase() === 'english',
       )
       if (!hasEnglish) {
-        mapped.push({ language: 'English', fluency: 'Full Professional' })
+        mapped.push({
+          enabled: true,
+          language: 'English',
+          fluency: 'Full Professional',
+        })
       }
       return mapped
     })(),
     // Certifications - maps LinkedIn certifications
     certificates: (unifiedData.certifications || []).map((cert: any) => ({
+      enabled: true,
       name: cert.name || cert.certification_name || '',
       issuer: cert.issuing_organization || cert.issuer || '',
       date: cert.issue_date || cert.date || '',
@@ -217,6 +232,7 @@ export function convertToResumeData(unifiedData: any): ResumeData {
     })),
     // Projects - maps LinkedIn projects
     projects: (unifiedData.projects || []).map((proj: any) => ({
+      enabled: true,
       name: proj.name || proj.title || '',
       description: proj.description || '',
       startDate: proj.start_date || '',
@@ -225,6 +241,7 @@ export function convertToResumeData(unifiedData: any): ResumeData {
     })),
     // References - maps LinkedIn recommendations to references
     references: (unifiedData.recommendations || []).map((rec: any) => ({
+      enabled: true,
       name:
         rec.recommender_name ||
         rec.name ||

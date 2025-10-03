@@ -19,6 +19,7 @@ export function resumeDataFromJsonObj(jsonData: any): ResumeData {
             city: jsonData.basics.location.city,
             countryCode: jsonData.basics.location.countryCode,
             region: jsonData.basics.location.region,
+            enabled: jsonData.basics.location.enabled ?? true,
           }
         : undefined,
       profiles: jsonData.basics?.profiles || [],
