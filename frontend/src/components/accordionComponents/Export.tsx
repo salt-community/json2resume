@@ -57,12 +57,34 @@ export default function Export({ resumeData }: Props) {
                 margin: 0;
                 padding: 0;
                 background: white;
+                position: relative;
+              }
+              
+              /* Print-only footer that fills remaining space */
+              .print-footer {
+                display: none;
+              }
+              
+              @media print {
+                .print-footer {
+                  display: block !important;
+                  position: fixed !important;
+                  bottom: 0 !important;
+                  left: 0 !important;
+                  right: 0 !important;
+                  height: 100vh !important;
+                  background: var(--sidebar-bg) !important;
+                  z-index: -1 !important;
+                  pointer-events: none !important;
+                }
               }
             </style>
           </head>
           <body>
             <div class="resume-container">
               ${clonedContent.outerHTML}
+              <!-- Print-only footer to fill remaining space -->
+              <div class="print-footer"></div>
             </div>
           </body>
         </html>
@@ -287,7 +309,10 @@ export default function Export({ resumeData }: Props) {
       const url = URL.createObjectURL(blob)
       const a = document.createElement('a')
       const name = resumeData.basics?.name?.trim() || 'resume'
-      const safe = name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-_]/g, '')
+      const safe = name
+        .toLowerCase()
+        .replace(/\s+/g, '-')
+        .replace(/[^a-z0-9-_]/g, '')
       a.href = url
       a.download = `${safe || 'resume'}.json`
       document.body.appendChild(a)
