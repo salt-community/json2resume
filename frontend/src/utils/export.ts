@@ -133,8 +133,8 @@ export async function exportResumeToPDF(resumeData: ResumeData): Promise<void> {
         object-fit: cover !important;
         /* Let theme CSS determine dimensions and border-radius */
       }
-      /* Remove costly effects for smaller PDFs */
-      * {
+      /* Remove costly effects for smaller PDFs, but preserve profile image effects */
+      *:not(img.avatar):not(img[alt*="profile" i]):not(img[alt*="photo" i]):not(img[alt*="avatar" i]) {
         box-shadow: none !important;
         text-shadow: none !important;
         filter: none !important;
