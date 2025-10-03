@@ -119,30 +119,19 @@ export async function exportResumeToPDF(resumeData: ResumeData): Promise<void> {
       }
       img {
         max-width: 100% !important;
-        height: auto !important;
         image-rendering: -webkit-optimize-contrast;
         image-rendering: crisp-edges;
       }
-      /* Preserve circular profile images in PDF export */
+      /* Fix for specific circular profile images that get distorted (minimal theme) */
       img[style*="border-radius:9999px"] {
         height: 64px !important;
         width: 64px !important;
         object-fit: cover !important;
       }
-      /* Preserve circular profile images using CSS classes */
-      img.avatar {
-        height: 208px !important;
-        width: 208px !important;
+      /* Ensure profile images maintain proper aspect ratio without forcing dimensions */
+      img.avatar, img[alt*="profile" i], img[alt*="photo" i], img[alt*="avatar" i] {
         object-fit: cover !important;
-        border-radius: 50% !important;
-      }
-      /* General fix for any circular profile images */
-      img[style*="border-radius:50%"] {
-        object-fit: cover !important;
-      }
-      /* Ensure profile images maintain aspect ratio */
-      img[alt*="profile" i], img[alt*="photo" i], img[alt*="avatar" i] {
-        object-fit: cover !important;
+        /* Let theme CSS determine dimensions and border-radius */
       }
       /* Remove costly effects for smaller PDFs */
       * {
