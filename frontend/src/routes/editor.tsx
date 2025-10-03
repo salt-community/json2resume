@@ -10,7 +10,10 @@ import { jsonObjFromResumeData } from '@/data/jsonObjFromResumeData.ts'
 import { resumeDataFromJsonObj } from '@/data/resumeDataFromJsonObj.ts'
 import jsonObjFromJsonString from '@/data/jsonObjFromJsonString.ts'
 import { GistTemplate } from '@/components/GistTemplate'
-import { loadResumeData, loadResumeDataAndConfig, saveResumeData } from '@/storage/resumeStorage'
+import {
+  loadResumeDataAndConfig,
+  saveResumeData,
+} from '@/storage/resumeStorage'
 import { inlineThemes } from '@/data/localThemes'
 
 // Theme selection can be a URL or inline HTML
@@ -24,7 +27,9 @@ export const Route = createFileRoute('/editor')({
 
 function App() {
   const loaded = loadResumeDataAndConfig()
-  const [resumeData, setResumeData] = useState<ResumeData>(() => loaded?.resumeData ?? mockedResumeData)
+  const [resumeData, setResumeData] = useState<ResumeData>(
+    () => loaded?.resumeData ?? mockedResumeData,
+  )
   const [selectedTheme, setSelectedTheme] = useState<ThemeSource>(() => {
     const themeCfg = loaded?.config?.theme as
       | { kind: 'url'; url?: string }
@@ -33,14 +38,20 @@ function App() {
       | undefined
 
     if (themeCfg && typeof themeCfg === 'object') {
-      if (themeCfg.kind === 'url' && typeof (themeCfg as any).url === 'string') {
+      if (
+        themeCfg.kind === 'url' &&
+        typeof (themeCfg as any).url === 'string'
+      ) {
         return { kind: 'url', url: (themeCfg as any).url }
       } else if (
         themeCfg.kind === 'inline' &&
         typeof (themeCfg as any).html === 'string'
       ) {
         return { kind: 'inline', html: (themeCfg as any).html }
-      } else if (themeCfg.kind === 'local' && typeof (themeCfg as any).id === 'string') {
+      } else if (
+        themeCfg.kind === 'local' &&
+        typeof (themeCfg as any).id === 'string'
+      ) {
         if ((themeCfg as any).id === 'Minimal Local') {
           return { kind: 'inline', html: inlineThemes.minimal.html }
         }
@@ -90,7 +101,7 @@ function App() {
 
   return (
     <div className="flex justify-center bg-surface-strong h-screen overflow-hidden">
-      <div className=" max-w-[1920px] text-text-strong grid grid-cols-1 lg:grid-cols-2 gap-8 p-6 md:p-10 h-full overflow-hidden">
+      <div className=" w-[1920px] text-text-strong grid grid-cols-1 lg:grid-cols-2 gap-8 p-6 md:p-10 h-full overflow-hidden">
         <section className="h-full overflow-auto bg-surface rounded-xl border border-border shadow-sm p-4">
           <button
             className="p-4 w-full cursor-pointer hover:text-red-500 transition-colors"
@@ -131,7 +142,7 @@ function App() {
                   const obj: any = jsonObjFromJsonString(jsonString)
 
                   // Build ResumeData from JSON (existing behavior)
-                  let rData = resumeDataFromJsonObj(obj)
+                  const rData = resumeDataFromJsonObj(obj)
 
                   // Enabled flags are already represented directly in the JSON;
                   // no need to derive from config. Apply the parsed data as-is.
@@ -145,17 +156,32 @@ function App() {
                     | undefined
 
                   if (themeCfg && typeof themeCfg === 'object') {
-                    if (themeCfg.kind === 'url' && typeof (themeCfg as any).url === 'string') {
-                      setSelectedTheme({ kind: 'url', url: (themeCfg as any).url })
+                    if (
+                      themeCfg.kind === 'url' &&
+                      typeof (themeCfg as any).url === 'string'
+                    ) {
+                      setSelectedTheme({
+                        kind: 'url',
+                        url: (themeCfg as any).url,
+                      })
                     } else if (
                       themeCfg.kind === 'inline' &&
                       typeof (themeCfg as any).html === 'string'
                     ) {
-                      setSelectedTheme({ kind: 'inline', html: (themeCfg as any).html })
-                    } else if (themeCfg.kind === 'local' && typeof (themeCfg as any).id === 'string') {
+                      setSelectedTheme({
+                        kind: 'inline',
+                        html: (themeCfg as any).html,
+                      })
+                    } else if (
+                      themeCfg.kind === 'local' &&
+                      typeof (themeCfg as any).id === 'string'
+                    ) {
                       // Minimal local mapping example: 'Minimal Local' -> inline theme
                       if ((themeCfg as any).id === 'Minimal Local') {
-                        setSelectedTheme({ kind: 'inline', html: inlineThemes.minimal.html })
+                        setSelectedTheme({
+                          kind: 'inline',
+                          html: inlineThemes.minimal.html,
+                        })
                       }
                     }
                   }

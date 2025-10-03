@@ -123,7 +123,7 @@ function RouteComponent() {
             HTML Interpreter Standard
           </h1>
           <p className="mt-3 text-text-muted">
-            Author templates using normal HTML plus four helpers: Each, If, List, and
+            Author themes using normal HTML plus four helpers: Each, If, List, and
             value Insertion.
           </p>
         </header>
