@@ -114,129 +114,123 @@ export default function Export({ resumeData }: Props) {
       })
 
       // Add print-specific styles with exact height and full page coverage
+      // Note: Do NOT wrap with a nested <style> tag here; we inject this into a <style> element below.
       const printStyles = `
-        <style>
-          @media print {
-            @page {
-              size: 210mm ${pageHeightMm}mm;
-              margin: 0;
-            }
-            body {
-              margin: 0;
-              padding: 0;
-              height: ${pageHeightMm}mm;
-              overflow: hidden;
-            }
-            .resume-container {
-              width: 100%;
-              margin: 0;
-              padding: 0;
-              height: ${pageHeightMm}mm;
-              overflow: hidden;
-            }
-            .page {
-              width: 100% !important;
-              margin: 0 !important;
-              padding: 0 !important;
-            }
-            .main-content {
-              margin: 0 !important;
-              padding: 0 !important;
-            }
-            .sidebar {
-              margin: 0 !important;
-              padding: 16px !important;
-            }
-            .content {
-              margin: 0 !important;
-              padding: 8px !important;
-            }
-            .header {
-              margin: 0 !important;
-              padding: 8px 16px !important;
-            }
-            /* Optimize for file size while maintaining text selectability */
-            img {
-              max-width: 100% !important;
-              height: auto !important;
-              -webkit-print-color-adjust: exact !important;
-              print-color-adjust: exact !important;
-              /* Reduce image quality for smaller file size */
-              image-rendering: -webkit-optimize-contrast;
-              image-rendering: crisp-edges;
-            }
-            
-            /* Enable background graphics but optimize for size */
-            * {
-              -webkit-print-color-adjust: exact !important;
-              print-color-adjust: exact !important;
-              color-adjust: exact !important;
-            }
-            
-            /* Optimize text rendering for PDF */
-            body, html {
-              -webkit-print-color-adjust: exact !important;
-              print-color-adjust: exact !important;
-              color-adjust: exact !important;
-              /* Ensure text remains selectable */
-              -webkit-text-stroke: 0.01em transparent;
-              text-rendering: optimizeLegibility;
-            }
-            
-            /* Optimize text elements for smaller file size */
-            p, span, div, h1, h2, h3, h4, h5, h6, li, td, th {
-              -webkit-print-color-adjust: exact !important;
-              print-color-adjust: exact !important;
-              color-adjust: exact !important;
-              /* Ensure text is selectable and crisp */
-              -webkit-text-stroke: 0.01em transparent;
-              text-rendering: optimizeLegibility;
-            }
-            
-            /* Reduce background complexity for smaller file size */
-            [style*="background"],
-            [class*="bg-"] {
-              -webkit-print-color-adjust: exact !important;
-              print-color-adjust: exact !important;
-              color-adjust: exact !important;
-              /* Simplify gradients and complex backgrounds */
-              background-image: none !important;
-            }
-            
-            /* Optimize resume container for PDF generation */
-            .resume-container,
-            .page,
-            .main-content,
-            .sidebar,
-            .content,
-            .header {
-              -webkit-print-color-adjust: exact !important;
-              print-color-adjust: exact !important;
-              color-adjust: exact !important;
-              /* Ensure text remains selectable */
-              -webkit-text-stroke: 0.01em transparent;
-              text-rendering: optimizeLegibility;
-            }
-            
-            /* Remove unnecessary visual elements for smaller file size */
-            .no-print,
-            .print-hidden {
-              display: none !important;
-            }
-            
-            /* Optimize borders and shadows for PDF */
-            * {
-              box-shadow: none !important;
-              text-shadow: none !important;
-            }
-            
-            /* Ensure proper font embedding for text selectability */
-            @font-face {
-              font-family: 'system-ui';
-              font-display: swap;
-            }
+        @media print {
+          @page {
+            size: 210mm ${pageHeightMm}mm;
+            margin: 0;
           }
-        </style>
+          html, body {
+            margin: 0;
+            padding: 0;
+            width: 210mm;
+            height: ${pageHeightMm}mm;
+            overflow: hidden;
+          }
+          .resume-container {
+            width: 210mm;
+            margin: 0;
+            padding: 0;
+            height: ${pageHeightMm}mm;
+            min-height: ${pageHeightMm}mm;
+            overflow: hidden;
+          }
+          .page {
+            width: 210mm !important;
+            margin: 0 !important;
+            padding: 0 !important;
+          }
+          .main-content {
+            margin: 0 !important;
+            padding: 0 !important;
+          }
+          .sidebar {
+            margin: 0 !important;
+            padding: 16px !important;
+          }
+          .content {
+            margin: 0 !important;
+            padding: 8px !important;
+          }
+          .header {
+            margin: 0 !important;
+            padding: 8px 16px !important;
+          }
+          /* Optimize for file size while maintaining text selectability */
+          img {
+            max-width: 100% !important;
+            height: auto !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+          }
+
+          /* Enable background graphics but optimize for size */
+          * {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            color-adjust: exact !important;
+            box-shadow: none !important;
+            text-shadow: none !important;
+          }
+
+          /* Optimize text rendering for PDF */
+          body, html {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            color-adjust: exact !important;
+            -webkit-text-stroke: 0.01em transparent;
+            text-rendering: optimizeLegibility;
+          }
+
+          /* Optimize text elements for smaller file size */
+          p, span, div, h1, h2, h3, h4, h5, h6, li, td, th {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            color-adjust: exact !important;
+            -webkit-text-stroke: 0.01em transparent;
+            text-rendering: optimizeLegibility;
+            break-inside: avoid;
+            page-break-inside: avoid;
+          }
+
+          /* Reduce background complexity for smaller file size */
+          [style*="background"],
+          [class*="bg-"] {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            color-adjust: exact !important;
+            background-image: none !important;
+          }
+
+          /* Optimize resume container for PDF generation */
+          .resume-container,
+          .page,
+          .main-content,
+          .sidebar,
+          .content,
+          .header {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            color-adjust: exact !important;
+            -webkit-text-stroke: 0.01em transparent;
+            text-rendering: optimizeLegibility;
+          }
+
+          /* Remove unnecessary visual elements for smaller file size */
+          .no-print,
+          .print-hidden {
+            display: none !important;
+          }
+
+          /* Ensure proper font embedding for text selectability */
+          @font-face {
+            font-family: 'system-ui';
+            font-display: swap;
+          }
+        }
       `
 
       // Inject the print styles
