@@ -47,10 +47,19 @@ public class ResumeController {
 
 
     @PostMapping(path = "/convert-file", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> convertFileToResume(@Valid @RequestBody FileUploadRequestDto request) {
-        log.info("🚀 Received file conversion request for file: {}", request.getFileName());
-
+    public ResponseEntity<?> convertFileToResume(@RequestBody String rawBody) {
+        log.info("🔍 Raw request body received, length: {}", rawBody.length());
+        
         try {
+            // Parse manually to see what's happening
+            com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
+            FileUploadRequestDto request = mapper.readValue(rawBody, FileUploadRequestDto.class);
+            
+            log.info("🚀 Successfully parsed file conversion request for file: {}", request.getFileName());
+            log.info("📋 Request details - FileType: {}, FileName: {}, DataLength: {}", 
+                    request.getFileType(), request.getFileName(), 
+                    request.getFileData() != null ? request.getFileData().length() : 0);
+
             // Validate file type
             if (!isValidFileType(request.getFileType())) {
                 log.warn("❌ Invalid file type: {}", request.getFileType());
@@ -69,8 +78,13 @@ public class ResumeController {
             log.info("📝 File conversion completed successfully for file: {}", request.getFileName());
             return ResponseEntity.ok(convertedResume);
 
+        } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
+            log.error("❌ JSON parsing error: {}", e.getMessage());
+            log.error("❌ Raw body: {}", rawBody.substring(0, Math.min(500, rawBody.length())));
+            return ResponseEntity.badRequest()
+                .body(Map.of("error", "Invalid JSON format: " + e.getMessage()));
         } catch (Exception e) {
-            log.error("❌ Error processing file conversion request for file: {}", request.getFileName(), e);
+            log.error("❌ Error processing file conversion request", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(Map.of("error", "Failed to convert file. Please try again."));
         }
@@ -81,6 +95,12 @@ public class ResumeController {
             fileType.startsWith("image/") || 
             fileType.equals("application/pdf")
         );
+    }
+
+    @PostMapping(path = "/debug-file", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> debugFileUpload(@RequestBody String rawBody) {
+        log.info("🔍 Raw request body: {}", rawBody);
+        return ResponseEntity.ok(Map.of("received", "ok", "bodyLength", rawBody.length()));
     }
 
     @GetMapping("/health")

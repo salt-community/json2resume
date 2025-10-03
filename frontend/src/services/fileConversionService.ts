@@ -33,6 +33,13 @@ export function fileToBase64(file: File): Promise<string> {
 export async function convertFileToResume(
   request: FileConversionRequest,
 ): Promise<ResumeData> {
+  console.log('📤 Sending file conversion request:', {
+    fileName: request.fileName,
+    fileType: request.fileType,
+    dataLength: request.fileData.length,
+    hasTargetLanguage: !!request.targetLanguage,
+  })
+
   const response = await fetch(`${API_URL}/convert-file`, {
     method: 'POST',
     headers: {
@@ -76,8 +83,18 @@ export async function convertFile(
     fileData,
     fileType: file.type,
     fileName: file.name,
-    targetLanguage,
+    // targetLanguage: targetLanguage || 'English', // Temporarily remove to test
   }
+
+  console.log('🔍 Request object before sending:', {
+    fileName: request.fileName,
+    fileType: request.fileType,
+    dataLength: request.fileData.length,
+    targetLanguage: request.targetLanguage,
+    targetLanguageType: typeof request.targetLanguage,
+  })
+
+  console.log('🔍 Full request object:', request)
 
   return convertFileToResume(request)
 }
