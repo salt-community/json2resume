@@ -126,7 +126,7 @@ function Themes({ onThemeChange, onThemeChangeV2, currentTheme }: Props) {
   const customInlinePreset: ThemePreset = useMemo(
     () => ({
       id: 'Custom (Inline)',
-      description: 'Paste your own theme HTML (uses custom template language)',
+      description: 'Paste your own theme HTML (uses custom theme language)',
       source: { kind: 'inline', html: customInlineHtml },
     }),
     [customInlineHtml],
@@ -384,7 +384,7 @@ function Themes({ onThemeChange, onThemeChangeV2, currentTheme }: Props) {
           </p>
           <div className="space-y-2">
             <ReactCodeMirror
-              placeholder="Paste your template HTML here (supports >>[path]<<, [[#if]], [[#each]], [[#join]])"
+              placeholder="Paste your theme HTML here (supports >>[path]<<, [[#if]], [[#each]], [[#join]])"
               value={customInlineHtml}
               onChange={(e) => setCustomInlineHtml(e)}
               theme={oneDark}

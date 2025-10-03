@@ -11,7 +11,6 @@ import { resumeDataFromJsonObj } from '@/data/resumeDataFromJsonObj.ts'
 import jsonObjFromJsonString from '@/data/jsonObjFromJsonString.ts'
 import { GistTemplate } from '@/components/GistTemplate'
 import {
-  loadResumeData,
   loadResumeDataAndConfig,
   saveResumeData,
 } from '@/storage/resumeStorage'
@@ -143,7 +142,7 @@ function App() {
                   const obj: any = jsonObjFromJsonString(jsonString)
 
                   // Build ResumeData from JSON (existing behavior)
-                  let rData = resumeDataFromJsonObj(obj)
+                  const rData = resumeDataFromJsonObj(obj)
 
                   // Enabled flags are already represented directly in the JSON;
                   // no need to derive from config. Apply the parsed data as-is.
