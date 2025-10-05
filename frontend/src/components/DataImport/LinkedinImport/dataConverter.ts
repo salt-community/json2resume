@@ -84,8 +84,12 @@ export function convertToResumeData(unifiedData: any): ResumeData {
   }
 
   return {
-    // Basic profile information - maps LinkedIn profile data to ResumeData.basics
+    // JSON Resume schema identifier - match mock data exactly
+    $schema:
+      'https://raw.githubusercontent.com/jsonresume/resume-schema/v1.0.0/schema.json',
+    // Basic profile information - match mock data structure exactly
     basics: {
+      enabled: true,
       // Construct full name from first/last or use alternative name fields
       name:
         profile.first_name && profile.last_name
@@ -93,6 +97,10 @@ export function convertToResumeData(unifiedData: any): ResumeData {
           : profile.name || profile.full_name || 'Unknown',
       // Professional headline or title
       label: profile.headline || profile.title || '',
+      // Profile image
+      image: profile.profile_picture_url || '',
+      // Uploaded image (empty for LinkedIn imports)
+      uploadedImage: '',
       // Email address with fallback options
       email: (() => {
         // First try to get email from the dedicated emails collection
@@ -116,12 +124,12 @@ export function convertToResumeData(unifiedData: any): ResumeData {
       })(),
       // Professional summary/about section
       summary: profile.summary || profile.about || '',
-      // Location information
+      // Location information - match mock data structure exactly
       location: {
+        enabled: true,
         city: profile.city || '',
         region: profile.state || profile.region || '',
         countryCode: profile.country || '',
-        enabled: true,
       },
       // Social media profiles and websites
       profiles: (() => {
@@ -145,9 +153,8 @@ export function convertToResumeData(unifiedData: any): ResumeData {
           ...filteredWebsites.map((w) => ({ ...w, enabled: true })),
         ]
       })(),
-      enabled: true,
     },
-    // Work experience - maps LinkedIn positions to work entries
+    // Work experience - match mock data structure exactly
     work: (unifiedData.positions || []).map((pos: any) => {
       // Handle various LinkedIn date field formats
       const start =
@@ -162,21 +169,24 @@ export function convertToResumeData(unifiedData: any): ResumeData {
         name: pos.company_name || pos.organization || '',
         position: pos.title || pos.position || '',
         location: pos.location || '',
+        url: '', // LinkedIn doesn't provide company URLs
         startDate: start,
         endDate: end,
         summary: pos.description || pos.summary || '',
         highlights: [], // LinkedIn doesn't provide structured highlights
       }
     }),
-    // Education - maps LinkedIn education records
+    // Education - match mock data structure exactly
     education: (unifiedData.education || []).map((edu: any) => ({
       enabled: true,
       institution: edu.school_name || edu.institution || '',
-      area: edu.field_of_study || 'FIELD OF STUDY',
+      area: edu.field_of_study || '',
       studyType: edu.degree_name || edu.degree || '',
       startDate: edu.start_date || edu.start_date_month_year || '',
       endDate: edu.end_date || edu.end_date_month_year || '',
       score: edu.grade || '',
+      courses: [], // LinkedIn doesn't provide course information
+      url: '', // LinkedIn doesn't provide school URLs
     })),
     // Skills - processes LinkedIn skills into structured format
     skills: (() => {
@@ -222,22 +232,15 @@ export function convertToResumeData(unifiedData: any): ResumeData {
       }
       return mapped
     })(),
-    // Certifications - maps LinkedIn certifications
-    certificates: (unifiedData.certifications || []).map((cert: any) => ({
-      enabled: true,
-      name: cert.name || cert.certification_name || '',
-      issuer: cert.issuing_organization || cert.issuer || '',
-      date: cert.issue_date || cert.date || '',
-      url: cert.credential_url || cert.url || '',
-    })),
-    // Projects - maps LinkedIn projects
+    // Projects - match mock data structure exactly
     projects: (unifiedData.projects || []).map((proj: any) => ({
       enabled: true,
       name: proj.name || proj.title || '',
       description: proj.description || '',
+      url: proj.url || '',
       startDate: proj.start_date || '',
       endDate: proj.end_date || '',
-      url: proj.url || '',
+      highlights: [], // LinkedIn doesn't provide structured highlights
     })),
     // References - maps LinkedIn recommendations to references
     references: (unifiedData.recommendations || []).map((rec: any) => ({
@@ -249,21 +252,37 @@ export function convertToResumeData(unifiedData: any): ResumeData {
         'Unknown',
       reference: rec.recommendation_text || rec.message || rec.text || '',
     })),
-    // Metadata - standard ResumeData metadata
+    // Certificates - match mock data structure exactly
+    certificates: (unifiedData.certifications || []).map((cert: any) => ({
+      enabled: true,
+      name: cert.name || cert.certification_name || '',
+      issuer: cert.issuing_organization || cert.issuer || '',
+      date: cert.issue_date || cert.date || '',
+      url: cert.credential_url || cert.url || '',
+    })),
+    // Awards - empty array (LinkedIn doesn't provide awards)
+    awards: [],
+    // Publications - empty array (LinkedIn doesn't provide publications)
+    publications: [],
+    // Volunteer - empty array (LinkedIn doesn't provide volunteer work)
+    volunteer: [],
+    // Interests - empty array (LinkedIn doesn't provide interests)
+    interests: [],
+    // Metadata - match mock data structure exactly
     meta: {
-      version: 'v1.0.0',
+      version: '1.0.0',
       sectionHeaders: {
-        work: 'Work',
-        volunteer: 'Volunteer',
+        work: 'Work Experience',
         education: 'Education',
+        projects: 'Projects',
         awards: 'Awards',
-        certificates: 'Certificates',
+        certificates: 'Certifications',
         publications: 'Publications',
         skills: 'Skills',
         languages: 'Languages',
         interests: 'Interests',
         references: 'References',
-        projects: 'Projects',
+        volunteer: 'Volunteering',
       },
     },
   }
