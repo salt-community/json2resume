@@ -161,7 +161,7 @@ function SectionHeadersComponent({ resumeData, setResumeData }: Props) {
         <h4 className="text-sm font-medium mb-2">Preview</h4>
         <div className="text-xs text-muted-foreground space-y-1">
           <p>
-            These headers will appear as section titles in your resume template.
+            These headers will appear as section titles in your resume themes.
           </p>
           <p>Leave empty to use the default header for that section.</p>
         </div>

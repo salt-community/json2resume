@@ -9,14 +9,14 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as TemplatesGuideRouteImport } from './routes/templates-guide'
+import { Route as ThemesGuideRouteImport } from './routes/themes-guide'
 import { Route as HtmlInterpreterStandardRouteImport } from './routes/html-interpreter-standard'
 import { Route as EditorRouteImport } from './routes/editor'
 import { Route as IndexRouteImport } from './routes/index'
 
-const TemplatesGuideRoute = TemplatesGuideRouteImport.update({
-  id: '/templates-guide',
-  path: '/templates-guide',
+const ThemesGuideRoute = ThemesGuideRouteImport.update({
+  id: '/themes-guide',
+  path: '/themes-guide',
   getParentRoute: () => rootRouteImport,
 } as any)
 const HtmlInterpreterStandardRoute = HtmlInterpreterStandardRouteImport.update({
@@ -39,48 +39,48 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/editor': typeof EditorRoute
   '/html-interpreter-standard': typeof HtmlInterpreterStandardRoute
-  '/templates-guide': typeof TemplatesGuideRoute
+  '/themes-guide': typeof ThemesGuideRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/editor': typeof EditorRoute
   '/html-interpreter-standard': typeof HtmlInterpreterStandardRoute
-  '/templates-guide': typeof TemplatesGuideRoute
+  '/themes-guide': typeof ThemesGuideRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/editor': typeof EditorRoute
   '/html-interpreter-standard': typeof HtmlInterpreterStandardRoute
-  '/templates-guide': typeof TemplatesGuideRoute
+  '/themes-guide': typeof ThemesGuideRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/editor' | '/html-interpreter-standard' | '/templates-guide'
+  fullPaths: '/' | '/editor' | '/html-interpreter-standard' | '/themes-guide'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/editor' | '/html-interpreter-standard' | '/templates-guide'
+  to: '/' | '/editor' | '/html-interpreter-standard' | '/themes-guide'
   id:
     | '__root__'
     | '/'
     | '/editor'
     | '/html-interpreter-standard'
-    | '/templates-guide'
+    | '/themes-guide'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   EditorRoute: typeof EditorRoute
   HtmlInterpreterStandardRoute: typeof HtmlInterpreterStandardRoute
-  TemplatesGuideRoute: typeof TemplatesGuideRoute
+  ThemesGuideRoute: typeof ThemesGuideRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/templates-guide': {
-      id: '/templates-guide'
-      path: '/templates-guide'
-      fullPath: '/templates-guide'
-      preLoaderRoute: typeof TemplatesGuideRouteImport
+    '/themes-guide': {
+      id: '/themes-guide'
+      path: '/themes-guide'
+      fullPath: '/themes-guide'
+      preLoaderRoute: typeof ThemesGuideRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/html-interpreter-standard': {
@@ -111,7 +111,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   EditorRoute: EditorRoute,
   HtmlInterpreterStandardRoute: HtmlInterpreterStandardRoute,
-  TemplatesGuideRoute: TemplatesGuideRoute,
+  ThemesGuideRoute: ThemesGuideRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

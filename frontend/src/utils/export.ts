@@ -5,7 +5,9 @@ import type { ResumeData } from '@/types'
  * cloning into a hidden iframe, measuring height, injecting print CSS, and printing.
  */
 export async function exportResumeToPDF(resumeData: ResumeData): Promise<void> {
-  const resumeElement = document.querySelector('[data-resume-content]') as HTMLElement | null
+  const resumeElement = document.querySelector(
+    '[data-resume-content]',
+  ) as HTMLElement | null
   if (!resumeElement) {
     throw new Error('Resume content not found')
   }
@@ -75,16 +77,19 @@ export async function exportResumeToPDF(resumeData: ResumeData): Promise<void> {
   }
 
   // Measure height in px using multiple sources for robustness
-  const resumeContainer = iframeDoc.querySelector('.resume-container') as HTMLElement | null
+  const resumeContainer = iframeDoc.querySelector(
+    '.resume-container',
+  ) as HTMLElement | null
   const docScrollHeight = iframeDoc.documentElement.scrollHeight
   const bodyScrollHeight = iframeDoc.body.scrollHeight
   const containerScrollHeight = resumeContainer?.scrollHeight ?? 0
-  const containerRectHeight = resumeContainer?.getBoundingClientRect().height ?? 0
+  const containerRectHeight =
+    resumeContainer?.getBoundingClientRect().height ?? 0
   const contentHeightPx = Math.max(
     docScrollHeight,
     bodyScrollHeight,
     containerScrollHeight,
-    Math.ceil(containerRectHeight)
+    Math.ceil(containerRectHeight),
   )
 
   // Convert px -> mm (1px ≈ 0.264583mm)
@@ -114,12 +119,22 @@ export async function exportResumeToPDF(resumeData: ResumeData): Promise<void> {
       }
       img {
         max-width: 100% !important;
-        height: auto !important;
         image-rendering: -webkit-optimize-contrast;
         image-rendering: crisp-edges;
       }
-      /* Remove costly effects for smaller PDFs */
-      * {
+      /* Fix for specific circular profile images that get distorted (minimal theme) */
+      img[style*="border-radius:9999px"] {
+        height: 64px !important;
+        width: 64px !important;
+        object-fit: cover !important;
+      }
+      /* Ensure profile images maintain proper aspect ratio without forcing dimensions */
+      img.avatar, img[alt*="profile" i], img[alt*="photo" i], img[alt*="avatar" i] {
+        object-fit: cover !important;
+        /* Let theme CSS determine dimensions and border-radius */
+      }
+      /* Remove costly effects for smaller PDFs, but preserve profile image effects */
+      *:not(img.avatar):not(img[alt*="profile" i]):not(img[alt*="photo" i]):not(img[alt*="avatar" i]) {
         box-shadow: none !important;
         text-shadow: none !important;
         filter: none !important;
@@ -181,7 +196,11 @@ function cleanupIframe(iframe: HTMLIFrameElement) {
 }
 
 function toSafeKebabCase(input: string, fallback = 'file'): string {
-  const safe = input.toLowerCase().trim().replace(/\s+/g, '-').replace(/[^a-z0-9-_]/g, '')
+  const safe = input
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, '-')
+    .replace(/[^a-z0-9-_]/g, '')
   return safe || fallback
 }
 

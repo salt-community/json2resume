@@ -1,7 +1,7 @@
 import { Link, createFileRoute } from '@tanstack/react-router'
 import type { ReactNode } from 'react'
 
-export const Route = createFileRoute('/templates-guide')({
+export const Route = createFileRoute('/themes-guide')({
   component: RouteComponent,
 })
 
@@ -27,17 +27,17 @@ function RouteComponent() {
       <div className="mx-auto w-full max-w-3xl p-4 md:p-6">
         <header className="py-12 md:py-12 text-center">
           <h1 className="text-4xl md:text-5xl font-bold tracking-tight">
-            Templates Guide
+            Themes Guide
           </h1>
           <p className="mt-3 text-text-muted">
-            How to create resume templates for the editor to use.
+            How to create resume themes for the editor to use.
           </p>
         </header>
 
         <div className="space-y-10 md:space-y-12">
           <GuideSection
             title="1. Create a Github Gist"
-            description="Create a public gist on Github for storing the template"
+            description="Create a public gist on Github for storing the theme"
           >
             <ul className="mx-auto w-fit list-disc pl-5 space-y-2 text-text-muted">
               <li>
@@ -53,7 +53,7 @@ function RouteComponent() {
                   work,{' '}
                 </a>
                 <br />
-                <a>if you don't want your template public, </a>
+                <a>if you don't want your theme public, </a>
                 <br />
                 <a>then you need to store the html locally </a>
                 <br />
@@ -73,12 +73,12 @@ function RouteComponent() {
 
           <div className="border-t border-border pt-8 md:pt-10">
             <GuideSection
-              title="2. Insert HTML Template"
-              description="Create a template in our custom html interpreter language"
+              title="2. Insert HTML theme"
+              description="Create a theme in our custom html interpreter language"
             >
               <ul className="mx-auto w-fit list-disc pl-5 space-y-2 text-text-muted">
                 <li>
-                  <a>Create the HTTP template in accordance </a>
+                  <a>Create the HTML theme in accordance </a>
                   <br />
                   <a>with our </a>
                   <Link
@@ -105,7 +105,7 @@ function RouteComponent() {
             >
               <ul className="mx-auto w-fit list-disc pl-5 space-y-2 text-text-muted">
                 <li>
-                  <a>To select your template in the editor you need to...</a>
+                  <a>To select your theme in the editor you need to...</a>
                 </li>
                 <li>
                   <a>Go to the </a>
@@ -114,7 +114,7 @@ function RouteComponent() {
                     to={'/editor'}
                     >Editor
                   </Link>
-                  <a> to try out your template!</a>
+                  <a> to try out your theme!</a>
                 </li>
               </ul>
             </GuideSection>
