@@ -21,7 +21,12 @@ import {
 import { convertToResumeData } from './dataConverter.ts'
 import { downloadBlob } from './utils.ts'
 import type { ResumeData } from '@/types.ts'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card.tsx'
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card.tsx'
 import { Button } from '@/components/ui/button.tsx'
 
 /**
