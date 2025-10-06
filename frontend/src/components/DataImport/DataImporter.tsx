@@ -16,15 +16,8 @@ export default function DataImporter({ onDataImported }: Props) {
         </p>
       </div>
 
-      <div className="space-y-6">
-        <div className="p-4 border rounded-lg">
-          <h4 className="font-medium mb-2">JSON Import</h4>
-          <p className="text-sm text-muted-foreground mb-3">
-            Import your resume data from a JSON file.
-          </p>
-          <JsonImporter onDataImported={onDataImported} />
-        </div>
-
+      <div className="">
+        <JsonImporter onDataImported={onDataImported} />
         <LinkedinImporter onDataImported={onDataImported} />
       </div>
     </div>
