@@ -2,7 +2,7 @@
 import type { ResumeData } from '@/types.ts'
 import { resumeDataFromJsonObj } from '@/data/resumeDataFromJsonObj.ts'
 
-export const defaultResumeData: ResumeData = {
+export const resumeDataMock: ResumeData = {
   $schema:
     'https://raw.githubusercontent.com/jsonresume/resume-schema/v1.0.0/schema.json',
   basics: {
@@ -165,4 +165,4 @@ export const defaultResumeData: ResumeData = {
 
 // Export the parsed, type-safe resume data
 export const mockedResumeData: ResumeData =
-  resumeDataFromJsonObj(defaultResumeData)
+  resumeDataFromJsonObj(resumeDataMock)

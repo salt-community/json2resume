@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import type { ResumeData } from '@/types'
 import AccordionGroup from '@/components/AccordionGroup'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { defaultResumeData, mockedResumeData } from '@/data/resumeDataMock.ts'
+import { defaultResumeData } from '@/data/defaultResumeData.ts'
 import JsonCodeEditor from '@/components/ResumeEditor/JsonCodeEditor.tsx'
 import { jsonStringFromJsonObj } from '@/data/jsonStringFromJsonObj.ts'
 import { jsonObjFromResumeData } from '@/data/jsonObjFromResumeData.ts'
@@ -28,7 +28,7 @@ export const Route = createFileRoute('/editor')({
 function App() {
   const loaded = loadResumeDataAndConfig()
   const [resumeData, setResumeData] = useState<ResumeData>(
-    () => loaded?.resumeData ?? mockedResumeData,
+    () => loaded?.resumeData ?? defaultResumeData,
   )
   const [selectedTheme, setSelectedTheme] = useState<ThemeSource>(() => {
     const themeCfg = loaded?.config?.theme as
