@@ -7,12 +7,8 @@ const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
  * cloning into a hidden iframe, measuring height, injecting print CSS, and printing.
  */
 export async function exportResumeToPDF(resumeData: ResumeData): Promise<void> {
-  const resumeElement = document.querySelector(
-    '[data-resume-content]',
-  ) as HTMLElement | null
-  if (!resumeElement) {
-    throw new Error('Resume content not found')
-  }
+  const resumeElement = document.querySelector('[data-resume-content]')
+  if (!resumeElement) throw new Error('Resume content not found')
 
   // Clone the resume content
   const clonedContent = resumeElement.cloneNode(true) as HTMLElement

@@ -89,10 +89,9 @@ function RouteComponent() {
                   </Link>
                 </li>
                 <li>
-                  <a>When you are done, save it as public </a>
-                  <br />
-                  <a>with the name </a>
-                  <a className="text-text-highlight">$[INSERT]</a>
+                  <a>Note that we will insert css to regulate pdf height and width.</a>
+                  <br/>
+                  <a>This means that the only thing your theme should do<br/>in regards to size is assume the width of 210mm.</a>
                 </li>
               </ul>
             </GuideSection>
