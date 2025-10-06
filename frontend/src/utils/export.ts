@@ -1,36 +1,6 @@
 import type { ResumeData } from '@/types'
-import { renderTemplate } from '@/components/GistTemplate/templateEngine'
-import { fetchAndValidateGistTemplate } from '@/components/GistTemplate/gistFetcher'
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
-
-// Helper function to get element path for matching
-function getElementPath(element: Element, root: Element): number[] {
-  const path: number[] = []
-  let current = element
-  while (current && current !== root) {
-    const parent = current.parentElement
-    if (parent) {
-      const index = Array.from(parent.children).indexOf(current)
-      path.unshift(index)
-    }
-    current = parent as Element
-  }
-  return path
-}
-
-// Helper function to find element by path
-function findElementByPath(root: Element, path: number[]): Element | null {
-  let current = root
-  for (const index of path) {
-    if (current.children[index]) {
-      current = current.children[index]
-    } else {
-      return null
-    }
-  }
-  return current
-}
 
 /**
  * Export the current resume (found via [data-resume-content]) to a PDF by
@@ -61,21 +31,15 @@ export async function exportResumeToPDF(resumeData: ResumeData): Promise<void> {
     }
   }
 
-  console.log('=== Cloning Approach with CSS ===')
-  console.log(
-    'Original element height:',
-    resumeElement.getBoundingClientRect().height,
-  )
-  console.log('Original element scrollHeight:', resumeElement.scrollHeight)
-  console.log('Template CSS length:', templateCss.length)
-
   // Create a hidden iframe for PDF generation
   const iframe = document.createElement('iframe')
   iframe.style.position = 'absolute'
   iframe.style.left = '-9999px'
   iframe.style.top = '-9999px'
   iframe.style.width = '800px'
-  iframe.style.height = '5000px' // Make it much taller to accommodate content
+  // Make iframe height dynamic based on content height + buffer
+  const estimatedHeight = Math.max(600, resumeElement.scrollHeight + 1000)
+  iframe.style.height = `${estimatedHeight}px`
   document.body.appendChild(iframe)
 
   // HTML skeleton to host the content
@@ -131,30 +95,10 @@ export async function exportResumeToPDF(resumeData: ResumeData): Promise<void> {
     throw new Error('Could not access iframe document')
   }
 
-  // Debug: Compare iframe heights after loading
-  console.log('=== Iframe Heights After Loading ===')
-  console.log('Iframe body scrollHeight:', iframeDoc.body.scrollHeight)
-  console.log(
-    'Iframe documentElement scrollHeight:',
-    iframeDoc.documentElement.scrollHeight,
-  )
-  const iframeResumeContainer = iframeDoc.querySelector(
-    '.resume-container',
-  ) as HTMLElement | null
-  console.log(
-    'Iframe resume-container height:',
-    iframeResumeContainer?.getBoundingClientRect().height,
-  )
-  console.log(
-    'Iframe resume-container scrollHeight:',
-    iframeResumeContainer?.scrollHeight,
-  )
-
   // Measure height in px using multiple sources for robustness
   const resumeContainer = iframeDoc.querySelector(
     '.resume-container',
   ) as HTMLElement | null
-  const docScrollHeight = iframeDoc.documentElement.scrollHeight
   const bodyScrollHeight = iframeDoc.body.scrollHeight
   const containerScrollHeight = resumeContainer?.scrollHeight ?? 0
   const containerRectHeight =
@@ -169,10 +113,6 @@ export async function exportResumeToPDF(resumeData: ResumeData): Promise<void> {
 
   // Convert px -> mm (1px ≈ 0.264583mm)
   const pageHeightMm = Math.max(1, contentHeightPx * 0.264583)
-
-  console.log('=== Height Calculation Debug ===')
-  console.log('Iframe content height:', contentHeightPx)
-  console.log('Page height (mm):', pageHeightMm)
 
   // Inject concise print styles
   const printStyles = `
