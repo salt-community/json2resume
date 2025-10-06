@@ -24,10 +24,7 @@ export async function exportResumeToPDF(resumeData: ResumeData): Promise<void> {
   if (gistTemplateElement) {
     const styleTag = gistTemplateElement.querySelector('style')
     if (styleTag) {
-      let css = styleTag.textContent || ''
-      // Remove CSS scoping by replacing scoped selectors with unscoped ones
-      css = css.replace(/#gist-template-[a-zA-Z0-9-]+\s+/g, '')
-      templateCss = css
+      templateCss = styleTag.textContent || ''
     }
   }
 
