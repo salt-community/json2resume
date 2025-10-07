@@ -24,6 +24,7 @@ export function jsonObjFromResumeData(data: ResumeData) {
       name: basics?.name,
       label: basics?.label,
       image: basics?.image,
+      uploadedImage: basics?.uploadedImage,
       email: basics?.email,
       phone: basics?.phone,
       url: basics?.url,

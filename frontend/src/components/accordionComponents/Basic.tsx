@@ -12,25 +12,45 @@ type Props = {
 }
 
 export default function Basic({ resumeData, setResumeData }: Props) {
-  const [imageMode, setImageMode] = useState<'url' | 'upload'>('url')
+  // Determine initial image mode based on which field has data
+  const [imageMode, setImageMode] = useState<'url' | 'upload'>(() => {
+    return resumeData.basics?.uploadedImage ? 'upload' : 'url'
+  })
 
-  const updateBasics = (field: keyof typeof resumeData.basics, value: any) => {
+  const updateBasics = (field: keyof NonNullable<typeof resumeData.basics>, value: any) => {
     setResumeData({
       ...resumeData,
-      basics: { ...resumeData.basics, [field]: value },
+      basics: { 
+        ...resumeData.basics, 
+        enabled: resumeData.basics?.enabled ?? true,
+        [field]: value 
+      },
     })
   }
 
+  const handleImageModeChange = (mode: 'url' | 'upload') => {
+    setImageMode(mode)
+    
+    // Clear the opposite field when switching modes to avoid confusion
+    if (mode === 'url') {
+      updateBasics('uploadedImage', undefined)
+    } else {
+      updateBasics('image', undefined)
+    }
+  }
+
   const updateLocation = (
-    field: keyof NonNullable<typeof resumeData.basics.location>,
+    field: keyof NonNullable<NonNullable<typeof resumeData.basics>['location']>,
     value: string,
   ) => {
     setResumeData({
       ...resumeData,
       basics: {
         ...resumeData.basics,
+        enabled: resumeData.basics?.enabled ?? true,
         location: {
-          ...resumeData.basics.location,
+          ...resumeData.basics?.location,
+          enabled: resumeData.basics?.location?.enabled ?? true,
           [field]: value,
         },
       },
@@ -38,12 +58,13 @@ export default function Basic({ resumeData, setResumeData }: Props) {
   }
 
   const addProfile = () => {
-    const newProfile: Profile = { network: '', username: '', url: '' }
+    const newProfile: Profile = { network: '', username: '', url: '', enabled: true }
     setResumeData({
       ...resumeData,
       basics: {
         ...resumeData.basics,
-        profiles: [...(resumeData.basics.profiles || []), newProfile],
+        enabled: resumeData.basics?.enabled ?? true,
+        profiles: [...(resumeData.basics?.profiles || []), newProfile],
       },
     })
   }
@@ -53,25 +74,27 @@ export default function Basic({ resumeData, setResumeData }: Props) {
     field: keyof Profile,
     value: string,
   ) => {
-    const updatedProfiles = [...(resumeData.basics.profiles || [])]
+    const updatedProfiles = [...(resumeData.basics?.profiles || [])]
     updatedProfiles[index] = { ...updatedProfiles[index], [field]: value }
     setResumeData({
       ...resumeData,
       basics: {
         ...resumeData.basics,
+        enabled: resumeData.basics?.enabled ?? true,
         profiles: updatedProfiles,
       },
     })
   }
 
   const removeProfile = (index: number) => {
-    const updatedProfiles = (resumeData.basics.profiles || []).filter(
+    const updatedProfiles = (resumeData.basics?.profiles || []).filter(
       (_, i) => i !== index,
     )
     setResumeData({
       ...resumeData,
       basics: {
         ...resumeData.basics,
+        enabled: resumeData.basics?.enabled ?? true,
         profiles: updatedProfiles,
       },
     })
@@ -86,7 +109,7 @@ export default function Basic({ resumeData, setResumeData }: Props) {
           <Input
             id="name"
             placeholder="Your full name"
-            value={resumeData.basics.name}
+            value={resumeData.basics?.name || ''}
             onChange={(e) => updateBasics('name', e.target.value)}
           />
         </div>
@@ -97,7 +120,7 @@ export default function Basic({ resumeData, setResumeData }: Props) {
           <Input
             id="label"
             placeholder="e.g. Software Engineer"
-            value={resumeData.basics.label || ''}
+            value={resumeData.basics?.label || ''}
             onChange={(e) => updateBasics('label', e.target.value)}
           />
         </div>
@@ -109,7 +132,7 @@ export default function Basic({ resumeData, setResumeData }: Props) {
             id="email"
             type="email"
             placeholder="your.email@example.com"
-            value={resumeData.basics.email || ''}
+            value={resumeData.basics?.email || ''}
             onChange={(e) => updateBasics('email', e.target.value)}
           />
         </div>
@@ -121,7 +144,7 @@ export default function Basic({ resumeData, setResumeData }: Props) {
             id="phone"
             type="tel"
             placeholder="+1 (555) 123-4567"
-            value={resumeData.basics.phone || ''}
+            value={resumeData.basics?.phone || ''}
             onChange={(e) => updateBasics('phone', e.target.value)}
           />
         </div>
@@ -133,7 +156,7 @@ export default function Basic({ resumeData, setResumeData }: Props) {
             id="url"
             type="url"
             placeholder="https://yourwebsite.com"
-            value={resumeData.basics.url || ''}
+            value={resumeData.basics?.url || ''}
             onChange={(e) => updateBasics('url', e.target.value)}
           />
         </div>
@@ -148,12 +171,12 @@ export default function Basic({ resumeData, setResumeData }: Props) {
                   id="image"
                   type="url"
                   placeholder="https://example.com/photo.jpg"
-                  value={resumeData.basics.image || ''}
+                  value={resumeData.basics?.image || ''}
                   onChange={(e) => updateBasics('image', e.target.value)}
                 />
               ) : (
                 <ImageUpload
-                  value={resumeData.basics.uploadedImage}
+                  value={resumeData.basics?.uploadedImage}
                   onChange={(value) => updateBasics('uploadedImage', value)}
                   showLabel={false}
                 />
@@ -164,7 +187,7 @@ export default function Basic({ resumeData, setResumeData }: Props) {
                 type="button"
                 variant="outline"
                 size="sm"
-                onClick={() => setImageMode('url')}
+                onClick={() => handleImageModeChange('url')}
                 className={`text-xs px-3 py-2 h-8 ${
                   imageMode === 'url'
                     ? 'bg-[var(--color-selected)] text-[var(--color-on-selected)] border-[var(--color-selected)] !cursor-default hover:!bg-[var(--color-selected)] hover:!text-[var(--color-on-selected)]'
@@ -177,7 +200,7 @@ export default function Basic({ resumeData, setResumeData }: Props) {
                 type="button"
                 variant="outline"
                 size="sm"
-                onClick={() => setImageMode('upload')}
+                onClick={() => handleImageModeChange('upload')}
                 className={`text-xs px-3 py-2 h-8 ${
                   imageMode === 'upload'
                     ? 'bg-[var(--color-selected)] text-[var(--color-on-selected)] border-[var(--color-selected)] !cursor-default hover:!bg-[var(--color-selected)] hover:!text-[var(--color-on-selected)]'
@@ -197,7 +220,7 @@ export default function Basic({ resumeData, setResumeData }: Props) {
         <Textarea
           id="summary"
           placeholder="Brief description of your professional background and key achievements..."
-          value={resumeData.basics.summary || ''}
+          value={resumeData.basics?.summary || ''}
           onChange={(e) => updateBasics('summary', e.target.value)}
           rows={4}
         />
@@ -212,7 +235,7 @@ export default function Basic({ resumeData, setResumeData }: Props) {
             <Input
               id="address"
               placeholder="123 Main Street"
-              value={resumeData.basics.location?.address || ''}
+              value={resumeData.basics?.location?.address || ''}
               onChange={(e) => updateLocation('address', e.target.value)}
             />
           </div>
@@ -222,7 +245,7 @@ export default function Basic({ resumeData, setResumeData }: Props) {
             <Input
               id="city"
               placeholder="New York"
-              value={resumeData.basics.location?.city || ''}
+              value={resumeData.basics?.location?.city || ''}
               onChange={(e) => updateLocation('city', e.target.value)}
             />
           </div>
@@ -232,7 +255,7 @@ export default function Basic({ resumeData, setResumeData }: Props) {
             <Input
               id="region"
               placeholder="NY"
-              value={resumeData.basics.location?.region || ''}
+              value={resumeData.basics?.location?.region || ''}
               onChange={(e) => updateLocation('region', e.target.value)}
             />
           </div>
@@ -242,7 +265,7 @@ export default function Basic({ resumeData, setResumeData }: Props) {
             <Input
               id="postalCode"
               placeholder="10001"
-              value={resumeData.basics.location?.postalCode || ''}
+              value={resumeData.basics?.location?.postalCode || ''}
               onChange={(e) => updateLocation('postalCode', e.target.value)}
             />
           </div>
@@ -252,7 +275,7 @@ export default function Basic({ resumeData, setResumeData }: Props) {
             <Input
               id="countryCode"
               placeholder="US"
-              value={resumeData.basics.location?.countryCode || ''}
+              value={resumeData.basics?.location?.countryCode || ''}
               onChange={(e) => updateLocation('countryCode', e.target.value)}
             />
           </div>
@@ -268,9 +291,9 @@ export default function Basic({ resumeData, setResumeData }: Props) {
           </Button>
         </div>
 
-        {resumeData.basics.profiles && resumeData.basics.profiles.length > 0 ? (
+        {resumeData.basics?.profiles && resumeData.basics.profiles.length > 0 ? (
           <div className="space-y-4">
-            {resumeData.basics.profiles.map((profile, index) => (
+            {resumeData.basics?.profiles?.map((profile, index) => (
               <div key={index} className="border rounded-lg p-4 space-y-4">
                 <div className="flex items-center justify-between">
                   <h4 className="font-medium">Profile {index + 1}</h4>
