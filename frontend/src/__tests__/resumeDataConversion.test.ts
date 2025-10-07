@@ -44,9 +44,9 @@ describe('Resume Data Conversion Tests', () => {
       const jsonObj = jsonObjFromJsonString(minimalJson)
       const resumeData = resumeDataFromJsonObj(jsonObj)
 
-      expect(resumeData.basics.name).toBe('Test User')
-      expect(resumeData.basics.email).toBeUndefined()
-      expect(resumeData.basics.location).toBeUndefined()
+      expect(resumeData.basics?.name).toBe('Test User')
+      expect(resumeData.basics?.email).toBeUndefined()
+      expect(resumeData.basics?.location).toBeUndefined()
       expect(resumeData.work).toEqual([])
       expect(resumeData.skills).toEqual([])
     })
@@ -58,14 +58,14 @@ describe('Resume Data Conversion Tests', () => {
 
       expect(jsonObj).toBeDefined()
       expect(jsonObj.$schema).toBe(mockedResumeData.$schema)
-      expect(jsonObj.basics?.name).toBe(mockedResumeData.basics.name)
+      expect(jsonObj.basics?.name).toBe(mockedResumeData.basics?.name)
       expect(Array.isArray(jsonObj.work)).toBe(true)
       expect(Array.isArray(jsonObj.skills)).toBe(true)
     })
 
     test('should handle empty ResumeData', () => {
       const emptyResumeData: ResumeData = {
-        basics: { name: '' },
+        basics: { name: '', enabled: true },
       }
       const jsonObj = jsonObjFromResumeData(emptyResumeData)
 
@@ -116,12 +116,15 @@ describe('Resume Data Conversion Tests', () => {
             city: 'New York',
             countryCode: 'US',
             region: 'NY',
+            enabled: true,
           },
+          enabled: true,
           profiles: [
             {
               network: 'LinkedIn',
               username: 'johndoe',
               url: 'https://linkedin.com/in/johndoe',
+              enabled: true,
             },
           ],
         },
@@ -132,6 +135,7 @@ describe('Resume Data Conversion Tests', () => {
             startDate: '2020-01',
             endDate: '2023-12',
             highlights: ['Built amazing features', 'Led team of 5'],
+            enabled: true,
           },
         ],
         skills: [
@@ -139,6 +143,7 @@ describe('Resume Data Conversion Tests', () => {
             name: 'JavaScript',
             level: 'Expert',
             keywords: ['React', 'Node.js'],
+            enabled: true,
           },
         ],
         meta: {
@@ -169,18 +174,22 @@ describe('Resume Data Conversion Tests', () => {
 
     test('should maintain array structures during conversion', () => {
       const resumeWithArrays: ResumeData = {
-        basics: { name: 'Array Test' },
+        basics: { name: 'Array Test', enabled: true },
         work: [
-          { name: 'Company 1', position: 'Dev 1' },
-          { name: 'Company 2', position: 'Dev 2' },
+          { name: 'Company 1', position: 'Dev 1', enabled: true },
+          { name: 'Company 2', position: 'Dev 2', enabled: true },
         ],
         skills: [
-          { name: 'Skill 1', keywords: ['keyword1', 'keyword2'] },
-          { name: 'Skill 2', keywords: ['keyword3'] },
+          {
+            name: 'Skill 1',
+            keywords: ['keyword1', 'keyword2'],
+            enabled: true,
+          },
+          { name: 'Skill 2', keywords: ['keyword3'], enabled: true },
         ],
         languages: [
-          { language: 'English', fluency: 'Native' },
-          { language: 'Spanish', fluency: 'Intermediate' },
+          { language: 'English', fluency: 'Native', enabled: true },
+          { language: 'Spanish', fluency: 'Intermediate', enabled: true },
         ],
       }
 
@@ -203,7 +212,7 @@ describe('Resume Data Conversion Tests', () => {
   describe('Edge cases and error handling', () => {
     test('should handle undefined and null values', () => {
       const resumeWithNulls: ResumeData = {
-        basics: { name: 'Test' },
+        basics: { name: 'Test', enabled: true },
         work: undefined,
         skills: undefined,
         meta: undefined,
@@ -217,7 +226,7 @@ describe('Resume Data Conversion Tests', () => {
 
     test('should handle empty arrays', () => {
       const resumeWithEmptyArrays: ResumeData = {
-        basics: { name: 'Test' },
+        basics: { name: 'Test', enabled: true },
         work: [],
         skills: [],
         languages: [],
