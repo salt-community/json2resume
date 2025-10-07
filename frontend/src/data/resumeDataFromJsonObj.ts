@@ -8,7 +8,6 @@ export function resumeDataFromJsonObj(jsonData: any): ResumeData {
       name: jsonData.basics?.name || '',
       label: jsonData.basics?.label,
       image: jsonData.basics?.image,
-      uploadedImage: jsonData.basics?.uploadedImage,
       email: jsonData.basics?.email,
       phone: jsonData.basics?.phone,
       url: jsonData.basics?.url,

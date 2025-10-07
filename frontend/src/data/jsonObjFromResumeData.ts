@@ -30,7 +30,6 @@ export function jsonObjFromResumeData(data: ResumeData) {
       summary: basics?.summary,
       location,
       profiles: Array.isArray(basics?.profiles) ? basics.profiles : [],
-      uploadedImage: basics?.uploadedImage,
       enabled: basics?.enabled ?? true,
     },
     work: Array.isArray(data.work) ? data.work : [],

@@ -256,12 +256,12 @@ function resolvePath(path: string, ctxStack: Array<any>, root: any): any {
 
   if (!path || path === '.' || path === 'this') return ctx
 
-  // Special handling for basics.image - prioritize uploadedImage over image
+  // Special handling for basics.image - use the image field directly
   if (path === 'basics.image' || path === 'image') {
     const basics = getNested(root, 'basics')
     if (basics) {
-      // Return uploadedImage if available, otherwise fall back to image
-      return basics.uploadedImage || basics.image
+      // Return the image field (which contains either web URL or Object URL)
+      return basics.image
     }
   }
 

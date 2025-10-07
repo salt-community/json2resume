@@ -90,8 +90,14 @@ describe('Template Engine', () => {
   const createResumeDataWithImages = (): ResumeData => ({
     basics: {
       name: 'John Doe',
-      image: 'https://example.com/old-image.jpg',
-      uploadedImage: 'https://example.com/new-image.jpg',
+      image: 'https://example.com/new-image.jpg', // This is now the Object URL or web URL
+      imageData: {
+        objectUrl: 'https://example.com/new-image.jpg',
+        fileName: 'new-image.jpg',
+        fileSize: 1024,
+        mimeType: 'image/jpeg'
+      },
+      enabled: true
     },
   })
 
@@ -290,16 +296,17 @@ describe('Template Engine', () => {
   })
 
   describe('Special Image Handling', () => {
-    test('prioritizes uploadedImage over image', () => {
+    test('uses image field for display (Object URL or web URL)', () => {
       const template = 'Image: >>[basics.image]<<'
       const resumeData = createResumeDataWithImages()
       const result = renderTemplate(template, resumeData)
       expect(result).toBe('Image: https://example.com/new-image.jpg')
     })
 
-    test('falls back to image when uploadedImage is not available', () => {
+    test('falls back to image when imageData is not available', () => {
       const resumeData = createResumeDataWithImages()
-      delete resumeData.basics.uploadedImage
+      resumeData.basics!.image = 'https://example.com/old-image.jpg'
+      resumeData.basics!.imageData = undefined
 
       const template = 'Image: >>[basics.image]<<'
       const result = renderTemplate(template, resumeData)

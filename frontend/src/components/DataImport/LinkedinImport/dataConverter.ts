@@ -100,7 +100,6 @@ export function convertToResumeData(unifiedData: any): ResumeData {
       // Profile image
       image: profile.profile_picture_url || '',
       // Uploaded image (empty for LinkedIn imports)
-      uploadedImage: '',
       // Email address with fallback options
       email: (() => {
         // First try to get email from the dedicated emails collection

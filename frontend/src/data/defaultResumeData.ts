@@ -11,7 +11,6 @@ export const defaultData: ResumeData = {
     label: '',
     image:
       '',
-    uploadedImage: '',
     email: '',
     phone: '',
     url: '',

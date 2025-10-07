@@ -1,4 +1,5 @@
 import type { ResumeData } from '@/types'
+import { getImageDataUri } from '@/storage/fileStorage'
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
@@ -12,6 +13,20 @@ export async function exportResumeToPDF(resumeData: ResumeData): Promise<void> {
 
   // Clone the resume content
   const clonedContent = resumeElement.cloneNode(true) as HTMLElement
+  
+  // Convert Object URLs to data URIs for export
+  if (resumeData.basics?.imageData && resumeData.basics.image?.startsWith('blob:')) {
+    const dataUri = await getImageDataUri(resumeData.basics.imageData)
+    if (dataUri) {
+      // Replace Object URL with data URI in cloned content
+      const images = clonedContent.querySelectorAll('img')
+      images.forEach(img => {
+        if (img.src === resumeData.basics?.image) {
+          img.src = dataUri
+        }
+      })
+    }
+  }
 
   // Get the CSS from the Gist template element
   const gistTemplateElement = document.querySelector('[id^="gist-template-"]')

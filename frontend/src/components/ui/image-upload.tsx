@@ -2,13 +2,15 @@ import React, { useRef, useState } from 'react'
 import { Image as ImageIcon, Upload, X } from 'lucide-react'
 import { Button } from './button'
 import { Label } from './label'
+import type { ResumeImageData } from '@/types'
+import { storeImageFile, cleanupImageData } from '@/storage/fileStorage'
 
 interface ImageUploadProps {
-  value?: string // Base64 data URI
-  onChange: (value: string | undefined) => void
+  value?: ResumeImageData
+  onChange: (value: ResumeImageData | undefined) => void
   placeholder?: string
   className?: string
-  showLabel?: boolean // Whether to show the "Profile Image" label
+  showLabel?: boolean
 }
 
 export function ImageUpload({
@@ -20,7 +22,7 @@ export function ImageUpload({
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [dragOver, setDragOver] = useState(false)
 
-  const handleFileSelect = (file: File) => {
+  const handleFileSelect = async (file: File) => {
     // File validation
     const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png']
     if (!allowedTypes.includes(file.type)) {
@@ -28,21 +30,13 @@ export function ImageUpload({
       return
     }
 
-    // Size validation (5MB limit - commented out for now) - also change the one down in return
-    // const maxSize = 5 * 1024 * 1024 // 5MB
-    // if (file.size > maxSize) {
-    //   alert('File size must be less than 5MB')
-    //   return
-    // }
-
-    const reader = new FileReader()
-    reader.onload = (e) => {
-      const result = e.target?.result as string
-      if (result) {
-        onChange(result)
-      }
+    try {
+      const imageData = await storeImageFile(file)
+      onChange(imageData)
+    } catch (error) {
+      console.error('Failed to store image:', error)
+      alert('Failed to upload image. Please try again.')
     }
-    reader.readAsDataURL(file)
   }
 
   const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -70,6 +64,9 @@ export function ImageUpload({
   }
 
   const handleRemove = () => {
+    if (value) {
+      cleanupImageData(value)
+    }
     onChange(undefined)
     if (fileInputRef.current) {
       fileInputRef.current.value = ''
@@ -89,7 +86,7 @@ export function ImageUpload({
           {/* Image Preview */}
           <div className="relative inline-block">
             <img
-              src={value}
+              src={value.objectUrl}
               alt="Profile preview"
               className="w-24 h-24 object-cover rounded-lg border border-border"
             />

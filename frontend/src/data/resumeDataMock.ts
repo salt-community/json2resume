@@ -11,7 +11,6 @@ export const resumeDataMock: ResumeData = {
     label: 'Job Title (e.g., Senior Frontend Engineer)',
     image:
       'https://upload.wikimedia.org/wikipedia/commons/4/4d/Cat_November_2010-1a.jpg',
-    uploadedImage: '',
     email: 'you@example.com',
     phone: '+1 (555) 000-0000',
     url: 'https://your-website-or-portfolio.com',

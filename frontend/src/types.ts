@@ -31,17 +31,24 @@ export interface Profile {
   enabled: boolean
 }
 
+export interface ResumeImageData {
+  objectUrl: string
+  fileName: string
+  fileSize: number
+  mimeType: string
+}
+
 export interface Basics {
   name?: string
   label?: string
-  image?: string
+  image?: string // Clean URL string - either web URL or Object URL for display
   email?: string
   phone?: string
   url?: string
   summary?: string
   location?: Location
   profiles?: Array<Profile>
-  uploadedImage?: string // Base64 data URI for uploaded images
+  imageData?: ResumeImageData // Internal data for uploaded images (not in JSON)
   enabled: boolean
 }
 

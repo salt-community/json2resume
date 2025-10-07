@@ -1,10 +1,11 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import type { Profile, ResumeData } from '@/types'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
 import { ImageUpload } from '@/components/ui/image-upload'
+import { restoreImageData, cleanupImageData } from '@/storage/fileStorage'
 
 type Props = {
   resumeData: ResumeData
@@ -12,10 +13,37 @@ type Props = {
 }
 
 export default function Basic({ resumeData, setResumeData }: Props) {
-  // Determine initial image mode based on which field has data
   const [imageMode, setImageMode] = useState<'url' | 'upload'>(() => {
-    return resumeData.basics?.uploadedImage ? 'upload' : 'url'
+    return resumeData.basics?.imageData ? 'upload' : 'url'
   })
+
+  // Restore Object URLs on component mount
+  useEffect(() => {
+    const restoreImage = async () => {
+      if (resumeData.basics?.imageData) {
+        const restored = await restoreImageData(resumeData.basics.imageData)
+        if (restored) {
+          updateBasics('imageData', restored)
+          // Update the image field with the Object URL for display
+          updateBasics('image', restored.objectUrl)
+        } else {
+          // Object URL was lost (page refresh), clear the image data
+          updateBasics('imageData', undefined)
+          updateBasics('image', undefined)
+        }
+      }
+    }
+    restoreImage()
+  }, [])
+
+  // Cleanup Object URLs on component unmount
+  useEffect(() => {
+    return () => {
+      if (resumeData.basics?.imageData) {
+        cleanupImageData(resumeData.basics.imageData)
+      }
+    }
+  }, [resumeData.basics?.imageData])
 
   const updateBasics = (field: keyof NonNullable<typeof resumeData.basics>, value: any) => {
     setResumeData({
@@ -31,10 +59,12 @@ export default function Basic({ resumeData, setResumeData }: Props) {
   const handleImageModeChange = (mode: 'url' | 'upload') => {
     setImageMode(mode)
     
-    // Clear the opposite field when switching modes to avoid confusion
-    if (mode === 'url') {
-      updateBasics('uploadedImage', undefined)
-    } else {
+    // Clean up Object URL when switching to URL mode
+    if (mode === 'url' && resumeData.basics?.imageData) {
+      cleanupImageData(resumeData.basics.imageData)
+      updateBasics('imageData', undefined)
+      updateBasics('image', undefined)
+    } else if (mode === 'upload') {
       updateBasics('image', undefined)
     }
   }
@@ -176,8 +206,16 @@ export default function Basic({ resumeData, setResumeData }: Props) {
                 />
               ) : (
                 <ImageUpload
-                  value={resumeData.basics?.uploadedImage}
-                  onChange={(value) => updateBasics('uploadedImage', value)}
+                  value={resumeData.basics?.imageData}
+                  onChange={(imageData) => {
+                    updateBasics('imageData', imageData)
+                    // Update the image field with Object URL for display
+                    if (imageData) {
+                      updateBasics('image', imageData.objectUrl)
+                    } else {
+                      updateBasics('image', undefined)
+                    }
+                  }}
                   showLabel={false}
                 />
               )}
