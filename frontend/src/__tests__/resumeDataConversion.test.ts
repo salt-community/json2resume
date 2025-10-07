@@ -14,8 +14,8 @@ describe('Resume Data Conversion Tests', () => {
       const resumeData = resumeDataFromJsonObj(jsonObj)
 
       expect(resumeData).toBeDefined()
-      expect(resumeData.basics.name).toBe('David Aslan')
-      expect(resumeData.basics.email).toBe('david.aslan1999@gmail.com')
+      expect(resumeData.basics?.name).toBe('Your Full Name')
+      expect(resumeData.basics?.email).toBe('you@example.com')
       expect(Array.isArray(resumeData.work)).toBe(true)
       expect(Array.isArray(resumeData.skills)).toBe(true)
     })
@@ -26,7 +26,7 @@ describe('Resume Data Conversion Tests', () => {
       const resumeData = resumeDataFromJsonObj(jsonObj)
 
       expect(resumeData).toBeDefined()
-      expect(resumeData.basics.name).toBe('')
+      expect(resumeData.basics?.name).toBe('')
       expect(resumeData.work).toEqual([])
       expect(resumeData.skills).toEqual([])
     })

@@ -1,5 +1,5 @@
 // TypeScript / React
-import ReactCodeMirror from '@uiw/react-codemirror'
+import ReactCodeMirror, { basicSetup } from '@uiw/react-codemirror'
 import { jsonLanguage } from '@codemirror/lang-json'
 import { oneDark } from '@codemirror/theme-one-dark'
 import {
@@ -38,6 +38,7 @@ export default function JsonCodeEditor({
       theme={oneDark}
       basicSetup={false}
       extensions={[
+        basicSetup(),
         lineNumbers(),
         highlightActiveLineGutter(),
         history(),

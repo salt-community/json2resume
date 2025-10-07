@@ -35,13 +35,13 @@ export interface Basics {
   name?: string
   label?: string
   image?: string
-  uploadedImage?: string // Base64 data URI for uploaded images
   email?: string
   phone?: string
   url?: string
   summary?: string
   location?: Location
   profiles?: Array<Profile>
+  uploadedImage?: string // Base64 data URI for uploaded images
   enabled: boolean
 }
 
