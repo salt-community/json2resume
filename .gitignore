@@ -3,3 +3,5 @@
 .vscode
 *.iml
 fly.toml
+
+frontend/public/*
