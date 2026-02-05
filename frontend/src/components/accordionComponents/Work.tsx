@@ -1,9 +1,9 @@
-import { memo, useCallback } from 'react'
-import type { ResumeData, Work } from '@/types'
+import type { ResumeData, Work as WorkType } from '@/types'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
+import { createResumeDataSetter } from '@/utils/resumeDataUtils'
 
 type Props = {
   resumeData: ResumeData
@@ -11,8 +11,18 @@ type Props = {
 }
 
 function Work({ resumeData, setResumeData }: Props) {
-  const addWork = useCallback(() => {
-    const newWork: Work = {
+  const {
+    addItem,
+    updateItem,
+    removeItem,
+    moveItem,
+    addSubItem,
+    updateSubItem,
+    removeSubItem,
+  } = createResumeDataSetter(() => resumeData, setResumeData)
+
+  const addWork = () => {
+    const newWork: WorkType = {
       name: '',
       position: '',
       url: '',
@@ -20,58 +30,29 @@ function Work({ resumeData, setResumeData }: Props) {
       endDate: '',
       summary: '',
       highlights: [],
+      enabled: true,
     }
-    setResumeData({
-      ...resumeData,
-      work: [...(resumeData.work || []), newWork],
-    })
-  }, [resumeData, setResumeData])
+    addItem('work', newWork)
+  }
 
   const updateWork = (
     index: number,
-    field: keyof Work,
+    field: keyof WorkType,
     value: string | Array<string>,
   ) => {
-    const updatedWork = [...(resumeData.work || [])]
-    updatedWork[index] = {
-      ...updatedWork[index],
-      [field]: value,
-    }
-    setResumeData({
-      ...resumeData,
-      work: updatedWork,
-    })
+    updateItem('work', index, { [field]: value })
   }
 
   const removeWork = (index: number) => {
-    const updatedWork = (resumeData.work || []).filter((_, i) => i !== index)
-    setResumeData({
-      ...resumeData,
-      work: updatedWork,
-    })
+    removeItem('work', index)
   }
 
   const moveWork = (index: number, direction: 'up' | 'down') => {
-    const work = [...(resumeData.work || [])]
-    const newIndex = direction === 'up' ? index - 1 : index + 1
-
-    if (newIndex >= 0 && newIndex < work.length) {
-      const [movedWork] = work.splice(index, 1)
-      work.splice(newIndex, 0, movedWork)
-
-      setResumeData({
-        ...resumeData,
-        work: work,
-      })
-    }
+    moveItem('work', index, direction)
   }
 
   const addHighlight = (workIndex: number) => {
-    const work = resumeData.work?.[workIndex]
-    if (work) {
-      const updatedHighlights = [...(work.highlights || []), '']
-      updateWork(workIndex, 'highlights', updatedHighlights)
-    }
+    addSubItem('work', workIndex, 'highlights', '')
   }
 
   const updateHighlight = (
@@ -79,22 +60,11 @@ function Work({ resumeData, setResumeData }: Props) {
     highlightIndex: number,
     value: string,
   ) => {
-    const work = resumeData.work?.[workIndex]
-    if (work) {
-      const updatedHighlights = [...(work.highlights || [])]
-      updatedHighlights[highlightIndex] = value
-      updateWork(workIndex, 'highlights', updatedHighlights)
-    }
+    updateSubItem('work', workIndex, 'highlights', highlightIndex, value)
   }
 
   const removeHighlight = (workIndex: number, highlightIndex: number) => {
-    const work = resumeData.work?.[workIndex]
-    if (work) {
-      const updatedHighlights = (work.highlights || []).filter(
-        (_, i) => i !== highlightIndex,
-      )
-      updateWork(workIndex, 'highlights', updatedHighlights)
-    }
+    removeSubItem('work', workIndex, 'highlights', highlightIndex)
   }
 
   return (
@@ -305,4 +275,4 @@ function Work({ resumeData, setResumeData }: Props) {
   )
 }
 
-export default memo(Work)
+export default Work

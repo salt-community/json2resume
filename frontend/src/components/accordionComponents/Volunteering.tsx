@@ -1,4 +1,3 @@
-import { memo } from 'react'
 import type { ResumeData, Volunteer } from '@/types'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -20,6 +19,7 @@ function Volunteering({ resumeData, setResumeData }: Props) {
       endDate: '',
       summary: '',
       highlights: [],
+      enabled: true,
     }
     setResumeData({
       ...resumeData,
@@ -295,4 +295,4 @@ function Volunteering({ resumeData, setResumeData }: Props) {
   )
 }
 
-export default memo(Volunteering)
+export default Volunteering

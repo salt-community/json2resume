@@ -1,5 +1,4 @@
-import { memo } from 'react'
-import type { Education, ResumeData } from '@/types'
+import type { Education as EducationType, ResumeData } from '@/types'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
@@ -11,7 +10,7 @@ type Props = {
 
 function Education({ resumeData, setResumeData }: Props) {
   const addEducation = () => {
-    const newEducation: Education = {
+    const newEducation: EducationType = {
       institution: '',
       url: '',
       area: '',
@@ -20,6 +19,7 @@ function Education({ resumeData, setResumeData }: Props) {
       endDate: '',
       score: '',
       courses: [],
+      enabled: true,
     }
     setResumeData({
       ...resumeData,
@@ -29,7 +29,7 @@ function Education({ resumeData, setResumeData }: Props) {
 
   const updateEducation = (
     index: number,
-    field: keyof Education,
+    field: keyof EducationType,
     value: string | Array<string>,
   ) => {
     const updatedEducation = [...(resumeData.education || [])]
@@ -300,4 +300,4 @@ function Education({ resumeData, setResumeData }: Props) {
   )
 }
 
-export default memo(Education)
+export default Education

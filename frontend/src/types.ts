@@ -15,6 +15,15 @@ export interface ResumeData {
   meta?: Meta
 }
 
+export interface ExtendedResumeData extends ResumeData {
+  config: {
+    theme: {
+      kind: string
+      url: string
+    }
+  }
+}
+
 export interface Location {
   address?: string
   postalCode?: string

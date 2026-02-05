@@ -1,4 +1,4 @@
-import { memo, useMemo, useState } from 'react'
+import { useState } from 'react'
 import { ExternalLink, Eye, FileCode, Github, Palette } from 'lucide-react'
 import ReactCodeMirror, {
   EditorView,
@@ -123,14 +123,11 @@ function Themes({ onThemeChange, onThemeChangeV2, currentTheme }: Props) {
   })
   const [isLoading, setIsLoading] = useState(false)
 
-  const customInlinePreset: ThemePreset = useMemo(
-    () => ({
-      id: 'Custom (Inline)',
-      description: 'Paste your own theme HTML (uses custom theme language)',
-      source: { kind: 'inline', html: customInlineHtml },
-    }),
-    [customInlineHtml],
-  )
+  const customInlinePreset: ThemePreset = {
+    id: 'Custom (Inline)',
+    description: 'Paste your own theme HTML (uses custom theme language)',
+    source: { kind: 'inline', html: customInlineHtml },
+  }
 
   const handlePresetSelect = (theme: ThemePreset) => {
     setSelectedTheme(theme.id)
@@ -446,4 +443,4 @@ function Themes({ onThemeChange, onThemeChangeV2, currentTheme }: Props) {
   )
 }
 
-export default memo(Themes)
+export default Themes

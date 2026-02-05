@@ -7,31 +7,31 @@ export function jsonObjFromResumeData(data: ResumeData) {
   if (data === null) return {}
 
   const basics = (data.basics ?? {}) as NonNullable<ResumeData['basics']>
-  const location = basics?.location
+  const location = basics.location
     ? {
         address: basics.location.address,
         postalCode: basics.location.postalCode,
         city: basics.location.city,
         countryCode: basics.location.countryCode,
         region: basics.location.region,
-        enabled: basics.location.enabled ?? true,
+        enabled: basics.location.enabled,
       }
     : undefined
 
   return {
     $schema: data.$schema,
     basics: {
-      name: basics?.name,
-      label: basics?.label,
-      image: basics?.image,
-      email: basics?.email,
-      phone: basics?.phone,
-      url: basics?.url,
-      summary: basics?.summary,
+      name: basics.name,
+      label: basics.label,
+      image: basics.image,
+      email: basics.email,
+      phone: basics.phone,
+      url: basics.url,
+      summary: basics.summary,
       location,
-      profiles: Array.isArray(basics?.profiles) ? basics.profiles : [],
-      uploadedImage: basics?.uploadedImage,
-      enabled: basics?.enabled ?? true,
+      profiles: Array.isArray(basics.profiles) ? basics.profiles : [],
+      uploadedImage: basics.uploadedImage,
+      enabled: basics.enabled,
     },
     work: Array.isArray(data.work) ? data.work : [],
     volunteer: Array.isArray(data.volunteer) ? data.volunteer : [],
