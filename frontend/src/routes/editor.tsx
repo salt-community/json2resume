@@ -13,6 +13,16 @@ import {
   saveResumeData,
 } from '@/storage/resumeStorage'
 import { inlineThemes } from '@/data/localThemes'
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 
 // Lazy load heavy components
 const JsonCodeEditor = lazy(
@@ -34,12 +44,16 @@ export const Route = createFileRoute('/editor')({
 })
 
 function App() {
-  const loaded = loadResumeDataAndConfig()
+  const [initialData] = useState(() => loadResumeDataAndConfig())
   const [resumeData, setResumeData] = useState<ResumeData>(
-    () => loaded?.resumeData ?? defaultResumeData,
+    () => initialData?.resumeData ?? defaultResumeData,
   )
+  const [exampleIndex, setExampleIndex] = useState(() =>
+    Math.floor(Math.random() * 3),
+  )
+
   const [selectedTheme, setSelectedTheme] = useState<ThemeSource>(() => {
-    const themeCfg = loaded?.config?.theme as
+    const themeCfg = initialData?.config?.theme as
       | { kind: 'url'; url?: string }
       | { kind: 'inline'; html?: string }
       | { kind: 'local'; id?: string }
@@ -107,16 +121,112 @@ function App() {
     setResumeData(translatedData)
   }
 
+  const handleReplaceWithExample = async () => {
+    const exampleFiles = [
+      '/cv-daniel-sandstrom.json',
+      '/cv-david-aslan.json',
+      '/cv-samuel-karlhager.json',
+    ]
+    const nextFile = exampleFiles[exampleIndex]
+
+    try {
+      const response = await fetch(nextFile)
+      const text = await response.text()
+      const jsonObj = jsonObjFromJsonString(text)
+      const rData = resumeDataFromJsonObj(jsonObj)
+      setResumeData(rData)
+      setExampleIndex((prev) => (prev + 1) % exampleFiles.length)
+    } catch (e) {
+      console.error(`Failed to load example data from ${nextFile}`, e)
+    }
+  }
+
+  // Initial load effect: if no data was found in storage, load a random example
+  useEffect(() => {
+    if (!initialData) {
+      handleReplaceWithExample()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []) // Run only once on mount
+
   return (
     <div className="flex justify-center bg-surface-strong h-screen overflow-hidden">
       <div className=" w-[1920px] text-text-strong grid grid-cols-1 lg:grid-cols-2 gap-8 p-6 md:p-10 h-full overflow-hidden">
         <section className="h-full overflow-auto bg-surface rounded-xl border border-border shadow-sm p-4">
-          <button
-            className="p-4 w-full cursor-pointer hover:text-red-500 transition-colors"
-            onClick={() => setResumeData(defaultResumeData)}
-          >
-            Reset to Default
-          </button>
+          <div className="grid grid-cols-2 pb-4 items-center border-b border-border mb-4">
+            <div className="flex justify-center">
+              <Dialog>
+                <DialogTrigger asChild>
+                  <button className="w-48 py-2.5 cursor-pointer bg-black/[0.03] dark:bg-white/5 backdrop-blur-md border border-black/10 dark:border-white/10 rounded-xl hover:bg-black/[0.08] dark:hover:bg-white/10 hover:text-red-500 transition-all text-sm font-medium shadow-sm">
+                    Clear Data
+                  </button>
+                </DialogTrigger>
+                <DialogContent className="bg-surface border border-border">
+                  <DialogHeader>
+                    <DialogTitle>Are you sure?</DialogTitle>
+                    <DialogDescription>
+                      This will clear all your current resume data. This action
+                      cannot be undone.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <DialogFooter>
+                    <DialogClose asChild>
+                      <button className="px-4 py-2 text-sm font-medium hover:bg-surface-strong rounded-lg">
+                        Cancel
+                      </button>
+                    </DialogClose>
+                    <DialogClose asChild>
+                      <button
+                        className="px-4 py-2 text-sm font-medium bg-red-500 text-white rounded-lg hover:bg-red-600"
+                        onClick={() => setResumeData(defaultResumeData)}
+                      >
+                        Yes
+                      </button>
+                    </DialogClose>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+            </div>
+            <div className="flex justify-center">
+              <Dialog>
+                <DialogTrigger asChild>
+                  <button className="w-48 py-2.5 cursor-pointer bg-black/[0.03] dark:bg-white/5 backdrop-blur-md border border-black/10 dark:border-white/10 rounded-xl hover:bg-black/[0.08] dark:hover:bg-white/10 hover:text-red-500 transition-all text-sm font-medium shadow-sm">
+                    Replace with Example
+                  </button>
+                </DialogTrigger>
+                <DialogContent className="bg-surface border border-border">
+                  <DialogHeader>
+                    <DialogTitle>Are you sure?</DialogTitle>
+                    <DialogDescription>
+                      <a>
+                        This will replace your current resume data with the
+                        example data.
+                      </a>
+                      <br />
+                      <a>
+                        This action cannot be undone.
+                      </a>
+                    </DialogDescription>
+                  </DialogHeader>
+                  <DialogFooter>
+                    <DialogClose asChild>
+                      <button className="px-4 py-2 text-sm font-medium hover:bg-surface-strong rounded-lg">
+                        Cancel
+                      </button>
+                    </DialogClose>
+                    <DialogClose asChild>
+                      <button
+                        className="px-4 py-2 text-sm font-medium bg-red-500 text-white rounded-lg hover:bg-red-600"
+                        onClick={handleReplaceWithExample}
+                      >
+                        Yes
+                      </button>
+                    </DialogClose>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+            </div>
+          </div>
 
           <Tabs defaultValue="form">
             <TabsList className="w-full bg-surface rounded-lg my-4 ">
