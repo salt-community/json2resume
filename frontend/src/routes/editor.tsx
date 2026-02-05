@@ -25,7 +25,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { mockedResumeData } from "@/data/resumeDataMock.ts"
 
 // Theme selection can be a URL or inline HTML
 type ThemeSource =
@@ -110,6 +109,18 @@ function App() {
     setResumeData(translatedData)
   }
 
+  const handleReplaceWithExample = async () => {
+    try {
+      const response = await fetch('/cv-daniel-sandstrom.json')
+      const text = await response.text()
+      const jsonObj = jsonObjFromJsonString(text)
+      const rData = resumeDataFromJsonObj(jsonObj)
+      setResumeData(rData)
+    } catch (e) {
+      console.error('Failed to load example data', e)
+    }
+  }
+
   return (
     <div className="flex justify-center bg-surface-strong h-screen overflow-hidden">
       <div className=" w-[1920px] text-text-strong grid grid-cols-1 lg:grid-cols-2 gap-8 p-6 md:p-10 h-full overflow-hidden">
@@ -163,7 +174,7 @@ function App() {
                         This will replace your current resume data with the
                         example data.
                       </a>
-                      <br/>
+                      <br />
                       <a>
                         This action cannot be undone.
                       </a>
@@ -178,7 +189,7 @@ function App() {
                     <DialogClose asChild>
                       <button
                         className="px-4 py-2 text-sm font-medium bg-red-500 text-white rounded-lg hover:bg-red-600"
-                        onClick={() => setResumeData(mockedResumeData)}
+                        onClick={handleReplaceWithExample}
                       >
                         Yes
                       </button>
