@@ -15,6 +15,7 @@ import {
   saveResumeData,
 } from '@/storage/resumeStorage'
 import { inlineThemes } from '@/data/localThemes'
+import { mockedResumeData } from '@/data/resumeDataMock.ts'
 
 // Theme selection can be a URL or inline HTML
 type ThemeSource =
@@ -103,12 +104,21 @@ function App() {
     <div className="flex justify-center bg-surface-strong h-screen overflow-hidden">
       <div className=" w-[1920px] text-text-strong grid grid-cols-1 lg:grid-cols-2 gap-8 p-6 md:p-10 h-full overflow-hidden">
         <section className="h-full overflow-auto bg-surface rounded-xl border border-border shadow-sm p-4">
-          <button
-            className="p-4 w-full cursor-pointer hover:text-red-500 transition-colors"
-            onClick={() => setResumeData(defaultResumeData)}
-          >
-            Reset to Default
-          </button>
+          <div className="flex gap-2 p-2 border-b border-border mb-4">
+            <button
+              className="flex-1 p-2 cursor-pointer hover:text-red-500 transition-colors text-sm font-medium"
+              onClick={() => setResumeData(defaultResumeData)}
+            >
+              Clear Data
+            </button>
+            <div className="w-[1px] bg-border my-2" />
+            <button
+              className="flex-1 p-2 cursor-pointer hover:text-primary transition-colors text-sm font-medium"
+              onClick={() => setResumeData(mockedResumeData)}
+            >
+              Replace with Example
+            </button>
+          </div>
 
           <Tabs defaultValue="form">
             <TabsList className="w-full bg-surface rounded-lg my-4 ">
