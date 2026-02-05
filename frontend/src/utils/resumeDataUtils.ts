@@ -13,7 +13,7 @@ export const resumeDataUtils = {
     field: T,
     newItem: ResumeData[T] extends Array<infer U> ? U : never,
   ): ResumeData {
-    const currentArray = (resumeData[field] as Array<any>) || []
+    const currentArray = resumeData[field] as Array<any>
     return {
       ...resumeData,
       [field]: [...currentArray, newItem],
@@ -29,7 +29,7 @@ export const resumeDataUtils = {
     index: number,
     updates: Partial<ResumeData[T] extends Array<infer U> ? U : never>,
   ): ResumeData {
-    const currentArray = (resumeData[field] as Array<any>) || []
+    const currentArray = resumeData[field] as Array<any>
     const updatedArray = [...currentArray]
     updatedArray[index] = { ...updatedArray[index], ...updates }
     return {
@@ -46,7 +46,7 @@ export const resumeDataUtils = {
     field: T,
     index: number,
   ): ResumeData {
-    const currentArray = (resumeData[field] as Array<any>) || []
+    const currentArray = resumeData[field] as Array<any>
     const updatedArray = currentArray.filter((_, i) => i !== index)
     return {
       ...resumeData,
@@ -63,7 +63,7 @@ export const resumeDataUtils = {
     index: number,
     direction: 'up' | 'down',
   ): ResumeData {
-    const currentArray = (resumeData[field] as Array<any>) || []
+    const currentArray = resumeData[field] as Array<any>
     const newIndex = direction === 'up' ? index - 1 : index + 1
 
     if (newIndex >= 0 && newIndex < currentArray.length) {
@@ -105,10 +105,10 @@ export const resumeDataUtils = {
     subField: string,
     newSubItem: any,
   ): ResumeData {
-    const currentArray = (resumeData[field] as Array<any>) || []
+    const currentArray = resumeData[field] as Array<any>
     const updatedArray = [...currentArray]
     const item = updatedArray[itemIndex]
-    const currentSubItems = (item[subField] as Array<any>) || []
+    const currentSubItems = item[subField] as Array<any>
     updatedArray[itemIndex] = {
       ...item,
       [subField]: [...currentSubItems, newSubItem],
@@ -130,10 +130,10 @@ export const resumeDataUtils = {
     subItemIndex: number,
     value: any,
   ): ResumeData {
-    const currentArray = (resumeData[field] as Array<any>) || []
+    const currentArray = resumeData[field] as Array<any>
     const updatedArray = [...currentArray]
     const item = updatedArray[itemIndex]
-    const currentSubItems = (item[subField] as Array<any>) || []
+    const currentSubItems = item[subField] as Array<any>
     currentSubItems[subItemIndex] = value
     updatedArray[itemIndex] = {
       ...item,
@@ -155,10 +155,10 @@ export const resumeDataUtils = {
     subField: string,
     subItemIndex: number,
   ): ResumeData {
-    const currentArray = (resumeData[field] as Array<any>) || []
+    const currentArray = resumeData[field] as Array<any>
     const updatedArray = [...currentArray]
     const item = updatedArray[itemIndex]
-    const currentSubItems = (item[subField] as Array<any>) || []
+    const currentSubItems = item[subField] as Array<any>
     updatedArray[itemIndex] = {
       ...item,
       [subField]: currentSubItems.filter((_, i) => i !== subItemIndex),
