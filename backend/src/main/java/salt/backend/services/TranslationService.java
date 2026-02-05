@@ -9,63 +9,130 @@ import lombok.extern.slf4j.Slf4j;
 import salt.backend.dto.TranslationRequestDto;
 import salt.backend.dto.ResumeDto;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+
 @Slf4j
 @Service
 public class TranslationService {
-    // The client gets the API key from the environment variable `GOOGLE_API_KEY`.
-    private final Client client;
+    private final List<String> apiKeys;
+    private final AtomicInteger keyIndex;
     private final ObjectMapper objectMapper;
 
     public TranslationService() {
-        // Check if API key is available
-        String apiKey = System.getenv("GOOGLE_API_KEY");
-        if (apiKey == null || apiKey.trim().isEmpty()) {
+        // Load all API keys from environment variables
+        this.apiKeys = loadApiKeys();
+        
+        if (apiKeys.isEmpty()) {
             throw new IllegalStateException(
-                "Google API key is required. Please set the GOOGLE_API_KEY environment variable."
+                "At least one Google API key is required. Please set at least one of: " +
+                "GOOGLE_API_KEY, GOOGLE_API_KEY_TWO, GOOGLE_API_KEY_THREE, GOOGLE_API_KEY_FOUR"
             );
         }
         
-        this.client = new Client();
+        this.keyIndex = new AtomicInteger(0);
         this.objectMapper = new ObjectMapper();
-        log.info("🔑 Google Gemini client initialized successfully");
+        log.info("🔑 Google Gemini client initialized with {} API key(s)", apiKeys.size());
+    }
+    
+    private List<String> loadApiKeys() {
+        List<String> keys = new ArrayList<>();
+        String[] envVarNames = {
+            "GOOGLE_API_KEY",
+            "GOOGLE_API_KEY_TWO",
+            "GOOGLE_API_KEY_THREE",
+            "GOOGLE_API_KEY_FOUR"
+        };
+        
+        for (String envVarName : envVarNames) {
+            String apiKey = System.getenv(envVarName);
+            if (apiKey != null && !apiKey.trim().isEmpty()) {
+                keys.add(apiKey.trim());
+                log.debug("Loaded API key from {}", envVarName);
+            }
+        }
+        
+        return keys;
     }
 
     public ResumeDto translateResume(TranslationRequestDto request) throws Exception {
-        try {
-            // Convert the resume to JSON string
-            String resumeJson = objectMapper.writeValueAsString(request.getResumeData());
+        // Convert the resume to JSON string
+        String resumeJson = objectMapper.writeValueAsString(request.getResumeData());
+        
+        // Create the prompt for Gemini AI
+        String prompt = buildTranslationPrompt(resumeJson, request.getTargetLanguage());
+        
+        log.info("📤 Sending translation request to Gemini AI for language: {}", request.getTargetLanguage());
+        
+        // Get the starting key index for this request (round-robin)
+        int startIndex = keyIndex.getAndIncrement() % apiKeys.size();
+        
+        // Try all API keys starting from the round-robin index, wrapping around if needed
+        Exception lastException = null;
+        int attempts = 0;
+        
+        for (int i = 0; i < apiKeys.size(); i++) {
+            // Calculate the actual index to use (wrapping around)
+            int currentIndex = (startIndex + i) % apiKeys.size();
+            String apiKey = apiKeys.get(currentIndex);
             
-            // Create the prompt for Gemini AI
-            String prompt = buildTranslationPrompt(resumeJson, request.getTargetLanguage());
-            
-            log.info("📤 Sending translation request to Gemini AI for language: {}", request.getTargetLanguage());
-            
-            // Send request to Gemini AI
-            GenerateContentResponse response = client.models.generateContent(
-                "gemini-2.0-flash-exp",
-                prompt,
-                null
-            );
-            
-            String translatedJson = response.text();
-            log.info("📥 Received response from Gemini AI");
-            
-            // Clean up the response (remove potential markdown formatting)
-            translatedJson = cleanJsonResponse(translatedJson);
-            
-            // Parse the translated JSON back to ResumeDto
-            ResumeDto translatedResume = objectMapper.readValue(translatedJson, ResumeDto.class);
-            
-            log.info("✅ Successfully translated resume to {}", request.getTargetLanguage());
-            return translatedResume;
-            
-        } catch (JsonProcessingException e) {
-            log.error("❌ JSON processing error during translation", e);
-            throw new Exception("Failed to process JSON during translation: " + e.getMessage(), e);
-        } catch (Exception e) {
-            log.error("❌ Error during AI translation", e);
-            throw new Exception("Translation service error: " + e.getMessage(), e);
+            try {
+                log.debug("Attempting translation with API key index: {} (attempt {}/{})", 
+                    currentIndex, i + 1, apiKeys.size());
+                
+                // Create a new client with the current API key
+                Client client = Client.builder()
+                    .apiKey(apiKey)
+                    .build();
+                
+                // Send request to Gemini AI
+                GenerateContentResponse response = client.models.generateContent(
+                    "gemini-2.5-flash",
+                    prompt,
+                    null
+                );
+                
+                String translatedJson = response.text();
+                log.info("📥 Received response from Gemini AI (using key index: {})", currentIndex);
+                
+                // Clean up the response (remove potential markdown formatting)
+                translatedJson = cleanJsonResponse(translatedJson);
+                
+                // Parse the translated JSON back to ResumeDto
+                ResumeDto translatedResume = objectMapper.readValue(translatedJson, ResumeDto.class);
+                
+                log.info("✅ Successfully translated resume to {} (using key index: {})", 
+                    request.getTargetLanguage(), currentIndex);
+                return translatedResume;
+                
+            } catch (JsonProcessingException e) {
+                // JSON processing errors are not related to API key, don't retry
+                log.error("❌ JSON processing error during translation", e);
+                throw new Exception("Failed to process JSON during translation: " + e.getMessage(), e);
+            } catch (Exception e) {
+                attempts++;
+                lastException = e;
+                log.warn("❌ Translation attempt {} failed with API key index {}: {}", 
+                    attempts, currentIndex, e.getMessage());
+                
+                // If this was the last key, break and throw error
+                if (i == apiKeys.size() - 1) {
+                    break;
+                }
+                
+                // Otherwise, try next key
+                log.info("🔄 Retrying with next API key...");
+            }
         }
+        
+        // All keys failed
+        log.error("❌ All {} API key(s) exhausted. Translation failed.", apiKeys.size());
+        throw new Exception(
+            "Translation service error: All API keys failed after " + attempts + " attempt(s). " +
+            "Last error: " + (lastException != null ? lastException.getMessage() : "Unknown error"),
+            lastException
+        );
     }
 
     private String buildTranslationPrompt(String resumeJson, String languageCode) {
