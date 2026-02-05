@@ -36,14 +36,16 @@ export const Route = createFileRoute('/editor')({
 })
 
 function App() {
-  const loaded = loadResumeDataAndConfig()
+  const [initialData] = useState(() => loadResumeDataAndConfig())
   const [resumeData, setResumeData] = useState<ResumeData>(
-    () => loaded?.resumeData ?? defaultResumeData,
+    () => initialData?.resumeData ?? defaultResumeData,
   )
-  const [exampleIndex, setExampleIndex] = useState(0)
+  const [exampleIndex, setExampleIndex] = useState(() =>
+    Math.floor(Math.random() * 3),
+  )
 
   const [selectedTheme, setSelectedTheme] = useState<ThemeSource>(() => {
-    const themeCfg = loaded?.config?.theme as
+    const themeCfg = initialData?.config?.theme as
       | { kind: 'url'; url?: string }
       | { kind: 'inline'; html?: string }
       | { kind: 'local'; id?: string }
@@ -130,6 +132,14 @@ function App() {
       console.error(`Failed to load example data from ${nextFile}`, e)
     }
   }
+
+  // Initial load effect: if no data was found in storage, load a random example
+  useEffect(() => {
+    if (!initialData) {
+      handleReplaceWithExample()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []) // Run only once on mount
 
   return (
     <div className="flex justify-center bg-surface-strong h-screen overflow-hidden">
