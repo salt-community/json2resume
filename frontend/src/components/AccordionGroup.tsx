@@ -1,8 +1,5 @@
-import { useCallback, useMemo } from 'react'
 import Basic from './accordionComponents/Basic'
-import Work from './accordionComponents/Work'
 import Volunteering from './accordionComponents/Volunteering'
-import Education from './accordionComponents/Education'
 import Awards from './accordionComponents/Awards'
 import Certifications from './accordionComponents/Certifications'
 import Publications from './accordionComponents/Publications'
@@ -15,6 +12,8 @@ import Export from './accordionComponents/Export'
 import ResumeTranslator from './accordionComponents/ResumeTranslator'
 import Themes from './accordionComponents/Themes'
 import SectionHeadersComponent from './accordionComponents/SectionHeaders'
+import Education from './accordionComponents/Education'
+import Work from './accordionComponents/Work'
 import type { ResumeData } from '@/types'
 import DataImporter from '@/components/DataImport/DataImporter'
 import {
@@ -48,12 +47,9 @@ function AccordionGroup({
   currentTheme,
 }: Props) {
   // Centralized saving is handled in the editor via derived JSON effect
-  const setResumeDataAndSave = useCallback(
-    (data: ResumeData) => {
-      setResumeData(data)
-    },
-    [setResumeData],
-  )
+  const setResumeDataAndSave = (data: ResumeData) => {
+    setResumeData(data)
+  }
 
   const sectionKeyMap: Record<string, keyof ResumeData | null> = {
     Basics: 'basics',
@@ -100,179 +96,163 @@ function AccordionGroup({
     title: string
     content: React.ReactNode
     checkbox: boolean
-  }> = useMemo(
-    () => [
-      {
-        title: 'Data Import',
-        content: <DataImporter onDataImported={setResumeDataAndSave} />,
-        checkbox: false,
-      },
-      {
-        title: 'Section Headers',
-        content: (
-          <SectionHeadersComponent
-            resumeData={resumeData}
-            setResumeData={setResumeDataAndSave}
-          />
-        ),
-        checkbox: false,
-      },
-      {
-        title: 'Basics',
-        content: (
-          <Basic resumeData={resumeData} setResumeData={setResumeDataAndSave} />
-        ),
-        checkbox: true,
-      },
-      {
-        title: 'Work Experience',
-        content: (
-          <Work resumeData={resumeData} setResumeData={setResumeDataAndSave} />
-        ),
-        checkbox: true,
-      },
-      {
-        title: 'Education',
-        content: (
-          <Education
-            resumeData={resumeData}
-            setResumeData={setResumeDataAndSave}
-          />
-        ),
-        checkbox: true,
-      },
-      {
-        title: 'Projects',
-        content: (
-          <Projects
-            resumeData={resumeData}
-            setResumeData={setResumeDataAndSave}
-          />
-        ),
-        checkbox: true,
-      },
-      {
-        title: 'Skills',
-        content: (
-          <Skills
-            resumeData={resumeData}
-            setResumeData={setResumeDataAndSave}
-          />
-        ),
-        checkbox: true,
-      },
-      {
-        title: 'Certifications',
-        content: (
-          <Certifications
-            resumeData={resumeData}
-            setResumeData={setResumeDataAndSave}
-          />
-        ),
-        checkbox: true,
-      },
-      {
-        title: 'Awards',
-        content: (
-          <Awards
-            resumeData={resumeData}
-            setResumeData={setResumeDataAndSave}
-          />
-        ),
-        checkbox: true,
-      },
-      {
-        title: 'Publications',
-        content: (
-          <Publications
-            resumeData={resumeData}
-            setResumeData={setResumeDataAndSave}
-          />
-        ),
-        checkbox: true,
-      },
-      {
-        title: 'Volunteering',
-        content: (
-          <Volunteering
-            resumeData={resumeData}
-            setResumeData={setResumeDataAndSave}
-          />
-        ),
-        checkbox: true,
-      },
-      {
-        title: 'Languages',
-        content: (
-          <Languages
-            resumeData={resumeData}
-            setResumeData={setResumeDataAndSave}
-          />
-        ),
-        checkbox: true,
-      },
-      {
-        title: 'Interests',
-        content: (
-          <Interests
-            resumeData={resumeData}
-            setResumeData={setResumeDataAndSave}
-          />
-        ),
-        checkbox: true,
-      },
-      {
-        title: 'References',
-        content: (
-          <References
-            resumeData={resumeData}
-            setResumeData={setResumeDataAndSave}
-          />
-        ),
-        checkbox: true,
-      },
-      {
-        title: 'Themes',
-        content: (
-          <Themes
-            onThemeChange={onThemeChange}
-            onThemeChangeV2={onThemeChangeV2}
-            currentTheme={currentTheme}
-          />
-        ),
-        checkbox: false,
-      },
+  }> = [
+    {
+      title: 'Data Import',
+      content: <DataImporter onDataImported={setResumeDataAndSave} />,
+      checkbox: false,
+    },
+    {
+      title: 'Section Headers',
+      content: (
+        <SectionHeadersComponent
+          resumeData={resumeData}
+          setResumeData={setResumeDataAndSave}
+        />
+      ),
+      checkbox: false,
+    },
+    {
+      title: 'Basics',
+      content: (
+        <Basic resumeData={resumeData} setResumeData={setResumeDataAndSave} />
+      ),
+      checkbox: true,
+    },
+    {
+      title: 'Work Experience',
+      content: (
+        <Work resumeData={resumeData} setResumeData={setResumeDataAndSave} />
+      ),
+      checkbox: true,
+    },
+    {
+      title: 'Education',
+      content: (
+        <Education
+          resumeData={resumeData}
+          setResumeData={setResumeDataAndSave}
+        />
+      ),
+      checkbox: true,
+    },
+    {
+      title: 'Projects',
+      content: (
+        <Projects
+          resumeData={resumeData}
+          setResumeData={setResumeDataAndSave}
+        />
+      ),
+      checkbox: true,
+    },
+    {
+      title: 'Skills',
+      content: (
+        <Skills resumeData={resumeData} setResumeData={setResumeDataAndSave} />
+      ),
+      checkbox: true,
+    },
+    {
+      title: 'Certifications',
+      content: (
+        <Certifications
+          resumeData={resumeData}
+          setResumeData={setResumeDataAndSave}
+        />
+      ),
+      checkbox: true,
+    },
+    {
+      title: 'Awards',
+      content: (
+        <Awards resumeData={resumeData} setResumeData={setResumeDataAndSave} />
+      ),
+      checkbox: true,
+    },
+    {
+      title: 'Publications',
+      content: (
+        <Publications
+          resumeData={resumeData}
+          setResumeData={setResumeDataAndSave}
+        />
+      ),
+      checkbox: true,
+    },
+    {
+      title: 'Volunteering',
+      content: (
+        <Volunteering
+          resumeData={resumeData}
+          setResumeData={setResumeDataAndSave}
+        />
+      ),
+      checkbox: true,
+    },
+    {
+      title: 'Languages',
+      content: (
+        <Languages
+          resumeData={resumeData}
+          setResumeData={setResumeDataAndSave}
+        />
+      ),
+      checkbox: true,
+    },
+    {
+      title: 'Interests',
+      content: (
+        <Interests
+          resumeData={resumeData}
+          setResumeData={setResumeDataAndSave}
+        />
+      ),
+      checkbox: true,
+    },
+    {
+      title: 'References',
+      content: (
+        <References
+          resumeData={resumeData}
+          setResumeData={setResumeDataAndSave}
+        />
+      ),
+      checkbox: true,
+    },
+    {
+      title: 'Themes',
+      content: (
+        <Themes
+          onThemeChange={onThemeChange}
+          onThemeChangeV2={onThemeChangeV2}
+          currentTheme={currentTheme}
+        />
+      ),
+      checkbox: false,
+    },
 
-      {
-        title: 'Translation',
-        content: onTranslationComplete ? (
-          <ResumeTranslator
-            resumeData={resumeData}
-            onTranslationComplete={onTranslationComplete}
-          />
-        ) : (
-          <div className="p-4 text-center text-muted-foreground">
-            <p>Translation feature not available</p>
-          </div>
-        ),
-        checkbox: false,
-      },
-      {
-        title: 'Export',
-        content: <Export resumeData={resumeData} />,
-        checkbox: false,
-      },
-    ],
+    {
+      title: 'Translation',
+      content: onTranslationComplete ? (
+        <ResumeTranslator
+          resumeData={resumeData}
+          onTranslationComplete={onTranslationComplete}
+        />
+      ) : (
+        <div className="p-4 text-center text-muted-foreground">
+          <p>Translation feature not available</p>
+        </div>
+      ),
+      checkbox: false,
+    },
+    {
+      title: 'Export',
+      content: <Export resumeData={resumeData} />,
+      checkbox: false,
+    },
+  ]
 
-    [
-      resumeData,
-      setResumeDataAndSave,
-      onThemeChange,
-      onThemeChangeV2,
-      onTranslationComplete,
-      currentTheme,
-    ],
-  )
   return (
     <Accordion type="single" collapsible className="space-y-2">
       {items.map((item, index) => (

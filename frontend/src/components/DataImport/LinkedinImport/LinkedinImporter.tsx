@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useRef, useState } from 'react'
+import React, { useRef, useState } from 'react'
 import { FileArchive, FileUp, Save, Trash2, Upload } from 'lucide-react'
 import ReactCodeMirror from '@uiw/react-codemirror'
 import { jsonLanguage } from '@codemirror/lang-json'
@@ -85,10 +85,7 @@ export default function LinkedinImporter({
    * Adds a log message to the activity log with automatic cleanup
    * Keeps only the most recent 200 log entries to prevent memory issues
    */
-  const addLog = useCallback(
-    (m: string) => setLogs((l) => [m, ...l].slice(0, 200)),
-    [],
-  )
+  const addLog = (m: string) => setLogs((l) => [m, ...l].slice(0, 200))
 
   /**
    * Handles file processing for both ZIP and CSV files
@@ -100,76 +97,67 @@ export default function LinkedinImporter({
    *
    * @param files - FileList from file input or drag & drop
    */
-  const handleFiles = useCallback(
-    async (files: FileList | null) => {
-      if (!files || !files.length) return
-      setBusy(true)
-      try {
-        // Start with existing collections to support incremental uploads
-        let merged: Record<string, Array<any>> = { ...collections }
+  const handleFiles = async (files: FileList | null) => {
+    if (!files || !files.length) return
+    setBusy(true)
+    try {
+      // Start with existing collections to support incremental uploads
+      let merged: Record<string, Array<any>> = { ...collections }
 
-        // Process each file individually
-        for (const file of Array.from(files)) {
-          const lower = file.name.toLowerCase()
+      // Process each file individually
+      for (const file of Array.from(files)) {
+        const lower = file.name.toLowerCase()
 
-          if (lower.endsWith('.zip')) {
-            // Handle ZIP archives (LinkedIn's standard export format)
-            addLog(`Reading ZIP: ${file.name}`)
-            const obj = await parseZip(file)
-            merged = mergeCollections(merged, obj)
-          } else if (lower.endsWith('.csv')) {
-            // Handle individual CSV files
-            addLog(`Reading CSV: ${file.name}`)
-            const data = await parseCsvFile(file)
-            const key = mapCsvNameToCollection(file.name)
-            merged[key] = (merged[key] || []).concat(data)
-          } else {
-            // Skip unsupported file types
-            addLog(`Ignoring ${file.name} (only .zip and .csv are supported)`)
-          }
+        if (lower.endsWith('.zip')) {
+          // Handle ZIP archives (LinkedIn's standard export format)
+          addLog(`Reading ZIP: ${file.name}`)
+          const obj = await parseZip(file)
+          merged = mergeCollections(merged, obj)
+        } else if (lower.endsWith('.csv')) {
+          // Handle individual CSV files
+          addLog(`Reading CSV: ${file.name}`)
+          const data = await parseCsvFile(file)
+          const key = mapCsvNameToCollection(file.name)
+          merged[key] = (merged[key] || []).concat(data)
+        } else {
+          // Skip unsupported file types
+          addLog(`Ignoring ${file.name} (only .zip and .csv are supported)`)
         }
-
-        // Update state with merged collections
-        setCollections(merged)
-        addLog('Done! Files parsed and merged.')
-      } catch (e: any) {
-        console.error(e)
-        addLog(`Error: ${e?.message || e}`)
-      } finally {
-        setBusy(false)
       }
-    },
-    [collections, addLog],
-  )
+
+      // Update state with merged collections
+      setCollections(merged)
+      addLog('Done! Files parsed and merged.')
+    } catch (e: any) {
+      console.error(e)
+      addLog(`Error: ${e?.message || e}`)
+    } finally {
+      setBusy(false)
+    }
+  }
 
   /**
    * Handles drag & drop file events
    *
    * Prevents default browser behavior and processes dropped files
    */
-  const onDrop = useCallback(
-    (e: React.DragEvent) => {
-      e.preventDefault()
-      e.stopPropagation()
-      setDragOver(false)
-      const files = e.dataTransfer.files
-      void handleFiles(files)
-    },
-    [handleFiles],
-  )
+  const onDrop = (e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setDragOver(false)
+    const files = e.dataTransfer.files
+    void handleFiles(files)
+  }
 
   /**
    * Triggers file input dialog programmatically
    */
-  const onBrowse = useCallback(() => fileInputRef.current?.click(), [])
+  const onBrowse = () => fileInputRef.current?.click()
 
-  // Memoized data transformations for performance
-  const unified = useMemo(() => buildUnifiedJson(collections), [collections])
-  const resumeData = useMemo(() => convertToResumeData(unified), [unified])
-  const formattedPreviewJson = useMemo(
-    () => JSON.stringify(resumeData, null, 2),
-    [resumeData],
-  )
+  // Data transformations
+  const unified = buildUnifiedJson(collections)
+  const resumeData = convertToResumeData(unified)
+  const formattedPreviewJson = JSON.stringify(resumeData, null, 2)
 
   /**
    * Downloads the unified JSON data as a file
@@ -177,12 +165,12 @@ export default function LinkedinImporter({
    * Creates a downloadable JSON file containing the raw LinkedIn data
    * in unified format for external use or backup purposes.
    */
-  const handleDownloadJson = useCallback(() => {
+  const handleDownloadJson = () => {
     const blob = new Blob([JSON.stringify(unified, null, 2)], {
       type: 'application/json',
     })
     downloadBlob(blob, 'linkedin_merged.json')
-  }, [unified])
+  }
 
   /**
    * Imports the converted ResumeData to the parent component
@@ -190,12 +178,12 @@ export default function LinkedinImporter({
    * Calls the onDataImported callback with the converted resume data,
    * allowing the parent component to integrate the data into the resume editor.
    */
-  const handleImportToResume = useCallback(() => {
+  const handleImportToResume = () => {
     if (onDataImported) {
       onDataImported(resumeData)
       addLog('Data imported to resume editor!')
     }
-  }, [resumeData, onDataImported, addLog])
+  }
 
   /**
    * Clears all imported data and logs
@@ -203,10 +191,10 @@ export default function LinkedinImporter({
    * Resets the component to its initial state, removing all parsed data
    * and activity logs.
    */
-  const handleClear = useCallback(() => {
+  const handleClear = () => {
     setCollections({})
     setLogs([])
-  }, [])
+  }
 
   return (
     <div className="p-6 max-w-4xl mx-auto">

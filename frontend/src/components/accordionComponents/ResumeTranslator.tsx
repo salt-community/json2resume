@@ -1,4 +1,4 @@
-import { memo, useCallback, useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { CheckCircle, Languages, RotateCcw, Search, X } from 'lucide-react'
 import type { ResumeData } from '@/types'
 import { Button } from '@/components/ui/button'
@@ -139,12 +139,11 @@ function ResumeTranslator({
     { value: 'lao', label: 'Lao' },
   ]
 
-  const filteredLanguages = useMemo(() => {
-    if (!searchQuery) return languageOptions
-    return languageOptions.filter((option) =>
-      option.label.toLowerCase().includes(searchQuery.toLowerCase()),
-    )
-  }, [searchQuery])
+  const filteredLanguages = !searchQuery
+    ? languageOptions
+    : languageOptions.filter((option: { label: string }) =>
+        option.label.toLowerCase().includes(searchQuery.toLowerCase()),
+      )
 
   const selectedLanguage = languageOptions.find(
     (lang) => lang.value === targetLanguage,
@@ -264,4 +263,4 @@ function ResumeTranslator({
   )
 }
 
-export default memo(ResumeTranslator)
+export default ResumeTranslator

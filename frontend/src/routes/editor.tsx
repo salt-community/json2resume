@@ -1,20 +1,28 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, lazy, Suspense } from 'react'
 import type { ResumeData } from '@/types'
 import AccordionGroup from '@/components/AccordionGroup'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { defaultResumeData } from '@/data/defaultResumeData.ts'
-import JsonCodeEditor from '@/components/ResumeEditor/JsonCodeEditor.tsx'
 import { jsonStringFromJsonObj } from '@/data/jsonStringFromJsonObj.ts'
 import { jsonObjFromResumeData } from '@/data/jsonObjFromResumeData.ts'
 import { resumeDataFromJsonObj } from '@/data/resumeDataFromJsonObj.ts'
 import jsonObjFromJsonString from '@/data/jsonObjFromJsonString.ts'
-import { GistTemplate } from '@/components/GistTemplate'
 import {
   loadResumeDataAndConfig,
   saveResumeData,
 } from '@/storage/resumeStorage'
 import { inlineThemes } from '@/data/localThemes'
+
+// Lazy load heavy components
+const JsonCodeEditor = lazy(
+  () => import('@/components/ResumeEditor/JsonCodeEditor.tsx'),
+)
+const GistTemplate = lazy(() =>
+  import('@/components/GistTemplate').then((module) => ({
+    default: module.GistTemplate,
+  })),
+)
 
 // Theme selection can be a URL or inline HTML
 type ThemeSource =
@@ -136,72 +144,86 @@ function App() {
               />
             </TabsContent>
             <TabsContent value="json">
-              <JsonCodeEditor
-                jsonState={json}
-                onChange={(jsonString: string) => {
-                  const obj: any = jsonObjFromJsonString(jsonString)
+              <Suspense
+                fallback={
+                  <div className="p-4 text-center">Loading JSON Editor...</div>
+                }
+              >
+                <JsonCodeEditor
+                  jsonState={json}
+                  onChange={(jsonString: string) => {
+                    const obj: any = jsonObjFromJsonString(jsonString)
 
-                  // Build ResumeData from JSON (existing behavior)
-                  const rData = resumeDataFromJsonObj(obj)
+                    // Build ResumeData from JSON (existing behavior)
+                    const rData = resumeDataFromJsonObj(obj)
 
-                  // Enabled flags are already represented directly in the JSON;
-                  // no need to derive from config. Apply the parsed data as-is.
-                  setResumeData(rData)
+                    // Enabled flags are already represented directly in JSON;
+                    // no need to derive from config. Apply parsed data as-is.
+                    setResumeData(rData)
 
-                  // Apply theme from config.theme
-                  const themeCfg = obj?.config?.theme as
-                    | { kind: 'url'; url?: string }
-                    | { kind: 'inline'; html?: string }
-                    | { kind: 'local'; id?: string }
-                    | undefined
+                    // Apply theme from config.theme
+                    const themeCfg = obj?.config?.theme as
+                      | { kind: 'url'; url?: string }
+                      | { kind: 'inline'; html?: string }
+                      | { kind: 'local'; id?: string }
+                      | undefined
 
-                  if (themeCfg && typeof themeCfg === 'object') {
-                    if (
-                      themeCfg.kind === 'url' &&
-                      typeof (themeCfg as any).url === 'string'
-                    ) {
-                      setSelectedTheme({
-                        kind: 'url',
-                        url: (themeCfg as any).url,
-                      })
-                    } else if (
-                      themeCfg.kind === 'inline' &&
-                      typeof (themeCfg as any).html === 'string'
-                    ) {
-                      setSelectedTheme({
-                        kind: 'inline',
-                        html: (themeCfg as any).html,
-                      })
-                    } else if (
-                      themeCfg.kind === 'local' &&
-                      typeof (themeCfg as any).id === 'string'
-                    ) {
-                      // Minimal local mapping example: 'Minimal Local' -> inline theme
-                      if ((themeCfg as any).id === 'Minimal Local') {
+                    if (themeCfg && typeof themeCfg === 'object') {
+                      if (
+                        themeCfg.kind === 'url' &&
+                        typeof (themeCfg as any).url === 'string'
+                      ) {
+                        setSelectedTheme({
+                          kind: 'url',
+                          url: (themeCfg as any).url,
+                        })
+                      } else if (
+                        themeCfg.kind === 'inline' &&
+                        typeof (themeCfg as any).html === 'string'
+                      ) {
                         setSelectedTheme({
                           kind: 'inline',
-                          html: inlineThemes.minimal.html,
+                          html: (themeCfg as any).html,
                         })
+                      } else if (
+                        themeCfg.kind === 'local' &&
+                        typeof (themeCfg as any).id === 'string'
+                      ) {
+                        // Minimal local mapping example: 'Minimal Local' -> inline theme
+                        if ((themeCfg as any).id === 'Minimal Local') {
+                          setSelectedTheme({
+                            kind: 'inline',
+                            html: inlineThemes.minimal.html,
+                          })
+                        }
                       }
                     }
-                  }
-                }}
-              />
+                  }}
+                />
+              </Suspense>
             </TabsContent>
           </Tabs>
         </section>
 
         <section className="h-full bg-surface-strong rounded-xl border border-border shadow-sm p-4 overflow-auto">
           <div className="origin-top-left scale-[0.5] md:scale-100 w-[200%] h-[200%] md:w-auto md:h-auto">
-            <GistTemplate
-              resumeData={filterByEnabled(resumeData)}
-              gistUrl={
-                selectedTheme.kind === 'url' ? selectedTheme.url : undefined
+            <Suspense
+              fallback={
+                <div className="p-4 text-center">Loading Template...</div>
               }
-              inlineHtml={
-                selectedTheme.kind === 'inline' ? selectedTheme.html : undefined
-              }
-            />
+            >
+              <GistTemplate
+                resumeData={filterByEnabled(resumeData)}
+                gistUrl={
+                  selectedTheme.kind === 'url' ? selectedTheme.url : undefined
+                }
+                inlineHtml={
+                  selectedTheme.kind === 'inline'
+                    ? selectedTheme.html
+                    : undefined
+                }
+              />
+            </Suspense>
           </div>
         </section>
       </div>

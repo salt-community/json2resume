@@ -1,4 +1,3 @@
-import { memo, useCallback } from 'react'
 import type { Publication, ResumeData } from '@/types'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -18,6 +17,7 @@ function Publications({ resumeData, setResumeData }: Props) {
       releaseDate: '',
       url: '',
       summary: '',
+      enabled: true,
     }
     setResumeData({
       ...resumeData,
@@ -203,4 +203,4 @@ function Publications({ resumeData, setResumeData }: Props) {
   )
 }
 
-export default memo(Publications)
+export default Publications

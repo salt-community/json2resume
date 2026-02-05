@@ -10,7 +10,7 @@
  *   - The template’s own HTML/CSS is rendered as-is (trusted template).
  */
 
-import React, { memo, useEffect, useMemo } from 'react'
+import React, { useEffect } from 'react'
 import type { ResumeData } from './templateEngine'
 import { useGistTemplate } from '@/hooks'
 
@@ -236,73 +236,65 @@ function scopeRegularRule(rule: string, containerId: string): string {
  * Thin wrapper that renders loading/error states, and injects the processed HTML.
  * Now with CSS isolation to prevent style leakage.
  */
-const GistTemplate: React.FC<GistTemplateProps> = memo(
-  ({
+const GistTemplate: React.FC<GistTemplateProps> = ({
+  gistUrl,
+  inlineHtml,
+  resumeData,
+  filename,
+  className = '',
+  onProcessed,
+  onError,
+  showLoading = true,
+}) => {
+  const { processedHtml, loading, error, refetch } = useGistTemplate(
     gistUrl,
-    inlineHtml,
     resumeData,
     filename,
-    className = '',
-    onProcessed,
-    onError,
-    showLoading = true,
-  }) => {
-    const { processedHtml, loading, error, refetch } = useGistTemplate(
-      gistUrl,
-      resumeData,
-      filename,
-      inlineHtml,
-    )
+    inlineHtml,
+  )
 
-    // Generate a unique container ID for CSS scoping
-    const containerId = useMemo(
-      () => `gist-template-${Math.random().toString(36).substr(2, 9)}`,
-      [],
-    )
+  // Generate a unique container ID for CSS scoping
+  const containerId = `gist-template-${Math.random().toString(36).substr(2, 9)}`
 
-    // Extract and scope styles from the processed HTML
-    const { html: scopedHtml, css: scopedCss } = useMemo(() => {
-      if (!processedHtml) return { html: '', css: '' }
-      return extractAndScopeStyles(processedHtml, containerId)
-    }, [processedHtml, containerId])
+  // Extract and scope styles from the processed HTML
+  const { html: scopedHtml, css: scopedCss } = !processedHtml
+    ? { html: '', css: '' }
+    : extractAndScopeStyles(processedHtml, containerId)
 
-    // Bubble up the processed HTML if a callback is provided
-    useEffect(() => {
-      if (processedHtml && onProcessed) onProcessed(processedHtml)
-    }, [processedHtml, onProcessed])
+  // Bubble up the processed HTML if a callback is provided
+  useEffect(() => {
+    if (processedHtml && onProcessed) onProcessed(processedHtml)
+  }, [processedHtml, onProcessed])
 
-    // Bubble up errors if a callback is provided
-    useEffect(() => {
-      if (error && onError) onError(error)
-    }, [error, onError])
+  // Bubble up errors if a callback is provided
+  useEffect(() => {
+    if (error && onError) onError(error)
+  }, [error, onError])
 
-    if (loading && showLoading) return <LoadingState />
-    if (error) return <ErrorState error={error} onRetry={refetch} />
+  if (loading && showLoading) return <LoadingState />
+  if (error) return <ErrorState error={error} onRetry={refetch} />
 
-    if (processedHtml) {
-      return (
-        <div
-          id={containerId}
-          className={`gist-template-container ${className}`}
-          data-resume-content="true"
-        >
-          {/* Inject scoped CSS */}
-          {scopedCss && (
-            <style dangerouslySetInnerHTML={{ __html: scopedCss }} />
-          )}
-          {/* Inject scoped HTML content */}
-          <div dangerouslySetInnerHTML={{ __html: scopedHtml }} />
-        </div>
-      )
-    }
-
+  if (processedHtml) {
     return (
-      <div className="p-4 text-center text-gray-500">
-        No template content available
+      <div
+        id={containerId}
+        className={`gist-template-container ${className}`}
+        data-resume-content="true"
+      >
+        {/* Inject scoped CSS */}
+        {scopedCss && <style dangerouslySetInnerHTML={{ __html: scopedCss }} />}
+        {/* Inject scoped HTML content */}
+        <div dangerouslySetInnerHTML={{ __html: scopedHtml }} />
       </div>
     )
-  },
-)
+  }
+
+  return (
+    <div className="p-4 text-center text-gray-500">
+      No template content available
+    </div>
+  )
+}
 
 export { GistTemplate }
 
@@ -311,9 +303,10 @@ export const DEFAULT_CLASSIC_TEMPLATE_URL =
   'https://gist.github.com/samuel-kar/11b0969ab91989b64650ac9361c8103b'
 
 /** Convenience wrapper that pre-binds the default template URL */
-export const ClassicGistTemplate: React.FC<Omit<GistTemplateProps, 'gistUrl'>> =
-  memo((props) => (
-    <GistTemplate {...props} gistUrl={DEFAULT_CLASSIC_TEMPLATE_URL} />
-  ))
+export const ClassicGistTemplate: React.FC<
+  Omit<GistTemplateProps, 'gistUrl'>
+> = (props) => (
+  <GistTemplate {...props} gistUrl={DEFAULT_CLASSIC_TEMPLATE_URL} />
+)
 
 export default GistTemplate
