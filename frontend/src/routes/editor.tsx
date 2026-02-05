@@ -104,20 +104,23 @@ function App() {
     <div className="flex justify-center bg-surface-strong h-screen overflow-hidden">
       <div className=" w-[1920px] text-text-strong grid grid-cols-1 lg:grid-cols-2 gap-8 p-6 md:p-10 h-full overflow-hidden">
         <section className="h-full overflow-auto bg-surface rounded-xl border border-border shadow-sm p-4">
-          <div className="flex gap-2 p-2 border-b border-border mb-4">
-            <button
-              className="flex-1 p-2 cursor-pointer hover:text-red-500 transition-colors text-sm font-medium"
-              onClick={() => setResumeData(defaultResumeData)}
-            >
-              Clear Data
-            </button>
-            <div className="w-[1px] bg-border my-2" />
-            <button
-              className="flex-1 p-2 cursor-pointer hover:text-primary transition-colors text-sm font-medium"
-              onClick={() => setResumeData(mockedResumeData)}
-            >
-              Replace with Example
-            </button>
+          <div className="grid grid-cols-2 pb-4 items-center border-b border-border mb-4">
+            <div className="flex justify-center">
+              <button
+                className="w-48 py-2.5 cursor-pointer bg-black/[0.03] dark:bg-white/5 backdrop-blur-md border border-black/10 dark:border-white/10 rounded-xl hover:bg-black/[0.08] dark:hover:bg-white/10 hover:text-red-500 transition-all text-sm font-medium shadow-sm"
+                onClick={() => setResumeData(defaultResumeData)}
+              >
+                Clear Data
+              </button>
+            </div>
+            <div className="flex justify-center">
+              <button
+                className="w-48 py-2.5 cursor-pointer bg-black/[0.03] dark:bg-white/5 backdrop-blur-md border border-black/10 dark:border-white/10 rounded-xl hover:bg-black/[0.08] dark:hover:bg-white/10 hover:text-red-500 transition-all text-sm font-medium shadow-sm"
+                onClick={() => setResumeData(mockedResumeData)}
+              >
+                Replace with Example
+              </button>
+            </div>
           </div>
 
           <Tabs defaultValue="form">
