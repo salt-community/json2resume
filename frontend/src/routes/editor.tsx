@@ -15,7 +15,17 @@ import {
   saveResumeData,
 } from '@/storage/resumeStorage'
 import { inlineThemes } from '@/data/localThemes'
-import { mockedResumeData } from '@/data/resumeDataMock.ts'
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { mockedResumeData } from "@/data/resumeDataMock.ts"
 
 // Theme selection can be a URL or inline HTML
 type ThemeSource =
@@ -106,20 +116,76 @@ function App() {
         <section className="h-full overflow-auto bg-surface rounded-xl border border-border shadow-sm p-4">
           <div className="grid grid-cols-2 pb-4 items-center border-b border-border mb-4">
             <div className="flex justify-center">
-              <button
-                className="w-48 py-2.5 cursor-pointer bg-black/[0.03] dark:bg-white/5 backdrop-blur-md border border-black/10 dark:border-white/10 rounded-xl hover:bg-black/[0.08] dark:hover:bg-white/10 hover:text-red-500 transition-all text-sm font-medium shadow-sm"
-                onClick={() => setResumeData(defaultResumeData)}
-              >
-                Clear Data
-              </button>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <button className="w-48 py-2.5 cursor-pointer bg-black/[0.03] dark:bg-white/5 backdrop-blur-md border border-black/10 dark:border-white/10 rounded-xl hover:bg-black/[0.08] dark:hover:bg-white/10 hover:text-red-500 transition-all text-sm font-medium shadow-sm">
+                    Clear Data
+                  </button>
+                </DialogTrigger>
+                <DialogContent className="bg-surface border border-border">
+                  <DialogHeader>
+                    <DialogTitle>Are you sure?</DialogTitle>
+                    <DialogDescription>
+                      This will clear all your current resume data. This action
+                      cannot be undone.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <DialogFooter>
+                    <DialogClose asChild>
+                      <button className="px-4 py-2 text-sm font-medium hover:bg-surface-strong rounded-lg">
+                        Cancel
+                      </button>
+                    </DialogClose>
+                    <DialogClose asChild>
+                      <button
+                        className="px-4 py-2 text-sm font-medium bg-red-500 text-white rounded-lg hover:bg-red-600"
+                        onClick={() => setResumeData(defaultResumeData)}
+                      >
+                        Yes
+                      </button>
+                    </DialogClose>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
             </div>
             <div className="flex justify-center">
-              <button
-                className="w-48 py-2.5 cursor-pointer bg-black/[0.03] dark:bg-white/5 backdrop-blur-md border border-black/10 dark:border-white/10 rounded-xl hover:bg-black/[0.08] dark:hover:bg-white/10 hover:text-red-500 transition-all text-sm font-medium shadow-sm"
-                onClick={() => setResumeData(mockedResumeData)}
-              >
-                Replace with Example
-              </button>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <button className="w-48 py-2.5 cursor-pointer bg-black/[0.03] dark:bg-white/5 backdrop-blur-md border border-black/10 dark:border-white/10 rounded-xl hover:bg-black/[0.08] dark:hover:bg-white/10 hover:text-red-500 transition-all text-sm font-medium shadow-sm">
+                    Replace with Example
+                  </button>
+                </DialogTrigger>
+                <DialogContent className="bg-surface border border-border">
+                  <DialogHeader>
+                    <DialogTitle>Are you sure?</DialogTitle>
+                    <DialogDescription>
+                      <a>
+                        This will replace your current resume data with the
+                        example data.
+                      </a>
+                      <br/>
+                      <a>
+                        This action cannot be undone.
+                      </a>
+                    </DialogDescription>
+                  </DialogHeader>
+                  <DialogFooter>
+                    <DialogClose asChild>
+                      <button className="px-4 py-2 text-sm font-medium hover:bg-surface-strong rounded-lg">
+                        Cancel
+                      </button>
+                    </DialogClose>
+                    <DialogClose asChild>
+                      <button
+                        className="px-4 py-2 text-sm font-medium bg-red-500 text-white rounded-lg hover:bg-red-600"
+                        onClick={() => setResumeData(mockedResumeData)}
+                      >
+                        Yes
+                      </button>
+                    </DialogClose>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
             </div>
           </div>
 
