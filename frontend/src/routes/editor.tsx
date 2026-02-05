@@ -40,6 +40,8 @@ function App() {
   const [resumeData, setResumeData] = useState<ResumeData>(
     () => loaded?.resumeData ?? defaultResumeData,
   )
+  const [exampleIndex, setExampleIndex] = useState(0)
+
   const [selectedTheme, setSelectedTheme] = useState<ThemeSource>(() => {
     const themeCfg = loaded?.config?.theme as
       | { kind: 'url'; url?: string }
@@ -110,14 +112,22 @@ function App() {
   }
 
   const handleReplaceWithExample = async () => {
+    const exampleFiles = [
+      '/cv-daniel-sandstrom.json',
+      '/cv-david-aslan.json',
+      '/cv-samuel-karlhager.json',
+    ]
+    const nextFile = exampleFiles[exampleIndex]
+
     try {
-      const response = await fetch('/cv-daniel-sandstrom.json')
+      const response = await fetch(nextFile)
       const text = await response.text()
       const jsonObj = jsonObjFromJsonString(text)
       const rData = resumeDataFromJsonObj(jsonObj)
       setResumeData(rData)
+      setExampleIndex((prev) => (prev + 1) % exampleFiles.length)
     } catch (e) {
-      console.error('Failed to load example data', e)
+      console.error(`Failed to load example data from ${nextFile}`, e)
     }
   }
 
