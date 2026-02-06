@@ -141,8 +141,8 @@ public class TranslationService {
             
             CRITICAL INSTRUCTIONS:
             1. Translate ONLY the text content, preserve ALL field names, structure, dates, URLs, and email addresses
-            2. Do NOT translate: field names, email addresses, URLs, phone numbers, dates, or country codes
-            3. DO translate: summaries, descriptions, job titles, company names, education details, skills, and other text content
+            2. Do NOT translate: field names, company names, email addresses, URLs, phone numbers, dates, or country codes
+            3. DO translate: summaries, descriptions, job titles, education details, skills, and other text content
             4. Maintain the exact JSON structure and formatting
             5. Return ONLY the translated JSON, no additional text or markdown formatting
             6. Ensure the output is valid JSON that can be parsed
