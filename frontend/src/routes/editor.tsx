@@ -154,16 +154,36 @@ function App() {
 
   if (screenWidth.width < 720) {
     return (
-      <div className="flex justify-center items-center h-screen bg-surface-strong">
-        <div className="text-2xl font-bold">
-          <p>Please use a desktop browser to use Json2Resume.</p>
-          <p>
-            Press{' '}
-            <a href="/" className="text-blue-500">
-              here
-            </a>{' '}
-            to go to back to the homepage.
+      <div className="flex justify-center items-center h-screen bg-surface-strong p-6">
+        <div className="bg-surface rounded-xl border border-border shadow-sm p-8 md:p-12 max-w-md text-center">
+          <div className="mb-6">
+            <svg
+              className="w-16 h-16 mx-auto mb-4 text-text-strong opacity-50"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"
+              />
+            </svg>
+          </div>
+          <h1 className="text-2xl md:text-3xl font-bold text-text-strong mb-4">
+            Desktop Browser Required
+          </h1>
+          <p className="text-text-strong opacity-80 mb-6 leading-relaxed">
+            Please use a desktop browser to use Json2Resume. The editor requires
+            a larger screen for the best experience.
           </p>
+          <a
+            href="/"
+            className="inline-block px-6 py-3 bg-black/[0.03] dark:bg-white/5 backdrop-blur-md border border-black/10 dark:border-white/10 rounded-xl hover:bg-black/[0.08] dark:hover:bg-white/10 transition-all text-sm font-medium shadow-sm text-text-strong"
+          >
+            Return to Homepage
+          </a>
         </div>
       </div>
     )
