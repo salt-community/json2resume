@@ -59,6 +59,11 @@ function SectionHeadersComponent({ resumeData, setResumeData }: Props) {
     description: string
   }> = [
     {
+      key: 'social',
+      label: 'Social',
+      description: 'Social profiles and website',
+    },
+    {
       key: 'work',
       label: 'Work Experience',
       description: 'Professional employment history',

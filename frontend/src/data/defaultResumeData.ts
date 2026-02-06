@@ -49,6 +49,7 @@ export const defaultData: ResumeData = {
       interests: 'Interests',
       references: 'References',
       volunteer: 'Volunteering',
+      social: 'Social',
     },
   },
 }

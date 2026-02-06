@@ -146,6 +146,15 @@ export interface Meta {
   version?: string
   lastModified?: string
   sectionHeaders?: SectionHeaders
+  social?: SocialMeta
+}
+
+export interface SocialMeta {
+  enabled: boolean
+  website?: {
+    network?: string
+    username?: string
+  }
 }
 
 export interface SectionHeaders {
@@ -160,4 +169,5 @@ export interface SectionHeaders {
   interests?: string
   references?: string
   projects?: string
+  social?: string
 }

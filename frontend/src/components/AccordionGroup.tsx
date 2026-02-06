@@ -12,6 +12,7 @@ import Export from './accordionComponents/Export'
 import ResumeTranslator from './accordionComponents/ResumeTranslator'
 import Themes from './accordionComponents/Themes'
 import SectionHeadersComponent from './accordionComponents/SectionHeaders'
+import Social from './accordionComponents/Social'
 import Education from './accordionComponents/Education'
 import Work from './accordionComponents/Work'
 import type { ResumeData } from '@/types'
@@ -53,6 +54,7 @@ function AccordionGroup({
 
   const sectionKeyMap: Record<string, keyof ResumeData | null> = {
     Basics: 'basics',
+    Social: null,
     'Work Experience': 'work',
     Education: 'education',
     Projects: 'projects',
@@ -68,9 +70,10 @@ function AccordionGroup({
 
   function isSectionChecked(title: string): boolean {
     const key = sectionKeyMap[title]
-    if (!key) return false
+    if (!key && title !== 'Social') return false
     if (key === 'basics') return (resumeData.basics?.enabled ?? true) !== false
-    const arr = (resumeData as any)[key] as
+    if (title === 'Social') return (resumeData.meta?.social?.enabled ?? true) !== false
+    const arr = (resumeData as any)[key!] as
       | Array<{ enabled?: boolean }>
       | undefined
     return Boolean(arr?.some((x) => x.enabled !== false))
@@ -78,7 +81,7 @@ function AccordionGroup({
 
   function setSectionEnabled(title: string, enabled: boolean) {
     const key = sectionKeyMap[title]
-    if (!key) return
+    if (!key && title !== 'Social') return
     if (key === 'basics') {
       setResumeData({
         ...resumeData,
@@ -86,10 +89,23 @@ function AccordionGroup({
       })
       return
     }
-    const arr = ((resumeData as any)[key] ?? []) as Array<any>
+    if (title === 'Social') {
+      setResumeData({
+        ...resumeData,
+        meta: {
+          ...resumeData.meta,
+          social: {
+            enabled,
+            website: resumeData.meta?.social?.website
+          }
+        }
+      })
+      return
+    }
+    const arr = ((resumeData as any)[key!] ?? []) as Array<any>
     setResumeData({
       ...(resumeData as any),
-      [key]: arr.map((x) => ({ ...x, enabled })),
+      [key as string]: arr.map((x) => ({ ...x, enabled })),
     })
   }
   const items: Array<{
@@ -120,6 +136,13 @@ function AccordionGroup({
       checkbox: true,
     },
     {
+      title: 'Social',
+        content: (
+          <Social resumeData={resumeData} setResumeData={setResumeDataAndSave} />
+        ),
+        checkbox: true,
+      },
+      {
       title: 'Work Experience',
       content: (
         <Work resumeData={resumeData} setResumeData={setResumeDataAndSave} />
