@@ -22,7 +22,8 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
+} from '@/components/ui/dialog'
+import { useScreenWidth } from '@/hooks/useScreenWidth'
 
 // Lazy load heavy components
 const JsonCodeEditor = lazy(
@@ -149,6 +150,25 @@ function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []) // Run only once on mount
 
+  const screenWidth = useScreenWidth()
+
+  if (screenWidth.width < 720) {
+    return (
+      <div className="flex justify-center items-center h-screen bg-surface-strong">
+        <div className="text-2xl font-bold">
+          <p>Please use a desktop browser to use Json2Resume.</p>
+          <p>
+            Press{' '}
+            <a href="/" className="text-blue-500">
+              here
+            </a>{' '}
+            to go to back to the homepage.
+          </p>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="flex justify-center bg-surface-strong h-screen overflow-hidden">
       <div className=" w-[1920px] text-text-strong grid grid-cols-1 lg:grid-cols-2 gap-8 p-6 md:p-10 h-full overflow-hidden">
@@ -203,9 +223,7 @@ function App() {
                         example data.
                       </a>
                       <br />
-                      <a>
-                        This action cannot be undone.
-                      </a>
+                      <a>This action cannot be undone.</a>
                     </DialogDescription>
                   </DialogHeader>
                   <DialogFooter>
