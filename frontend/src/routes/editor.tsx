@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { Suspense, lazy, useEffect, useState } from 'react'
+import { useEffect, useState, lazy, Suspense } from 'react'
 import type { ResumeData } from '@/types'
 import AccordionGroup from '@/components/AccordionGroup'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
