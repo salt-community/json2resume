@@ -317,15 +317,15 @@ function GridNavigationGroup({
           <div key={category.title}>
             <h3
               className={cn(
-                'text-xs text-muted-foreground font-medium mb-2',
-                catIndex === 0 ? 'mt-0' : 'mt-4',
+                'text-xs text-muted-foreground font-medium mb-1.5',
+                catIndex === 0 ? 'mt-0' : 'mt-2',
               )}
             >
               {category.title}
             </h3>
             <div
               className={cn(
-                'grid gap-3',
+                'grid gap-2',
                 catIndex === 0
                   ? 'grid-cols-5'
                   : 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5',
@@ -341,7 +341,7 @@ function GridNavigationGroup({
                     )
                   }
                   className={cn(
-                    'flex items-center justify-between w-full p-3 rounded-md border text-left text-sm font-medium transition-colors',
+                    'flex items-center justify-between w-full p-2 rounded-md border text-left text-sm font-medium transition-colors',
                     // Base styles (not selected)
                     'bg-surface border-border',
                     // Hover only when not selected (greyish in dark mode)
@@ -379,7 +379,7 @@ function GridNavigationGroup({
       </div>
 
       {/* Content panel - takes remaining space */}
-      <div className="flex-1 min-h-0 flex flex-col border-t border-border mt-4">
+      <div className="flex-1 min-h-0 flex flex-col border-t border-border mt-2">
         {selectedItem ? (
           <div className="flex-1 min-h-0 overflow-y-auto p-4 transition-opacity">
             {selectedItem.content}
