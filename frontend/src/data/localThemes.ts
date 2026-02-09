@@ -234,6 +234,27 @@ export const inlineThemes = {
     [[#if basics.summary]]<p class="summary">>>[basics.summary]<<</p>[[/if]]
   [[/if]]
 
+    <!-- WORK -->
+  [[#if work]]
+  <section class="section">
+    <h2>[[#if meta.sectionHeaders.work]]>>[meta.sectionHeaders.work]<<[[/if]][[#if !meta.sectionHeaders.work]]Work Experience[[/if]]</h2>
+    [[#each work]]
+      [[#if enabled]]
+      <div class="item">
+        <div class="item-header">
+          <span>>>[position]<<</span> — <span>>>[name]<<</span>
+        </div>
+        <div class="item-date">>>[startDate]<< – >>[endDate]<<</div>
+        [[#if summary]]<div class="item-description">>>[summary]<<</div>[[/if]]
+        [[#if highlights]]
+          <ul>[[#each highlights]]<li>>>[.]<<</li>[[/each]]</ul>
+        [[/if]]
+      </div>
+      [[/if]]
+    [[/each]]
+  </section>
+  [[/if]]
+
   <!-- EDUCATION -->
   [[#if education]]
   <section class="section">
@@ -258,26 +279,7 @@ export const inlineThemes = {
   </section>
   [[/if]]
 
-  <!-- WORK -->
-  [[#if work]]
-  <section class="section">
-    <h2>[[#if meta.sectionHeaders.work]]>>[meta.sectionHeaders.work]<<[[/if]][[#if !meta.sectionHeaders.work]]Work Experience[[/if]]</h2>
-    [[#each work]]
-      [[#if enabled]]
-      <div class="item">
-        <div class="item-header">
-          <span>>>[position]<<</span> — <span>>>[name]<<</span>
-        </div>
-        <div class="item-date">>>[startDate]<< – >>[endDate]<<</div>
-        [[#if summary]]<div class="item-description">>>[summary]<<</div>[[/if]]
-        [[#if highlights]]
-          <ul>[[#each highlights]]<li>>>[.]<<</li>[[/each]]</ul>
-        [[/if]]
-      </div>
-      [[/if]]
-    [[/each]]
-  </section>
-  [[/if]]
+
 
   <!-- VOLUNTEER -->
   [[#if volunteer]]
@@ -343,14 +345,12 @@ export const inlineThemes = {
   <section class="section">
     <h2>[[#if meta.sectionHeaders.certificates]]>>[meta.sectionHeaders.certificates]<<[[/if]][[#if !meta.sectionHeaders.certificates]]Certificates[[/if]]</h2>
     [[#each certificates]]
-      [[#if enabled]]
         <div class="item">
           <div class="item-header">
             >>[name]<< [[#if issuer]]— >>[issuer]<<[[/if]]
           </div>
           <div class="item-date">>>[date]<<</div>
         </div>
-      [[/if]]
     [[/each]]
   </section>
   [[/if]]
