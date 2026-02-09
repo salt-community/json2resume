@@ -3,6 +3,8 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
+import { createResumeDataSetter } from '@/utils/resumeDataUtils'
+import { ItemActions } from '@/components/ui/item-actions'
 
 type Props = {
   resumeData: ResumeData
@@ -10,15 +12,17 @@ type Props = {
 }
 
 export default function References({ resumeData, setResumeData }: Props) {
+  const { addItem, updateItem, removeItem, moveItem } = createResumeDataSetter(
+    () => resumeData,
+    setResumeData,
+  )
+
   const addReference = () => {
     const newReference: Reference = {
       name: '',
       reference: '',
     }
-    setResumeData({
-      ...resumeData,
-      references: [...(resumeData.references || []), newReference],
-    })
+    addItem('references', newReference)
   }
 
   const updateReference = (
@@ -26,40 +30,15 @@ export default function References({ resumeData, setResumeData }: Props) {
     field: keyof Reference,
     value: string,
   ) => {
-    const updatedReferences = [...(resumeData.references || [])]
-    updatedReferences[index] = {
-      ...updatedReferences[index],
-      [field]: value,
-    }
-    setResumeData({
-      ...resumeData,
-      references: updatedReferences,
-    })
+    updateItem('references', index, { [field]: value })
   }
 
   const removeReference = (index: number) => {
-    const updatedReferences = (resumeData.references || []).filter(
-      (_, i) => i !== index,
-    )
-    setResumeData({
-      ...resumeData,
-      references: updatedReferences,
-    })
+    removeItem('references', index)
   }
 
   const moveReference = (index: number, direction: 'up' | 'down') => {
-    const references = [...(resumeData.references || [])]
-    const newIndex = direction === 'up' ? index - 1 : index + 1
-
-    if (newIndex >= 0 && newIndex < references.length) {
-      const [movedReference] = references.splice(index, 1)
-      references.splice(newIndex, 0, movedReference)
-
-      setResumeData({
-        ...resumeData,
-        references: references,
-      })
-    }
+    moveItem('references', index, direction)
   }
 
   return (
@@ -79,39 +58,13 @@ export default function References({ resumeData, setResumeData }: Props) {
                 <h4 className="text-sm font-medium text-muted-foreground">
                   Reference {index + 1}
                 </h4>
-                <div className="flex flex-wrap items-center gap-2">
-                  {/* Move Up Button */}
-                  <Button
-                    onClick={() => moveReference(index, 'up')}
-                    variant="outline"
-                    size="sm"
-                    className="h-7 px-2 text-xs flex-shrink-0"
-                    disabled={index === 0}
-                  >
-                    ↑
-                  </Button>
-                  {/* Move Down Button */}
-                  <Button
-                    onClick={() => moveReference(index, 'down')}
-                    variant="outline"
-                    size="sm"
-                    className="h-7 px-2 text-xs flex-shrink-0"
-                    disabled={
-                      index === (resumeData.references?.length || 0) - 1
-                    }
-                  >
-                    ↓
-                  </Button>
-                  {/* Remove Button */}
-                  <Button
-                    onClick={() => removeReference(index)}
-                    variant="outline"
-                    size="sm"
-                    className="h-7 px-2 text-xs flex-shrink-0"
-                  >
-                    Remove
-                  </Button>
-                </div>
+                <ItemActions
+                  index={index}
+                  totalItems={resumeData.references?.length || 0}
+                  onMoveUp={() => moveReference(index, 'up')}
+                  onMoveDown={() => moveReference(index, 'down')}
+                  onRemove={() => removeReference(index)}
+                />
               </div>
 
               <div className="space-y-3">

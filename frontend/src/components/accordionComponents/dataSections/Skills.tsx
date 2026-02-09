@@ -3,6 +3,8 @@ import type { ResumeData, Skill } from '@/types'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
+import { createResumeDataSetter } from '@/utils/resumeDataUtils'
+import { ItemActions } from '@/components/ui/item-actions'
 
 type Props = {
   resumeData: ResumeData
@@ -11,6 +13,10 @@ type Props = {
 
 function Skills({ resumeData, setResumeData }: Props) {
   const [keywordInputs, setKeywordInputs] = useState<Record<number, string>>({})
+  const { addItem, updateItem, removeItem, moveItem } = createResumeDataSetter(
+    () => resumeData,
+    setResumeData,
+  )
 
   const addSkill = () => {
     const newSkill: Skill = {
@@ -19,10 +25,7 @@ function Skills({ resumeData, setResumeData }: Props) {
       keywords: [],
       enabled: true,
     }
-    setResumeData({
-      ...resumeData,
-      skills: [...(resumeData.skills || []), newSkill],
-    })
+    addItem('skills', newSkill)
   }
 
   const updateSkill = (
@@ -30,40 +33,15 @@ function Skills({ resumeData, setResumeData }: Props) {
     field: keyof Skill,
     value: string | Array<string>,
   ) => {
-    const updatedSkills = [...(resumeData.skills || [])]
-    updatedSkills[index] = {
-      ...updatedSkills[index],
-      [field]: value,
-    }
-    setResumeData({
-      ...resumeData,
-      skills: updatedSkills,
-    })
+    updateItem('skills', index, { [field]: value })
   }
 
   const removeSkill = (index: number) => {
-    const updatedSkills = (resumeData.skills || []).filter(
-      (_, i) => i !== index,
-    )
-    setResumeData({
-      ...resumeData,
-      skills: updatedSkills,
-    })
+    removeItem('skills', index)
   }
 
   const moveSkill = (index: number, direction: 'up' | 'down') => {
-    const skills = [...(resumeData.skills || [])]
-    const newIndex = direction === 'up' ? index - 1 : index + 1
-
-    if (newIndex >= 0 && newIndex < skills.length) {
-      const [movedSkill] = skills.splice(index, 1)
-      skills.splice(newIndex, 0, movedSkill)
-
-      setResumeData({
-        ...resumeData,
-        skills: skills,
-      })
-    }
+    moveItem('skills', index, direction)
   }
 
   const updateKeywordInput = (skillIndex: number, value: string) => {
@@ -102,37 +80,13 @@ function Skills({ resumeData, setResumeData }: Props) {
                 <h4 className="text-sm font-medium text-muted-foreground">
                   Skill {index + 1}
                 </h4>
-                <div className="flex flex-wrap items-center gap-2">
-                  {/* Move Up Button */}
-                  <Button
-                    onClick={() => moveSkill(index, 'up')}
-                    variant="outline"
-                    size="sm"
-                    className="h-7 px-2 text-xs flex-shrink-0"
-                    disabled={index === 0}
-                  >
-                    ↑
-                  </Button>
-                  {/* Move Down Button */}
-                  <Button
-                    onClick={() => moveSkill(index, 'down')}
-                    variant="outline"
-                    size="sm"
-                    className="h-7 px-2 text-xs flex-shrink-0"
-                    disabled={index === (resumeData.skills?.length || 0) - 1}
-                  >
-                    ↓
-                  </Button>
-                  {/* Remove Button */}
-                  <Button
-                    onClick={() => removeSkill(index)}
-                    variant="outline"
-                    size="sm"
-                    className="h-7 px-2 text-xs flex-shrink-0"
-                  >
-                    Remove
-                  </Button>
-                </div>
+                <ItemActions
+                  index={index}
+                  totalItems={resumeData.skills?.length || 0}
+                  onMoveUp={() => moveSkill(index, 'up')}
+                  onMoveDown={() => moveSkill(index, 'down')}
+                  onRemove={() => removeSkill(index)}
+                />
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">

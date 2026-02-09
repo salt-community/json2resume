@@ -80,15 +80,13 @@ const presetThemes: Array<ThemePreset> = [
 ]
 
 interface Props {
-  // Backward compatible: legacy URL-based callback (still called for URL themes)
-  onThemeChange?: (themeUrl: string) => void
-  // New: theme source callback supporting URL or inline content
+  // Theme source callback supporting URL or inline content
   onThemeChangeV2?: (theme: ThemeSource) => void
   // Accept either a legacy URL or a ThemeSource object
   currentTheme?: string | ThemeSource
 }
 
-function Themes({ onThemeChange, onThemeChangeV2, currentTheme }: Props) {
+function Themes({ onThemeChangeV2, currentTheme }: Props) {
   const [customUrl, setCustomUrl] = useState('')
   const [customInlineHtml, setCustomInlineHtml] = useState('')
 
@@ -133,7 +131,6 @@ function Themes({ onThemeChange, onThemeChangeV2, currentTheme }: Props) {
     setSelectedTheme(theme.id)
     if (theme.source.kind === 'url') {
       setCustomUrl(theme.source.url)
-      onThemeChange?.(theme.source.url)
     } else {
       setCustomUrl('')
     }
@@ -152,7 +149,6 @@ function Themes({ onThemeChange, onThemeChangeV2, currentTheme }: Props) {
 
     setIsLoading(true)
     setSelectedTheme('custom')
-    onThemeChange?.(customUrl)
     onThemeChangeV2?.({ kind: 'url', url: customUrl })
 
     // Simulate loading

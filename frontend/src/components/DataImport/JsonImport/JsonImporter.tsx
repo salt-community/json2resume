@@ -2,8 +2,7 @@ import React, { useRef, useState } from 'react'
 import { Upload } from 'lucide-react'
 import type { ResumeData } from '@/types'
 import { Button } from '@/components/ui/button'
-import jsonObjFromJsonString from '@/data/jsonObjFromJsonString'
-import { resumeDataFromJsonObj } from '@/data/resumeDataFromJsonObj'
+import { resumeDataFromJsonObj } from '@/data/resumeDataConverter'
 
 type Props = {
   onDataImported?: (data: ResumeData) => void
@@ -30,7 +29,7 @@ export default function JsonImporter({ onDataImported }: Props) {
 
         try {
           const text = await file.text()
-          const jsonObj = jsonObjFromJsonString(text)
+          const jsonObj = JSON.parse(text)
           const rData = resumeDataFromJsonObj(jsonObj)
           onDataImported?.(rData)
         } catch (e) {

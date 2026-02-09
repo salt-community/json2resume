@@ -2,6 +2,8 @@ import type { Education as EducationType, ResumeData } from '@/types'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
+import { createResumeDataSetter } from '@/utils/resumeDataUtils'
+import { ItemActions } from '@/components/ui/item-actions'
 
 type Props = {
   resumeData: ResumeData
@@ -9,6 +11,16 @@ type Props = {
 }
 
 function Education({ resumeData, setResumeData }: Props) {
+  const {
+    addItem,
+    updateItem,
+    removeItem,
+    moveItem,
+    addSubItem,
+    updateSubItem,
+    removeSubItem,
+  } = createResumeDataSetter(() => resumeData, setResumeData)
+
   const addEducation = () => {
     const newEducation: EducationType = {
       institution: '',
@@ -21,10 +33,7 @@ function Education({ resumeData, setResumeData }: Props) {
       courses: [],
       enabled: true,
     }
-    setResumeData({
-      ...resumeData,
-      education: [...(resumeData.education || []), newEducation],
-    })
+    addItem('education', newEducation)
   }
 
   const updateEducation = (
@@ -32,45 +41,19 @@ function Education({ resumeData, setResumeData }: Props) {
     field: keyof EducationType,
     value: string | Array<string>,
   ) => {
-    const updatedEducation = [...(resumeData.education || [])]
-    updatedEducation[index] = { ...updatedEducation[index], [field]: value }
-    setResumeData({
-      ...resumeData,
-      education: updatedEducation,
-    })
+    updateItem('education', index, { [field]: value })
   }
 
   const removeEducation = (index: number) => {
-    const updatedEducation = (resumeData.education || []).filter(
-      (_, i) => i !== index,
-    )
-    setResumeData({
-      ...resumeData,
-      education: updatedEducation,
-    })
+    removeItem('education', index)
   }
 
   const moveEducation = (index: number, direction: 'up' | 'down') => {
-    const education = [...(resumeData.education || [])]
-    const newIndex = direction === 'up' ? index - 1 : index + 1
-
-    if (newIndex >= 0 && newIndex < education.length) {
-      const [movedEducation] = education.splice(index, 1)
-      education.splice(newIndex, 0, movedEducation)
-
-      setResumeData({
-        ...resumeData,
-        education: education,
-      })
-    }
+    moveItem('education', index, direction)
   }
 
   const addCourse = (educationIndex: number) => {
-    const education = resumeData.education?.[educationIndex]
-    if (education) {
-      const updatedCourses = [...(education.courses || []), '']
-      updateEducation(educationIndex, 'courses', updatedCourses)
-    }
+    addSubItem('education', educationIndex, 'courses', '')
   }
 
   const updateCourse = (
@@ -78,22 +61,11 @@ function Education({ resumeData, setResumeData }: Props) {
     courseIndex: number,
     value: string,
   ) => {
-    const education = resumeData.education?.[educationIndex]
-    if (education) {
-      const updatedCourses = [...(education.courses || [])]
-      updatedCourses[courseIndex] = value
-      updateEducation(educationIndex, 'courses', updatedCourses)
-    }
+    updateSubItem('education', educationIndex, 'courses', courseIndex, value)
   }
 
   const removeCourse = (educationIndex: number, courseIndex: number) => {
-    const education = resumeData.education?.[educationIndex]
-    if (education) {
-      const updatedCourses = (education.courses || []).filter(
-        (_, i) => i !== courseIndex,
-      )
-      updateEducation(educationIndex, 'courses', updatedCourses)
-    }
+    removeSubItem('education', educationIndex, 'courses', courseIndex)
   }
 
   return (
@@ -111,36 +83,13 @@ function Education({ resumeData, setResumeData }: Props) {
             <div key={index} className="border rounded-lg p-6 space-y-6">
               <div className="flex items-center justify-between">
                 <h4 className="text-lg font-medium">Education {index + 1}</h4>
-                <div className="flex items-center space-x-2">
-                  {/* Move Up Button */}
-                  <Button
-                    onClick={() => moveEducation(index, 'up')}
-                    variant="outline"
-                    size="sm"
-                    className="h-7 px-2 text-xs"
-                    disabled={index === 0}
-                  >
-                    ↑
-                  </Button>
-                  {/* Move Down Button */}
-                  <Button
-                    onClick={() => moveEducation(index, 'down')}
-                    variant="outline"
-                    size="sm"
-                    className="h-7 px-2 text-xs"
-                    disabled={index === (resumeData.education?.length || 0) - 1}
-                  >
-                    ↓
-                  </Button>
-                  {/* Remove Button */}
-                  <Button
-                    onClick={() => removeEducation(index)}
-                    variant="outline"
-                    size="sm"
-                  >
-                    Remove
-                  </Button>
-                </div>
+                <ItemActions
+                  index={index}
+                  totalItems={resumeData.education?.length || 0}
+                  onMoveUp={() => moveEducation(index, 'up')}
+                  onMoveDown={() => moveEducation(index, 'down')}
+                  onRemove={() => removeEducation(index)}
+                />
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

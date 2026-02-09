@@ -3,6 +3,8 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
+import { createResumeDataSetter } from '@/utils/resumeDataUtils'
+import { ItemActions } from '@/components/ui/item-actions'
 
 type Props = {
   resumeData: ResumeData
@@ -10,6 +12,16 @@ type Props = {
 }
 
 function Volunteering({ resumeData, setResumeData }: Props) {
+  const {
+    addItem,
+    updateItem,
+    removeItem,
+    moveItem,
+    addSubItem,
+    updateSubItem,
+    removeSubItem,
+  } = createResumeDataSetter(() => resumeData, setResumeData)
+
   const addVolunteer = () => {
     const newVolunteer: Volunteer = {
       organization: '',
@@ -21,10 +33,7 @@ function Volunteering({ resumeData, setResumeData }: Props) {
       highlights: [],
       enabled: true,
     }
-    setResumeData({
-      ...resumeData,
-      volunteer: [...(resumeData.volunteer || []), newVolunteer],
-    })
+    addItem('volunteer', newVolunteer)
   }
 
   const updateVolunteer = (
@@ -32,45 +41,19 @@ function Volunteering({ resumeData, setResumeData }: Props) {
     field: keyof Volunteer,
     value: string | Array<string>,
   ) => {
-    const updatedVolunteers = [...(resumeData.volunteer || [])]
-    updatedVolunteers[index] = { ...updatedVolunteers[index], [field]: value }
-    setResumeData({
-      ...resumeData,
-      volunteer: updatedVolunteers,
-    })
+    updateItem('volunteer', index, { [field]: value })
   }
 
   const removeVolunteer = (index: number) => {
-    const updatedVolunteers = (resumeData.volunteer || []).filter(
-      (_, i) => i !== index,
-    )
-    setResumeData({
-      ...resumeData,
-      volunteer: updatedVolunteers,
-    })
+    removeItem('volunteer', index)
   }
 
   const moveVolunteer = (index: number, direction: 'up' | 'down') => {
-    const volunteers = [...(resumeData.volunteer || [])]
-    const newIndex = direction === 'up' ? index - 1 : index + 1
-
-    if (newIndex >= 0 && newIndex < volunteers.length) {
-      const [movedVolunteer] = volunteers.splice(index, 1)
-      volunteers.splice(newIndex, 0, movedVolunteer)
-
-      setResumeData({
-        ...resumeData,
-        volunteer: volunteers,
-      })
-    }
+    moveItem('volunteer', index, direction)
   }
 
   const addHighlight = (volunteerIndex: number) => {
-    const volunteer = resumeData.volunteer?.[volunteerIndex]
-    if (volunteer) {
-      const updatedHighlights = [...(volunteer.highlights || []), '']
-      updateVolunteer(volunteerIndex, 'highlights', updatedHighlights)
-    }
+    addSubItem('volunteer', volunteerIndex, 'highlights', '')
   }
 
   const updateHighlight = (
@@ -78,22 +61,11 @@ function Volunteering({ resumeData, setResumeData }: Props) {
     highlightIndex: number,
     value: string,
   ) => {
-    const volunteer = resumeData.volunteer?.[volunteerIndex]
-    if (volunteer) {
-      const updatedHighlights = [...(volunteer.highlights || [])]
-      updatedHighlights[highlightIndex] = value
-      updateVolunteer(volunteerIndex, 'highlights', updatedHighlights)
-    }
+    updateSubItem('volunteer', volunteerIndex, 'highlights', highlightIndex, value)
   }
 
   const removeHighlight = (volunteerIndex: number, highlightIndex: number) => {
-    const volunteer = resumeData.volunteer?.[volunteerIndex]
-    if (volunteer) {
-      const updatedHighlights = (volunteer.highlights || []).filter(
-        (_, i) => i !== highlightIndex,
-      )
-      updateVolunteer(volunteerIndex, 'highlights', updatedHighlights)
-    }
+    removeSubItem('volunteer', volunteerIndex, 'highlights', highlightIndex)
   }
 
   return (
@@ -113,36 +85,13 @@ function Volunteering({ resumeData, setResumeData }: Props) {
                 <h4 className="text-lg font-medium">
                   Volunteer Experience {index + 1}
                 </h4>
-                <div className="flex items-center space-x-2">
-                  {/* Move Up Button */}
-                  <Button
-                    onClick={() => moveVolunteer(index, 'up')}
-                    variant="outline"
-                    size="sm"
-                    className="h-7 px-2 text-xs"
-                    disabled={index === 0}
-                  >
-                    ↑
-                  </Button>
-                  {/* Move Down Button */}
-                  <Button
-                    onClick={() => moveVolunteer(index, 'down')}
-                    variant="outline"
-                    size="sm"
-                    className="h-7 px-2 text-xs"
-                    disabled={index === (resumeData.volunteer?.length || 0) - 1}
-                  >
-                    ↓
-                  </Button>
-                  {/* Remove Button */}
-                  <Button
-                    onClick={() => removeVolunteer(index)}
-                    variant="outline"
-                    size="sm"
-                  >
-                    Remove
-                  </Button>
-                </div>
+                <ItemActions
+                  index={index}
+                  totalItems={resumeData.volunteer?.length || 0}
+                  onMoveUp={() => moveVolunteer(index, 'up')}
+                  onMoveDown={() => moveVolunteer(index, 'down')}
+                  onRemove={() => removeVolunteer(index)}
+                />
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

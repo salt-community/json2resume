@@ -3,6 +3,8 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
+import { createResumeDataSetter } from '@/utils/resumeDataUtils'
+import { ItemActions } from '@/components/ui/item-actions'
 
 type Props = {
   resumeData: ResumeData
@@ -10,6 +12,11 @@ type Props = {
 }
 
 function Publications({ resumeData, setResumeData }: Props) {
+  const { addItem, updateItem, removeItem, moveItem } = createResumeDataSetter(
+    () => resumeData,
+    setResumeData,
+  )
+
   const addPublication = () => {
     const newPublication: Publication = {
       name: '',
@@ -19,10 +26,7 @@ function Publications({ resumeData, setResumeData }: Props) {
       summary: '',
       enabled: true,
     }
-    setResumeData({
-      ...resumeData,
-      publications: [...(resumeData.publications || []), newPublication],
-    })
+    addItem('publications', newPublication)
   }
 
   const updatePublication = (
@@ -30,40 +34,15 @@ function Publications({ resumeData, setResumeData }: Props) {
     field: keyof Publication,
     value: string,
   ) => {
-    const updatedPublications = [...(resumeData.publications || [])]
-    updatedPublications[index] = {
-      ...updatedPublications[index],
-      [field]: value,
-    }
-    setResumeData({
-      ...resumeData,
-      publications: updatedPublications,
-    })
+    updateItem('publications', index, { [field]: value })
   }
 
   const removePublication = (index: number) => {
-    const updatedPublications = (resumeData.publications || []).filter(
-      (_, i) => i !== index,
-    )
-    setResumeData({
-      ...resumeData,
-      publications: updatedPublications,
-    })
+    removeItem('publications', index)
   }
 
   const movePublication = (index: number, direction: 'up' | 'down') => {
-    const publications = [...(resumeData.publications || [])]
-    const newIndex = direction === 'up' ? index - 1 : index + 1
-
-    if (newIndex >= 0 && newIndex < publications.length) {
-      const [movedPublication] = publications.splice(index, 1)
-      publications.splice(newIndex, 0, movedPublication)
-
-      setResumeData({
-        ...resumeData,
-        publications: publications,
-      })
-    }
+    moveItem('publications', index, direction)
   }
 
   return (
@@ -81,39 +60,13 @@ function Publications({ resumeData, setResumeData }: Props) {
             <div key={index} className="border rounded-lg p-6 space-y-6">
               <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <h4 className="text-lg font-medium">Publication {index + 1}</h4>
-                <div className="flex flex-wrap items-center gap-2">
-                  {/* Move Up Button */}
-                  <Button
-                    onClick={() => movePublication(index, 'up')}
-                    variant="outline"
-                    size="sm"
-                    className="h-7 px-2 text-xs flex-shrink-0"
-                    disabled={index === 0}
-                  >
-                    ↑
-                  </Button>
-                  {/* Move Down Button */}
-                  <Button
-                    onClick={() => movePublication(index, 'down')}
-                    variant="outline"
-                    size="sm"
-                    className="h-7 px-2 text-xs flex-shrink-0"
-                    disabled={
-                      index === (resumeData.publications?.length || 0) - 1
-                    }
-                  >
-                    ↓
-                  </Button>
-                  {/* Remove Button */}
-                  <Button
-                    onClick={() => removePublication(index)}
-                    variant="outline"
-                    size="sm"
-                    className="flex-shrink-0"
-                  >
-                    Remove
-                  </Button>
-                </div>
+                <ItemActions
+                  index={index}
+                  totalItems={resumeData.publications?.length || 0}
+                  onMoveUp={() => movePublication(index, 'up')}
+                  onMoveDown={() => movePublication(index, 'down')}
+                  onRemove={() => removePublication(index)}
+                />
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

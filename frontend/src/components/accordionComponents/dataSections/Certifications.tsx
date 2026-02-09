@@ -2,6 +2,8 @@ import type { Certificate, ResumeData } from '@/types'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
+import { createResumeDataSetter } from '@/utils/resumeDataUtils'
+import { ItemActions } from '@/components/ui/item-actions'
 
 type Props = {
   resumeData: ResumeData
@@ -9,6 +11,11 @@ type Props = {
 }
 
 export default function Certifications({ resumeData, setResumeData }: Props) {
+  const { addItem, updateItem, removeItem, moveItem } = createResumeDataSetter(
+    () => resumeData,
+    setResumeData,
+  )
+
   const addCertificate = () => {
     const newCertificate: Certificate = {
       name: '',
@@ -16,10 +23,7 @@ export default function Certifications({ resumeData, setResumeData }: Props) {
       issuer: '',
       url: '',
     }
-    setResumeData({
-      ...resumeData,
-      certificates: [...(resumeData.certificates || []), newCertificate],
-    })
+    addItem('certificates', newCertificate)
   }
 
   const updateCertificate = (
@@ -27,40 +31,15 @@ export default function Certifications({ resumeData, setResumeData }: Props) {
     field: keyof Certificate,
     value: string,
   ) => {
-    const updatedCertificates = [...(resumeData.certificates || [])]
-    updatedCertificates[index] = {
-      ...updatedCertificates[index],
-      [field]: value,
-    }
-    setResumeData({
-      ...resumeData,
-      certificates: updatedCertificates,
-    })
+    updateItem('certificates', index, { [field]: value })
   }
 
   const removeCertificate = (index: number) => {
-    const updatedCertificates = (resumeData.certificates || []).filter(
-      (_, i) => i !== index,
-    )
-    setResumeData({
-      ...resumeData,
-      certificates: updatedCertificates,
-    })
+    removeItem('certificates', index)
   }
 
   const moveCertificate = (index: number, direction: 'up' | 'down') => {
-    const certificates = [...(resumeData.certificates || [])]
-    const newIndex = direction === 'up' ? index - 1 : index + 1
-
-    if (newIndex >= 0 && newIndex < certificates.length) {
-      const [movedCertificate] = certificates.splice(index, 1)
-      certificates.splice(newIndex, 0, movedCertificate)
-
-      setResumeData({
-        ...resumeData,
-        certificates: certificates,
-      })
-    }
+    moveItem('certificates', index, direction)
   }
 
   return (
@@ -78,38 +57,13 @@ export default function Certifications({ resumeData, setResumeData }: Props) {
             <div key={index} className="border rounded-lg p-6 space-y-6">
               <div className="flex items-center justify-between">
                 <h4 className="text-lg font-medium">Certificate {index + 1}</h4>
-                <div className="flex items-center space-x-2">
-                  {/* Move Up Button */}
-                  <Button
-                    onClick={() => moveCertificate(index, 'up')}
-                    variant="outline"
-                    size="sm"
-                    className="h-7 px-2 text-xs"
-                    disabled={index === 0}
-                  >
-                    ↑
-                  </Button>
-                  {/* Move Down Button */}
-                  <Button
-                    onClick={() => moveCertificate(index, 'down')}
-                    variant="outline"
-                    size="sm"
-                    className="h-7 px-2 text-xs"
-                    disabled={
-                      index === (resumeData.certificates?.length || 0) - 1
-                    }
-                  >
-                    ↓
-                  </Button>
-                  {/* Remove Button */}
-                  <Button
-                    onClick={() => removeCertificate(index)}
-                    variant="outline"
-                    size="sm"
-                  >
-                    Remove
-                  </Button>
-                </div>
+                <ItemActions
+                  index={index}
+                  totalItems={resumeData.certificates?.length || 0}
+                  onMoveUp={() => moveCertificate(index, 'up')}
+                  onMoveDown={() => moveCertificate(index, 'down')}
+                  onRemove={() => removeCertificate(index)}
+                />
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

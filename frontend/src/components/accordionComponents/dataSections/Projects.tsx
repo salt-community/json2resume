@@ -3,6 +3,8 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
+import { createResumeDataSetter } from '@/utils/resumeDataUtils'
+import { ItemActions } from '@/components/ui/item-actions'
 
 type Props = {
   resumeData: ResumeData
@@ -10,6 +12,16 @@ type Props = {
 }
 
 function Projects({ resumeData, setResumeData }: Props) {
+  const {
+    addItem,
+    updateItem,
+    removeItem,
+    moveItem,
+    addSubItem,
+    updateSubItem,
+    removeSubItem,
+  } = createResumeDataSetter(() => resumeData, setResumeData)
+
   const addProject = () => {
     const newProject: Project = {
       name: '',
@@ -20,10 +32,7 @@ function Projects({ resumeData, setResumeData }: Props) {
       url: '',
       enabled: true,
     }
-    setResumeData({
-      ...resumeData,
-      projects: [...(resumeData.projects || []), newProject],
-    })
+    addItem('projects', newProject)
   }
 
   const updateProject = (
@@ -31,48 +40,19 @@ function Projects({ resumeData, setResumeData }: Props) {
     field: keyof Project,
     value: string | Array<string>,
   ) => {
-    const updatedProjects = [...(resumeData.projects || [])]
-    updatedProjects[index] = {
-      ...updatedProjects[index],
-      [field]: value,
-    }
-    setResumeData({
-      ...resumeData,
-      projects: updatedProjects,
-    })
+    updateItem('projects', index, { [field]: value })
   }
 
   const removeProject = (index: number) => {
-    const updatedProjects = (resumeData.projects || []).filter(
-      (_, i) => i !== index,
-    )
-    setResumeData({
-      ...resumeData,
-      projects: updatedProjects,
-    })
+    removeItem('projects', index)
   }
 
   const moveProject = (index: number, direction: 'up' | 'down') => {
-    const projects = [...(resumeData.projects || [])]
-    const newIndex = direction === 'up' ? index - 1 : index + 1
-
-    if (newIndex >= 0 && newIndex < projects.length) {
-      const [movedProject] = projects.splice(index, 1)
-      projects.splice(newIndex, 0, movedProject)
-
-      setResumeData({
-        ...resumeData,
-        projects: projects,
-      })
-    }
+    moveItem('projects', index, direction)
   }
 
   const addHighlight = (projectIndex: number) => {
-    const project = resumeData.projects?.[projectIndex]
-    if (project) {
-      const updatedHighlights = [...(project.highlights || []), '']
-      updateProject(projectIndex, 'highlights', updatedHighlights)
-    }
+    addSubItem('projects', projectIndex, 'highlights', '')
   }
 
   const updateHighlight = (
@@ -80,22 +60,11 @@ function Projects({ resumeData, setResumeData }: Props) {
     highlightIndex: number,
     value: string,
   ) => {
-    const project = resumeData.projects?.[projectIndex]
-    if (project) {
-      const updatedHighlights = [...(project.highlights || [])]
-      updatedHighlights[highlightIndex] = value
-      updateProject(projectIndex, 'highlights', updatedHighlights)
-    }
+    updateSubItem('projects', projectIndex, 'highlights', highlightIndex, value)
   }
 
   const removeHighlight = (projectIndex: number, highlightIndex: number) => {
-    const project = resumeData.projects?.[projectIndex]
-    if (project) {
-      const updatedHighlights = (project.highlights || []).filter(
-        (_, i) => i !== highlightIndex,
-      )
-      updateProject(projectIndex, 'highlights', updatedHighlights)
-    }
+    removeSubItem('projects', projectIndex, 'highlights', highlightIndex)
   }
 
   return (
@@ -115,37 +84,13 @@ function Projects({ resumeData, setResumeData }: Props) {
                 <h4 className="text-sm font-medium text-muted-foreground">
                   Project {index + 1}
                 </h4>
-                <div className="flex flex-wrap items-center gap-2">
-                  {/* Move Up Button */}
-                  <Button
-                    onClick={() => moveProject(index, 'up')}
-                    variant="outline"
-                    size="sm"
-                    className="h-7 px-2 text-xs flex-shrink-0"
-                    disabled={index === 0}
-                  >
-                    ↑
-                  </Button>
-                  {/* Move Down Button */}
-                  <Button
-                    onClick={() => moveProject(index, 'down')}
-                    variant="outline"
-                    size="sm"
-                    className="h-7 px-2 text-xs flex-shrink-0"
-                    disabled={index === (resumeData.projects?.length || 0) - 1}
-                  >
-                    ↓
-                  </Button>
-                  {/* Remove Button */}
-                  <Button
-                    onClick={() => removeProject(index)}
-                    variant="outline"
-                    size="sm"
-                    className="h-7 px-2 text-xs flex-shrink-0"
-                  >
-                    Remove
-                  </Button>
-                </div>
+                <ItemActions
+                  index={index}
+                  totalItems={resumeData.projects?.length || 0}
+                  onMoveUp={() => moveProject(index, 'up')}
+                  onMoveDown={() => moveProject(index, 'down')}
+                  onRemove={() => removeProject(index)}
+                />
               </div>
 
               <div className="space-y-3">

@@ -3,6 +3,8 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
+import { createResumeDataSetter } from '@/utils/resumeDataUtils'
+import { ItemActions } from '@/components/ui/item-actions'
 
 type Props = {
   resumeData: ResumeData
@@ -10,6 +12,11 @@ type Props = {
 }
 
 export default function Awards({ resumeData, setResumeData }: Props) {
+  const { addItem, updateItem, removeItem, moveItem } = createResumeDataSetter(
+    () => resumeData,
+    setResumeData,
+  )
+
   const addAward = () => {
     const newAward: Award = {
       enabled: true,
@@ -18,44 +25,19 @@ export default function Awards({ resumeData, setResumeData }: Props) {
       awarder: '',
       summary: '',
     }
-    setResumeData({
-      ...resumeData,
-      awards: [...(resumeData.awards || []), newAward],
-    })
+    addItem('awards', newAward)
   }
 
   const updateAward = (index: number, field: keyof Award, value: string) => {
-    const updatedAwards = [...(resumeData.awards || [])]
-    updatedAwards[index] = { ...updatedAwards[index], [field]: value }
-    setResumeData({
-      ...resumeData,
-      awards: updatedAwards,
-    })
+    updateItem('awards', index, { [field]: value })
   }
 
   const removeAward = (index: number) => {
-    const updatedAwards = (resumeData.awards || []).filter(
-      (_, i) => i !== index,
-    )
-    setResumeData({
-      ...resumeData,
-      awards: updatedAwards,
-    })
+    removeItem('awards', index)
   }
 
   const moveAward = (index: number, direction: 'up' | 'down') => {
-    const awards = [...(resumeData.awards || [])]
-    const newIndex = direction === 'up' ? index - 1 : index + 1
-
-    if (newIndex >= 0 && newIndex < awards.length) {
-      const [movedAward] = awards.splice(index, 1)
-      awards.splice(newIndex, 0, movedAward)
-
-      setResumeData({
-        ...resumeData,
-        awards: awards,
-      })
-    }
+    moveItem('awards', index, direction)
   }
 
   return (
@@ -73,37 +55,13 @@ export default function Awards({ resumeData, setResumeData }: Props) {
             <div key={index} className="border rounded-lg p-6 space-y-6">
               <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <h4 className="text-lg font-medium">Award {index + 1}</h4>
-                <div className="flex flex-wrap items-center gap-2">
-                  {/* Move Up Button */}
-                  <Button
-                    onClick={() => moveAward(index, 'up')}
-                    variant="outline"
-                    size="sm"
-                    className="h-7 px-2 text-xs flex-shrink-0"
-                    disabled={index === 0}
-                  >
-                    ↑
-                  </Button>
-                  {/* Move Down Button */}
-                  <Button
-                    onClick={() => moveAward(index, 'down')}
-                    variant="outline"
-                    size="sm"
-                    className="h-7 px-2 text-xs flex-shrink-0"
-                    disabled={index === (resumeData.awards?.length || 0) - 1}
-                  >
-                    ↓
-                  </Button>
-                  {/* Remove Button */}
-                  <Button
-                    onClick={() => removeAward(index)}
-                    variant="outline"
-                    size="sm"
-                    className="flex-shrink-0"
-                  >
-                    Remove
-                  </Button>
-                </div>
+                <ItemActions
+                  index={index}
+                  totalItems={resumeData.awards?.length || 0}
+                  onMoveUp={() => moveAward(index, 'up')}
+                  onMoveDown={() => moveAward(index, 'down')}
+                  onRemove={() => removeAward(index)}
+                />
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

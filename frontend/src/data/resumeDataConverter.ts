@@ -1,5 +1,8 @@
 import type { ResumeData } from '@/types'
 
+/**
+ * Convert ResumeData to JSON object format
+ */
 export function jsonObjFromResumeData(data: ResumeData) {
   if (typeof data !== 'object') return {}
   if (typeof data == 'undefined') return {}
@@ -44,5 +47,47 @@ export function jsonObjFromResumeData(data: ResumeData) {
     references: Array.isArray(data.references) ? data.references : [],
     projects: Array.isArray(data.projects) ? data.projects : [],
     meta: data.meta,
+  }
+}
+
+/**
+ * Convert JSON object to ResumeData format
+ */
+export function resumeDataFromJsonObj(jsonData: any): ResumeData {
+  return {
+    $schema: jsonData.$schema,
+    basics: {
+      name: jsonData.basics?.name || '',
+      label: jsonData.basics?.label,
+      image: jsonData.basics?.image,
+      uploadedImage: jsonData.basics?.uploadedImage,
+      email: jsonData.basics?.email,
+      phone: jsonData.basics?.phone,
+      url: jsonData.basics?.url,
+      summary: jsonData.basics?.summary,
+      location: jsonData.basics?.location
+        ? {
+            address: jsonData.basics.location.address,
+            postalCode: jsonData.basics.location.postalCode,
+            city: jsonData.basics.location.city,
+            countryCode: jsonData.basics.location.countryCode,
+            region: jsonData.basics.location.region,
+            enabled: jsonData.basics.location.enabled ?? true,
+          }
+        : undefined,
+      profiles: jsonData.basics?.profiles || [],
+      enabled: jsonData.basics?.enabled ?? true,
+    },
+    work: jsonData.work || [],
+    volunteer: jsonData.volunteer || [],
+    education: jsonData.education || [],
+    awards: jsonData.awards || [],
+    publications: jsonData.publications || [],
+    skills: jsonData.skills || [],
+    languages: jsonData.languages || [],
+    interests: jsonData.interests || [],
+    references: jsonData.references || [],
+    projects: jsonData.projects || [],
+    meta: jsonData.meta,
   }
 }

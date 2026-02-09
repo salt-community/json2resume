@@ -4,10 +4,10 @@ import type { ResumeData } from '@/types'
 import AccordionGroup from '@/components/AccordionGroup'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { defaultResumeData } from '@/data/defaultResumeData.ts'
-import { jsonStringFromJsonObj } from '@/data/jsonStringFromJsonObj.ts'
-import { jsonObjFromResumeData } from '@/data/jsonObjFromResumeData.ts'
-import { resumeDataFromJsonObj } from '@/data/resumeDataFromJsonObj.ts'
-import jsonObjFromJsonString from '@/data/jsonObjFromJsonString.ts'
+import {
+  jsonObjFromResumeData,
+  resumeDataFromJsonObj,
+} from '@/data/resumeDataConverter.ts'
 import {
   loadResumeDataAndConfig,
   saveResumeData,
@@ -95,7 +95,7 @@ function App() {
       ? { kind: 'url', url: selectedTheme.url }
       : { kind: 'inline', html: selectedTheme.html }
 
-  const json = jsonStringFromJsonObj({
+  const json = JSON.stringify({
     ...baseJsonObj,
     config: {
       theme: themeConfig,
@@ -108,12 +108,6 @@ function App() {
     saveResumeData(json)
   }, [json])
 
-  // Legacy handler: URL only
-  const handleThemeChange = (themeUrl: string) => {
-    setSelectedTheme({ kind: 'url', url: themeUrl })
-  }
-
-  // New handler: union type
   const handleThemeChangeV2 = (theme: ThemeSource) => {
     setSelectedTheme(theme)
   }
@@ -133,7 +127,7 @@ function App() {
     try {
       const response = await fetch(nextFile)
       const text = await response.text()
-      const jsonObj = jsonObjFromJsonString(text)
+      const jsonObj = JSON.parse(text)
       const rData = resumeDataFromJsonObj(jsonObj)
       setResumeData(rData)
       setExampleIndex((prev) => (prev + 1) % exampleFiles.length)
@@ -285,7 +279,6 @@ function App() {
               <AccordionGroup
                 resumeData={resumeData}
                 setResumeData={setResumeData}
-                onThemeChange={handleThemeChange}
                 onThemeChangeV2={handleThemeChangeV2}
                 onTranslationComplete={handleTranslationComplete}
                 currentTheme={selectedTheme}
@@ -300,7 +293,7 @@ function App() {
                 <JsonCodeEditor
                   jsonState={json}
                   onChange={(jsonString: string) => {
-                    const obj: any = jsonObjFromJsonString(jsonString)
+                    const obj: any = JSON.parse(jsonString)
 
                     // Build ResumeData from JSON (existing behavior)
                     const rData = resumeDataFromJsonObj(obj)

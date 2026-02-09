@@ -2,6 +2,8 @@ import type { Language, ResumeData } from '@/types'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
+import { createResumeDataSetter } from '@/utils/resumeDataUtils'
+import { ItemActions } from '@/components/ui/item-actions'
 
 type Props = {
   resumeData: ResumeData
@@ -9,15 +11,17 @@ type Props = {
 }
 
 export default function Languages({ resumeData, setResumeData }: Props) {
+  const { addItem, updateItem, removeItem, moveItem } = createResumeDataSetter(
+    () => resumeData,
+    setResumeData,
+  )
+
   const addLanguage = () => {
     const newLanguage: Language = {
       language: '',
       fluency: '',
     }
-    setResumeData({
-      ...resumeData,
-      languages: [...(resumeData.languages || []), newLanguage],
-    })
+    addItem('languages', newLanguage)
   }
 
   const updateLanguage = (
@@ -25,40 +29,15 @@ export default function Languages({ resumeData, setResumeData }: Props) {
     field: keyof Language,
     value: string,
   ) => {
-    const updatedLanguages = [...(resumeData.languages || [])]
-    updatedLanguages[index] = {
-      ...updatedLanguages[index],
-      [field]: value,
-    }
-    setResumeData({
-      ...resumeData,
-      languages: updatedLanguages,
-    })
+    updateItem('languages', index, { [field]: value })
   }
 
   const removeLanguage = (index: number) => {
-    const updatedLanguages = (resumeData.languages || []).filter(
-      (_, i) => i !== index,
-    )
-    setResumeData({
-      ...resumeData,
-      languages: updatedLanguages,
-    })
+    removeItem('languages', index)
   }
 
   const moveLanguage = (index: number, direction: 'up' | 'down') => {
-    const languages = [...(resumeData.languages || [])]
-    const newIndex = direction === 'up' ? index - 1 : index + 1
-
-    if (newIndex >= 0 && newIndex < languages.length) {
-      const [movedLanguage] = languages.splice(index, 1)
-      languages.splice(newIndex, 0, movedLanguage)
-
-      setResumeData({
-        ...resumeData,
-        languages: languages,
-      })
-    }
+    moveItem('languages', index, direction)
   }
 
   return (
@@ -78,37 +57,13 @@ export default function Languages({ resumeData, setResumeData }: Props) {
                 <h4 className="text-sm font-medium text-muted-foreground">
                   Language {index + 1}
                 </h4>
-                <div className="flex flex-wrap items-center gap-2">
-                  {/* Move Up Button */}
-                  <Button
-                    onClick={() => moveLanguage(index, 'up')}
-                    variant="outline"
-                    size="sm"
-                    className="h-7 px-2 text-xs flex-shrink-0"
-                    disabled={index === 0}
-                  >
-                    ↑
-                  </Button>
-                  {/* Move Down Button */}
-                  <Button
-                    onClick={() => moveLanguage(index, 'down')}
-                    variant="outline"
-                    size="sm"
-                    className="h-7 px-2 text-xs flex-shrink-0"
-                    disabled={index === (resumeData.languages?.length || 0) - 1}
-                  >
-                    ↓
-                  </Button>
-                  {/* Remove Button */}
-                  <Button
-                    onClick={() => removeLanguage(index)}
-                    variant="outline"
-                    size="sm"
-                    className="h-7 px-2 text-xs flex-shrink-0"
-                  >
-                    Remove
-                  </Button>
-                </div>
+                <ItemActions
+                  index={index}
+                  totalItems={resumeData.languages?.length || 0}
+                  onMoveUp={() => moveLanguage(index, 'up')}
+                  onMoveDown={() => moveLanguage(index, 'down')}
+                  onRemove={() => removeLanguage(index)}
+                />
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">

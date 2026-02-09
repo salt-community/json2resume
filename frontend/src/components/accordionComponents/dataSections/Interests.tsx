@@ -2,6 +2,8 @@ import type { Interest, ResumeData } from '@/types'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
+import { createResumeDataSetter } from '@/utils/resumeDataUtils'
+import { ItemActions } from '@/components/ui/item-actions'
 
 type Props = {
   resumeData: ResumeData
@@ -9,15 +11,17 @@ type Props = {
 }
 
 export default function Interests({ resumeData, setResumeData }: Props) {
+  const { addItem, updateItem, removeItem, moveItem } = createResumeDataSetter(
+    () => resumeData,
+    setResumeData,
+  )
+
   const addInterest = () => {
     const newInterest: Interest = {
       name: '',
       keywords: [],
     }
-    setResumeData({
-      ...resumeData,
-      interests: [...(resumeData.interests || []), newInterest],
-    })
+    addItem('interests', newInterest)
   }
 
   const updateInterest = (
@@ -25,40 +29,15 @@ export default function Interests({ resumeData, setResumeData }: Props) {
     field: keyof Interest,
     value: string | Array<string>,
   ) => {
-    const updatedInterests = [...(resumeData.interests || [])]
-    updatedInterests[index] = {
-      ...updatedInterests[index],
-      [field]: value,
-    }
-    setResumeData({
-      ...resumeData,
-      interests: updatedInterests,
-    })
+    updateItem('interests', index, { [field]: value })
   }
 
   const removeInterest = (index: number) => {
-    const updatedInterests = (resumeData.interests || []).filter(
-      (_, i) => i !== index,
-    )
-    setResumeData({
-      ...resumeData,
-      interests: updatedInterests,
-    })
+    removeItem('interests', index)
   }
 
   const moveInterest = (index: number, direction: 'up' | 'down') => {
-    const interests = [...(resumeData.interests || [])]
-    const newIndex = direction === 'up' ? index - 1 : index + 1
-
-    if (newIndex >= 0 && newIndex < interests.length) {
-      const [movedInterest] = interests.splice(index, 1)
-      interests.splice(newIndex, 0, movedInterest)
-
-      setResumeData({
-        ...resumeData,
-        interests: interests,
-      })
-    }
+    moveItem('interests', index, direction)
   }
 
   const updateKeywords = (index: number, keywordsString: string) => {
@@ -90,37 +69,13 @@ export default function Interests({ resumeData, setResumeData }: Props) {
                 <h4 className="text-sm font-medium text-muted-foreground">
                   Interest {index + 1}
                 </h4>
-                <div className="flex flex-wrap items-center gap-2">
-                  {/* Move Up Button */}
-                  <Button
-                    onClick={() => moveInterest(index, 'up')}
-                    variant="outline"
-                    size="sm"
-                    className="h-7 px-2 text-xs flex-shrink-0"
-                    disabled={index === 0}
-                  >
-                    ↑
-                  </Button>
-                  {/* Move Down Button */}
-                  <Button
-                    onClick={() => moveInterest(index, 'down')}
-                    variant="outline"
-                    size="sm"
-                    className="h-7 px-2 text-xs flex-shrink-0"
-                    disabled={index === (resumeData.interests?.length || 0) - 1}
-                  >
-                    ↓
-                  </Button>
-                  {/* Remove Button */}
-                  <Button
-                    onClick={() => removeInterest(index)}
-                    variant="outline"
-                    size="sm"
-                    className="h-7 px-2 text-xs flex-shrink-0"
-                  >
-                    Remove
-                  </Button>
-                </div>
+                <ItemActions
+                  index={index}
+                  totalItems={resumeData.interests?.length || 0}
+                  onMoveUp={() => moveInterest(index, 'up')}
+                  onMoveDown={() => moveInterest(index, 'down')}
+                  onRemove={() => removeInterest(index)}
+                />
               </div>
 
               <div className="space-y-3">

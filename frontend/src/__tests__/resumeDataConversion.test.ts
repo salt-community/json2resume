@@ -1,16 +1,16 @@
 import { describe, expect, test } from 'vitest'
 import type { ResumeData } from '@/types'
-import jsonObjFromJsonString from '@/data/jsonObjFromJsonString'
-import { resumeDataFromJsonObj } from '@/data/resumeDataFromJsonObj'
-import { jsonObjFromResumeData } from '@/data/jsonObjFromResumeData'
-import { jsonStringFromJsonObj } from '@/data/jsonStringFromJsonObj'
+import {
+  resumeDataFromJsonObj,
+  jsonObjFromResumeData,
+} from '@/data/resumeDataConverter'
 import { mockedResumeData } from '@/data/resumeDataMock'
 
 describe('Resume Data Conversion Tests', () => {
   describe('JSON String to ResumeData conversion', () => {
     test('should convert valid JSON string to ResumeData', () => {
       const jsonString = JSON.stringify(mockedResumeData)
-      const jsonObj = jsonObjFromJsonString(jsonString)
+      const jsonObj = JSON.parse(jsonString)
       const resumeData = resumeDataFromJsonObj(jsonObj)
 
       expect(resumeData).toBeDefined()
@@ -22,7 +22,7 @@ describe('Resume Data Conversion Tests', () => {
 
     test('should handle empty JSON string', () => {
       const jsonString = '{}'
-      const jsonObj = jsonObjFromJsonString(jsonString)
+      const jsonObj = JSON.parse(jsonString)
       const resumeData = resumeDataFromJsonObj(jsonObj)
 
       expect(resumeData).toBeDefined()
@@ -35,13 +35,13 @@ describe('Resume Data Conversion Tests', () => {
       const malformedJson = '{"basics": {"name": "Test", "invalid": }'
 
       expect(() => {
-        jsonObjFromJsonString(malformedJson)
+        JSON.parse(malformedJson)
       }).toThrow()
     })
 
     test('should handle missing optional fields gracefully', () => {
       const minimalJson = '{"basics": {"name": "Test User"}}'
-      const jsonObj = jsonObjFromJsonString(minimalJson)
+      const jsonObj = JSON.parse(minimalJson)
       const resumeData = resumeDataFromJsonObj(jsonObj)
 
       expect(resumeData.basics?.name).toBe('Test User')
@@ -85,10 +85,10 @@ describe('Resume Data Conversion Tests', () => {
       const originalJsonString = JSON.stringify(mockedResumeData)
 
       // Convert: JSON string → JSON object → ResumeData → JSON object → JSON string
-      const jsonObj1 = jsonObjFromJsonString(originalJsonString)
+      const jsonObj1 = JSON.parse(originalJsonString)
       const resumeData = resumeDataFromJsonObj(jsonObj1)
       const jsonObj2 = jsonObjFromResumeData(resumeData)
-      const finalJsonString = jsonStringFromJsonObj(jsonObj2)
+      const finalJsonString = JSON.stringify(jsonObj2)
 
       // Parse both JSON strings for comparison
       const original = JSON.parse(originalJsonString)
@@ -153,10 +153,10 @@ describe('Resume Data Conversion Tests', () => {
       }
 
       const jsonString = JSON.stringify(complexResumeData)
-      const jsonObj = jsonObjFromJsonString(jsonString)
+      const jsonObj = JSON.parse(jsonString)
       const resumeData = resumeDataFromJsonObj(jsonObj)
       const backToJsonObj = jsonObjFromResumeData(resumeData)
-      const finalJsonString = jsonStringFromJsonObj(backToJsonObj)
+      const finalJsonString = JSON.stringify(backToJsonObj)
 
       const original = JSON.parse(jsonString)
       const final = JSON.parse(finalJsonString)
@@ -194,10 +194,10 @@ describe('Resume Data Conversion Tests', () => {
       }
 
       const jsonString = JSON.stringify(resumeWithArrays)
-      const jsonObj = jsonObjFromJsonString(jsonString)
+      const jsonObj = JSON.parse(jsonString)
       const resumeData = resumeDataFromJsonObj(jsonObj)
       const backToJsonObj = jsonObjFromResumeData(resumeData)
-      const finalJsonString = jsonStringFromJsonObj(backToJsonObj)
+      const finalJsonString = JSON.stringify(backToJsonObj)
 
       const final = JSON.parse(finalJsonString)
 

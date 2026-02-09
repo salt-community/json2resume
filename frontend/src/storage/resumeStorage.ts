@@ -1,7 +1,6 @@
 import type { ResumeData } from '@/types'
 import { getJSON, removeItem, setJSON } from '@/storage/storage.ts'
-import jsonObjFromJsonString from '@/data/jsonObjFromJsonString'
-import { resumeDataFromJsonObj } from '@/data/resumeDataFromJsonObj.ts'
+import { resumeDataFromJsonObj } from '@/data/resumeDataConverter.ts'
 
 /**
  * Namespaced key for persisted resume JSON.
@@ -14,20 +13,25 @@ export const RESUME_STORAGE_KEY = 'app.resumeJson.v1'
  * Returns true if saved successfully, false otherwise.
  */
 export function saveResumeData(jsonString: string): boolean {
-  // setJSON safely stores even string values (it will JSON.stringify the string)
-  return setJSON(RESUME_STORAGE_KEY, jsonString)
+  // Parse the JSON string to an object, then store it
+  // This avoids double-stringification
+  try {
+    const obj = JSON.parse(jsonString)
+    return setJSON(RESUME_STORAGE_KEY, obj)
+  } catch {
+    // If parsing fails, store as string (fallback)
+    return setJSON(RESUME_STORAGE_KEY, jsonString)
+  }
 }
 
 /**
- * Load resume data from localStorage by reading the JSON string,
- * parsing it into an object, and converting it into ResumeData.
+ * Load resume data from localStorage.
  * Returns ResumeData or null if missing/invalid.
  */
 export function loadResumeData(): ResumeData | null {
-  const raw = getJSON<string>(RESUME_STORAGE_KEY)
-  if (!raw) return null
+  const obj = getJSON<any>(RESUME_STORAGE_KEY)
+  if (!obj) return null
   try {
-    const obj = jsonObjFromJsonString(raw)
     return resumeDataFromJsonObj(obj)
   } catch {
     return null
@@ -41,12 +45,11 @@ export function loadResumeData(): ResumeData | null {
 export function loadResumeDataAndConfig():
   | { resumeData: ResumeData; config?: any }
   | null {
-  const raw = getJSON<string>(RESUME_STORAGE_KEY)
-  if (!raw) return null
+  const obj = getJSON<any>(RESUME_STORAGE_KEY)
+  if (!obj) return null
   try {
-    const obj = jsonObjFromJsonString(raw)
     const resumeData = resumeDataFromJsonObj(obj)
-    const config = (obj)?.config
+    const config = obj?.config
     return { resumeData, config }
   } catch {
     return null

@@ -33,7 +33,6 @@ type ThemeSource =
 type Props = {
   resumeData: ResumeData
   setResumeData: (data: ResumeData) => void
-  onThemeChange?: (themeUrl: string) => void
   onThemeChangeV2?: (theme: ThemeSource) => void
   onTranslationComplete?: (data: ResumeData) => void
   currentTheme?: string | ThemeSource
@@ -42,7 +41,6 @@ type Props = {
 function AccordionGroup({
   resumeData,
   setResumeData,
-  onThemeChange,
   onThemeChangeV2,
   onTranslationComplete,
   currentTheme,
@@ -247,7 +245,6 @@ function AccordionGroup({
       title: 'Themes',
       content: (
         <Themes
-          onThemeChange={onThemeChange}
           onThemeChangeV2={onThemeChangeV2}
           currentTheme={currentTheme}
         />
