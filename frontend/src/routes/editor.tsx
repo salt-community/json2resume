@@ -189,13 +189,13 @@ function App() {
           <Tabs defaultValue="form" className="flex-1 flex flex-col min-h-0">
             <TabsList className="w-full bg-surface rounded-lg my-4 ">
               <TabsTrigger
-                className="p-8 font-bold text-2xl text-text-strong "
+                className="px-8 py-4 font-bold text-2xl text-text-strong"
                 value="form"
               >
                 Form
               </TabsTrigger>
               <TabsTrigger
-                className="p-8 font-bold text-2xl text-text-strong"
+                className="px-8 py-4 font-bold text-2xl text-text-strong"
                 value="json"
               >
                 Json
