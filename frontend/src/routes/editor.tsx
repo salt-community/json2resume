@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { useEffect, useState, lazy, Suspense } from 'react'
+import { Suspense, lazy, useEffect, useState } from 'react'
 import type { ResumeData } from '@/types'
 import AccordionGroup from '@/components/AccordionGroup'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -141,7 +141,6 @@ function App() {
     if (!initialData) {
       handleReplaceWithExample()
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []) // Run only once on mount
 
   const screenWidth = useScreenWidth()

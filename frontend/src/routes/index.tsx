@@ -13,8 +13,9 @@ function HomePage() {
             Json2Resume
           </h1>
           <p className="mt-4 text-lg text-text-muted max-w-2xl">
-            Manage all your resume information in one place.
-            Create, edit, and export a professional resume with an intuitive editor and beautiful themes.
+            Manage all your resume information in one place. Create, edit, and
+            export a professional resume with an intuitive editor and beautiful
+            themes.
           </p>
           <div className="mt-8 flex justify-center gap-4">
             <Link
@@ -26,15 +27,9 @@ function HomePage() {
             <Link
               to="/themes-guide"
               className="inline-flex items-center rounded-lg border border-border px-5 py-3 font-medium text-text-strong hover:bg-surface-strong focus:outline-none focus:ring-2 focus:ring-border focus:ring-offset-2 focus:ring-offset-surface transition-colors"
-              >
-              Create Theme
-            </Link>
-            {/*<a
-              href="/templates-guide"
-              className="inline-flex items-center rounded-lg border border-border px-5 py-3 font-medium text-text-strong hover:bg-surface-strong focus:outline-none focus:ring-2 focus:ring-border focus:ring-offset-2 focus:ring-offset-surface transition-colors"
             >
               Create Theme
-            </a>*/}
+            </Link>
           </div>
         </header>
       </div>
