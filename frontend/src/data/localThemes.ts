@@ -85,6 +85,7 @@ export const inlineThemes = {
     .chip {
       display: inline-block;
       background: #444;
+      color: #ffffff;
       padding: 2px 8px;
       border-radius: 999px;
       font-size: 11px;
