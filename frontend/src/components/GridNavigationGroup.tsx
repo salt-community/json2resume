@@ -340,7 +340,10 @@ function GridNavigationGroup({
                   className={cn(
                     'flex items-center justify-between w-full p-3 rounded-md border text-left text-sm font-medium transition-colors',
                     // Base styles (not selected)
-                    'bg-surface border-border hover:bg-surface-strong',
+                    'bg-surface border-border',
+                    // Hover only when not selected (greyish in dark mode)
+                    selectedSectionId !== item.id &&
+                      'hover:bg-surface-strong dark:hover:bg-neutral-700',
                     // Selected styles (matching tabs)
                     selectedSectionId === item.id && [
                       'bg-accent',
@@ -348,6 +351,9 @@ function GridNavigationGroup({
                       'dark:text-foreground',
                       'dark:border-input',
                       'shadow-sm',
+                      // Keep accent color on hover when selected
+                      'hover:bg-accent',
+                      'dark:hover:bg-input/30',
                     ],
                   )}
                 >
