@@ -339,9 +339,16 @@ function GridNavigationGroup({
                   }
                   className={cn(
                     'flex items-center justify-between w-full p-3 rounded-md border text-left text-sm font-medium transition-colors',
+                    // Base styles (not selected)
                     'bg-surface border-border hover:bg-surface-strong',
-                    selectedSectionId === item.id &&
-                      'border-accent bg-surface-strong ring-1 ring-accent',
+                    // Selected styles (matching tabs)
+                    selectedSectionId === item.id && [
+                      'bg-accent',
+                      'dark:bg-input/30',
+                      'dark:text-foreground',
+                      'dark:border-input',
+                      'shadow-sm',
+                    ],
                   )}
                 >
                   <span className="flex-1 truncate">{item.title}</span>
