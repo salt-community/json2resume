@@ -186,79 +186,6 @@ function App() {
     <div className="flex justify-center bg-surface-strong h-screen overflow-hidden">
       <div className=" w-[1920px] text-text-strong grid grid-cols-1 lg:grid-cols-2 gap-8 p-6 md:p-10 h-full overflow-hidden">
         <section className="h-full flex flex-col overflow-hidden bg-surface rounded-xl border border-border shadow-sm p-4">
-          <div className="grid grid-cols-2 pb-4 items-center border-b border-border mb-4">
-            <div className="flex justify-center">
-              <Dialog>
-                <DialogTrigger asChild>
-                  <button className="w-48 py-2.5 cursor-pointer bg-black/[0.03] dark:bg-white/5 backdrop-blur-md border border-black/10 dark:border-white/10 rounded-xl hover:bg-black/[0.08] dark:hover:bg-white/10 hover:text-red-500 transition-all text-sm font-medium shadow-sm">
-                    Clear Data
-                  </button>
-                </DialogTrigger>
-                <DialogContent className="bg-surface border border-border">
-                  <DialogHeader>
-                    <DialogTitle>Are you sure?</DialogTitle>
-                    <DialogDescription>
-                      This will clear all your current resume data. This action
-                      cannot be undone.
-                    </DialogDescription>
-                  </DialogHeader>
-                  <DialogFooter>
-                    <DialogClose asChild>
-                      <button className="px-4 py-2 text-sm font-medium hover:bg-surface-strong rounded-lg">
-                        Cancel
-                      </button>
-                    </DialogClose>
-                    <DialogClose asChild>
-                      <button
-                        className="px-4 py-2 text-sm font-medium bg-red-500 text-white rounded-lg hover:bg-red-600"
-                        onClick={() => setResumeData(defaultResumeData)}
-                      >
-                        Yes
-                      </button>
-                    </DialogClose>
-                  </DialogFooter>
-                </DialogContent>
-              </Dialog>
-            </div>
-            <div className="flex justify-center">
-              <Dialog>
-                <DialogTrigger asChild>
-                  <button className="w-48 py-2.5 cursor-pointer bg-black/[0.03] dark:bg-white/5 backdrop-blur-md border border-black/10 dark:border-white/10 rounded-xl hover:bg-black/[0.08] dark:hover:bg-white/10 hover:text-red-500 transition-all text-sm font-medium shadow-sm">
-                    Replace with Example
-                  </button>
-                </DialogTrigger>
-                <DialogContent className="bg-surface border border-border">
-                  <DialogHeader>
-                    <DialogTitle>Are you sure?</DialogTitle>
-                    <DialogDescription>
-                      <a>
-                        This will replace your current resume data with the
-                        example data.
-                      </a>
-                      <br />
-                      <a>This action cannot be undone.</a>
-                    </DialogDescription>
-                  </DialogHeader>
-                  <DialogFooter>
-                    <DialogClose asChild>
-                      <button className="px-4 py-2 text-sm font-medium hover:bg-surface-strong rounded-lg">
-                        Cancel
-                      </button>
-                    </DialogClose>
-                    <DialogClose asChild>
-                      <button
-                        className="px-4 py-2 text-sm font-medium bg-red-500 text-white rounded-lg hover:bg-red-600"
-                        onClick={handleReplaceWithExample}
-                      >
-                        Yes
-                      </button>
-                    </DialogClose>
-                  </DialogFooter>
-                </DialogContent>
-              </Dialog>
-            </div>
-          </div>
-
           <Tabs defaultValue="form" className="flex-1 flex flex-col min-h-0">
             <TabsList className="w-full bg-surface rounded-lg my-4 ">
               <TabsTrigger
@@ -345,25 +272,95 @@ function App() {
           </Tabs>
         </section>
 
-        <section className="h-full bg-surface-strong rounded-xl border border-border shadow-sm p-4 overflow-auto">
-          <div className="origin-top-left scale-[0.5] md:scale-100 w-[200%] h-[200%] md:w-auto md:h-auto">
-            <Suspense
-              fallback={
-                <div className="p-4 text-center">Loading Template...</div>
-              }
-            >
-              <GistTemplate
-                resumeData={filterByEnabled(resumeData)}
-                gistUrl={
-                  selectedTheme.kind === 'url' ? selectedTheme.url : undefined
+        <section className="h-full flex flex-col overflow-hidden bg-surface-strong rounded-xl border border-border shadow-sm p-4">
+          <div className="flex-shrink-0 grid grid-cols-2 gap-4 pb-4 border-b border-border mb-4 items-center justify-items-center">
+            <Dialog>
+              <DialogTrigger asChild>
+                <button className="w-48 py-2.5 cursor-pointer bg-black/[0.03] dark:bg-white/5 backdrop-blur-md border border-black/10 dark:border-white/10 rounded-xl hover:bg-black/[0.08] dark:hover:bg-white/10 hover:text-red-500 transition-all text-sm font-medium shadow-sm">
+                  Clear Data
+                </button>
+              </DialogTrigger>
+              <DialogContent className="bg-surface border border-border">
+                <DialogHeader>
+                  <DialogTitle>Are you sure?</DialogTitle>
+                  <DialogDescription>
+                    This will clear all your current resume data. This action
+                    cannot be undone.
+                  </DialogDescription>
+                </DialogHeader>
+                <DialogFooter>
+                  <DialogClose asChild>
+                    <button className="px-4 py-2 text-sm font-medium hover:bg-surface-strong rounded-lg">
+                      Cancel
+                    </button>
+                  </DialogClose>
+                  <DialogClose asChild>
+                    <button
+                      className="px-4 py-2 text-sm font-medium bg-red-500 text-white rounded-lg hover:bg-red-600"
+                      onClick={() => setResumeData(defaultResumeData)}
+                    >
+                      Yes
+                    </button>
+                  </DialogClose>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+            <Dialog>
+              <DialogTrigger asChild>
+                <button className="w-48 py-2.5 cursor-pointer bg-black/[0.03] dark:bg-white/5 backdrop-blur-md border border-black/10 dark:border-white/10 rounded-xl hover:bg-black/[0.08] dark:hover:bg-white/10 hover:text-red-500 transition-all text-sm font-medium shadow-sm">
+                  Replace with Example
+                </button>
+              </DialogTrigger>
+              <DialogContent className="bg-surface border border-border">
+                <DialogHeader>
+                  <DialogTitle>Are you sure?</DialogTitle>
+                  <DialogDescription>
+                    <a>
+                      This will replace your current resume data with the
+                      example data.
+                    </a>
+                    <br />
+                    <a>This action cannot be undone.</a>
+                  </DialogDescription>
+                </DialogHeader>
+                <DialogFooter>
+                  <DialogClose asChild>
+                    <button className="px-4 py-2 text-sm font-medium hover:bg-surface-strong rounded-lg">
+                      Cancel
+                    </button>
+                  </DialogClose>
+                  <DialogClose asChild>
+                    <button
+                      className="px-4 py-2 text-sm font-medium bg-red-500 text-white rounded-lg hover:bg-red-600"
+                      onClick={handleReplaceWithExample}
+                    >
+                      Yes
+                    </button>
+                  </DialogClose>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          </div>
+          <div className="flex-1 min-h-0 overflow-auto">
+            <div className="origin-top-left scale-[0.5] md:scale-100 w-[200%] h-[200%] md:w-auto md:h-auto">
+              <Suspense
+                fallback={
+                  <div className="p-4 text-center">Loading Template...</div>
                 }
-                inlineHtml={
-                  selectedTheme.kind === 'inline'
-                    ? selectedTheme.html
-                    : undefined
-                }
-              />
-            </Suspense>
+              >
+                <GistTemplate
+                  resumeData={filterByEnabled(resumeData)}
+                  gistUrl={
+                    selectedTheme.kind === 'url' ? selectedTheme.url : undefined
+                  }
+                  inlineHtml={
+                    selectedTheme.kind === 'inline'
+                      ? selectedTheme.html
+                      : undefined
+                  }
+                />
+              </Suspense>
+            </div>
           </div>
         </section>
       </div>
