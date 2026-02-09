@@ -387,5 +387,9 @@ function filterByEnabled(data: ResumeData): ResumeData {
     languages: (data.languages ?? []).filter((l) => l.enabled !== false),
     interests: (data.interests ?? []).filter((i) => i.enabled !== false),
     references: (data.references ?? []).filter((r) => r.enabled !== false),
+    meta: {
+      social:
+        data.meta?.social?.enabled === false ? undefined : data.meta?.social,
+    },
   }
 }
