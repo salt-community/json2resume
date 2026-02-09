@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { Link, createFileRoute } from '@tanstack/react-router'
 import { Suspense, lazy, useEffect, useState } from 'react'
 import type { ResumeData } from '@/types'
 import AccordionGroup from '@/components/AccordionGroup'
@@ -171,12 +171,12 @@ function App() {
             Please use a desktop browser to use Json2Resume. The editor requires
             a larger screen for the best experience.
           </p>
-          <a
-            href="/"
+          <Link
+            to="/"
             className="inline-block px-6 py-3 bg-black/[0.03] dark:bg-white/5 backdrop-blur-md border border-black/10 dark:border-white/10 rounded-xl hover:bg-black/[0.08] dark:hover:bg-white/10 transition-all text-sm font-medium shadow-sm text-text-strong"
           >
             Return to Homepage
-          </a>
+          </Link>
         </div>
       </div>
     )

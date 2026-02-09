@@ -25,6 +25,14 @@ function RouteComponent() {
   return (
     <div className="min-h-screen bg-surface text-text-strong">
       <div className="mx-auto w-full max-w-3xl p-4 md:p-6">
+        <div className="mb-6">
+          <Link
+            to="/"
+            className="inline-block px-6 py-3 bg-black/[0.03] dark:bg-white/5 backdrop-blur-md border border-black/10 dark:border-white/10 rounded-xl hover:bg-black/[0.08] dark:hover:bg-white/10 transition-all text-sm font-medium shadow-sm text-text-strong"
+          >
+            Return to Homepage
+          </Link>
+        </div>
         <header className="py-12 md:py-12 text-center">
           <h1 className="text-4xl md:text-5xl font-bold tracking-tight">
             Themes Guide
