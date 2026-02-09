@@ -1,7 +1,7 @@
 import { Link, createFileRoute } from '@tanstack/react-router'
 import { Suspense, lazy, useEffect, useState } from 'react'
 import type { ResumeData } from '@/types'
-import AccordionGroup from '@/components/AccordionGroup'
+import GridNavigationGroup from '@/components/GridNavigationGroup'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { defaultResumeData } from '@/data/defaultResumeData.ts'
 import {
@@ -185,7 +185,7 @@ function App() {
   return (
     <div className="flex justify-center bg-surface-strong h-screen overflow-hidden">
       <div className=" w-[1920px] text-text-strong grid grid-cols-1 lg:grid-cols-2 gap-8 p-6 md:p-10 h-full overflow-hidden">
-        <section className="h-full overflow-auto bg-surface rounded-xl border border-border shadow-sm p-4">
+        <section className="h-full flex flex-col overflow-hidden bg-surface rounded-xl border border-border shadow-sm p-4">
           <div className="grid grid-cols-2 pb-4 items-center border-b border-border mb-4">
             <div className="flex justify-center">
               <Dialog>
@@ -259,7 +259,7 @@ function App() {
             </div>
           </div>
 
-          <Tabs defaultValue="form">
+          <Tabs defaultValue="form" className="flex-1 flex flex-col min-h-0">
             <TabsList className="w-full bg-surface rounded-lg my-4 ">
               <TabsTrigger
                 className="p-8 font-bold text-2xl text-text-strong "
@@ -274,8 +274,8 @@ function App() {
                 Json
               </TabsTrigger>
             </TabsList>
-            <TabsContent value="form">
-              <AccordionGroup
+            <TabsContent value="form" className="flex flex-col h-full min-h-0 mt-0">
+              <GridNavigationGroup
                 resumeData={resumeData}
                 setResumeData={setResumeData}
                 onThemeChangeV2={handleThemeChangeV2}

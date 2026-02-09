@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import Basic from './accordionComponents/dataSections/Basic'
 import Volunteering from './accordionComponents/dataSections/Volunteering'
 import Awards from './accordionComponents/dataSections/Awards'
@@ -17,13 +18,8 @@ import Education from './accordionComponents/dataSections/Education'
 import Work from './accordionComponents/dataSections/Work'
 import type { ResumeData } from '@/types'
 import DataImporter from '@/components/DataImport/DataImporter'
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from '@/components/ui/accordion'
 import { Checkbox } from '@/components/ui/checkbox'
+import { cn } from '@/lib/utils'
 
 // Theme selection can be a URL or inline HTML
 type ThemeSource =
@@ -38,14 +34,24 @@ type Props = {
   currentTheme?: string | ThemeSource
 }
 
-function AccordionGroup({
+type SectionItem = {
+  id: string
+  title: string
+  content: React.ReactNode
+  checkbox: boolean
+}
+
+function GridNavigationGroup({
   resumeData,
   setResumeData,
   onThemeChangeV2,
   onTranslationComplete,
   currentTheme,
 }: Props) {
-  // Centralized saving is handled in the editor via derived JSON effect
+  const [selectedSectionId, setSelectedSectionId] = useState<string | null>(
+    null,
+  )
+
   const setResumeDataAndSave = (data: ResumeData) => {
     setResumeData(data)
   }
@@ -70,7 +76,8 @@ function AccordionGroup({
     const key = sectionKeyMap[title]
     if (!key && title !== 'Social') return false
     if (key === 'basics') return (resumeData.basics?.enabled ?? true) !== false
-    if (title === 'Social') return (resumeData.meta?.social?.enabled ?? true) !== false
+    if (title === 'Social')
+      return (resumeData.meta?.social?.enabled ?? true) !== false
     const arr = (resumeData as any)[key!] as
       | Array<{ enabled?: boolean }>
       | undefined
@@ -94,9 +101,9 @@ function AccordionGroup({
           ...resumeData.meta,
           social: {
             enabled,
-            website: resumeData.meta?.social?.website
-          }
-        }
+            website: resumeData.meta?.social?.website,
+          },
+        },
       })
       return
     }
@@ -106,17 +113,16 @@ function AccordionGroup({
       [key as string]: arr.map((x) => ({ ...x, enabled })),
     })
   }
-  const items: Array<{
-    title: string
-    content: React.ReactNode
-    checkbox: boolean
-  }> = [
+
+  const allItems: SectionItem[] = [
     {
+      id: 'data-import',
       title: 'Data Import',
       content: <DataImporter onDataImported={setResumeDataAndSave} />,
       checkbox: false,
     },
     {
+      id: 'section-headers',
       title: 'Section Headers',
       content: (
         <SectionHeadersComponent
@@ -127,6 +133,7 @@ function AccordionGroup({
       checkbox: false,
     },
     {
+      id: 'basics',
       title: 'Basics',
       content: (
         <Basic resumeData={resumeData} setResumeData={setResumeDataAndSave} />
@@ -134,13 +141,15 @@ function AccordionGroup({
       checkbox: true,
     },
     {
+      id: 'social',
       title: 'Social',
-        content: (
-          <Social resumeData={resumeData} setResumeData={setResumeDataAndSave} />
-        ),
-        checkbox: true,
-      },
-      {
+      content: (
+        <Social resumeData={resumeData} setResumeData={setResumeDataAndSave} />
+      ),
+      checkbox: true,
+    },
+    {
+      id: 'work',
       title: 'Work Experience',
       content: (
         <Work resumeData={resumeData} setResumeData={setResumeDataAndSave} />
@@ -148,6 +157,7 @@ function AccordionGroup({
       checkbox: true,
     },
     {
+      id: 'education',
       title: 'Education',
       content: (
         <Education
@@ -158,6 +168,7 @@ function AccordionGroup({
       checkbox: true,
     },
     {
+      id: 'projects',
       title: 'Projects',
       content: (
         <Projects
@@ -168,6 +179,7 @@ function AccordionGroup({
       checkbox: true,
     },
     {
+      id: 'skills',
       title: 'Skills',
       content: (
         <Skills resumeData={resumeData} setResumeData={setResumeDataAndSave} />
@@ -175,6 +187,7 @@ function AccordionGroup({
       checkbox: true,
     },
     {
+      id: 'certifications',
       title: 'Certifications',
       content: (
         <Certifications
@@ -185,6 +198,7 @@ function AccordionGroup({
       checkbox: true,
     },
     {
+      id: 'awards',
       title: 'Awards',
       content: (
         <Awards resumeData={resumeData} setResumeData={setResumeDataAndSave} />
@@ -192,6 +206,7 @@ function AccordionGroup({
       checkbox: true,
     },
     {
+      id: 'publications',
       title: 'Publications',
       content: (
         <Publications
@@ -202,6 +217,7 @@ function AccordionGroup({
       checkbox: true,
     },
     {
+      id: 'volunteering',
       title: 'Volunteering',
       content: (
         <Volunteering
@@ -212,6 +228,7 @@ function AccordionGroup({
       checkbox: true,
     },
     {
+      id: 'languages',
       title: 'Languages',
       content: (
         <Languages
@@ -222,6 +239,7 @@ function AccordionGroup({
       checkbox: true,
     },
     {
+      id: 'interests',
       title: 'Interests',
       content: (
         <Interests
@@ -232,6 +250,7 @@ function AccordionGroup({
       checkbox: true,
     },
     {
+      id: 'references',
       title: 'References',
       content: (
         <References
@@ -242,6 +261,7 @@ function AccordionGroup({
       checkbox: true,
     },
     {
+      id: 'themes',
       title: 'Themes',
       content: (
         <Themes
@@ -251,8 +271,8 @@ function AccordionGroup({
       ),
       checkbox: false,
     },
-
     {
+      id: 'translation',
       title: 'Translation',
       content: onTranslationComplete ? (
         <ResumeTranslator
@@ -267,39 +287,91 @@ function AccordionGroup({
       checkbox: false,
     },
     {
+      id: 'export',
       title: 'Export',
       content: <Export resumeData={resumeData} />,
       checkbox: false,
     },
   ]
 
+  const categories: { title: string; items: SectionItem[] }[] = [
+    {
+      title: 'Setup',
+      items: allItems.slice(0, 2),
+    },
+    {
+      title: 'Data Sections',
+      items: allItems.slice(2, 15),
+    },
+    {
+      title: 'Actions',
+      items: allItems.slice(15),
+    },
+  ]
+
+  const selectedItem = selectedSectionId
+    ? allItems.find((i) => i.id === selectedSectionId)
+    : null
+
   return (
-    <Accordion type="single" collapsible className="space-y-2">
-      {items.map((item, index) => (
-        <>
-          <AccordionItem
-            className={index === 13 ? 'mb-16' : index === 1 ? 'mb-16' : ''}
-            value={`item-${index}`}
-          >
-            <AccordionTrigger className="flex items-center w-full">
-              <span className="flex-1 text-left">{item.title}</span>
-              {item.checkbox && (
-                <Checkbox
-                  className=" ml-4 flex-shrink-0 order-last"
-                  checked={isSectionChecked(item.title)}
-                  onCheckedChange={(val) =>
-                    setSectionEnabled(item.title, Boolean(val))
-                  }
-                  onClick={(e) => e.stopPropagation()}
-                />
+    <div className="flex flex-col h-full min-h-0">
+      {/* Grid of cards */}
+      <div className="flex-shrink-0">
+        {categories.map((category, catIndex) => (
+          <div key={category.title}>
+            <h3
+              className={cn(
+                'text-xs text-muted-foreground font-medium mb-2',
+                catIndex === 0 ? 'mt-0' : 'mt-4',
               )}
-            </AccordionTrigger>
-            <AccordionContent>{item.content}</AccordionContent>
-          </AccordionItem>
-        </>
-      ))}
-    </Accordion>
+            >
+              {category.title}
+            </h3>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+              {category.items.map((item) => (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() =>
+                    setSelectedSectionId(
+                      selectedSectionId === item.id ? null : item.id,
+                    )
+                  }
+                  className={cn(
+                    'flex items-center justify-between w-full p-3 rounded-md border text-left text-sm font-medium transition-colors',
+                    'bg-surface border-border hover:bg-surface-strong',
+                    selectedSectionId === item.id &&
+                      'border-accent bg-surface-strong ring-1 ring-accent',
+                  )}
+                >
+                  <span className="flex-1 truncate">{item.title}</span>
+                  {item.checkbox && (
+                    <Checkbox
+                      className="ml-2 flex-shrink-0"
+                      checked={isSectionChecked(item.title)}
+                      onCheckedChange={(val) =>
+                        setSectionEnabled(item.title, Boolean(val))
+                      }
+                      onClick={(e) => e.stopPropagation()}
+                    />
+                  )}
+                </button>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Content panel - takes remaining space */}
+      <div className="flex-1 min-h-0 flex flex-col border-t border-border mt-4">
+        {selectedItem ? (
+          <div className="flex-1 min-h-0 overflow-y-auto p-4 transition-opacity">
+            {selectedItem.content}
+          </div>
+        ) : null}
+      </div>
+    </div>
   )
 }
 
-export default AccordionGroup
+export default GridNavigationGroup
