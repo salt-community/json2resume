@@ -296,16 +296,12 @@ function GridNavigationGroup({
 
   const categories: { title: string; items: SectionItem[] }[] = [
     {
-      title: 'Setup',
-      items: allItems.slice(0, 2),
+      title: 'Setup and actions',
+      items: [...allItems.slice(0, 2), ...allItems.slice(15)],
     },
     {
       title: 'Data Sections',
       items: allItems.slice(2, 15),
-    },
-    {
-      title: 'Actions',
-      items: allItems.slice(15),
     },
   ]
 
@@ -327,7 +323,14 @@ function GridNavigationGroup({
             >
               {category.title}
             </h3>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+            <div
+              className={cn(
+                'grid gap-3',
+                catIndex === 0
+                  ? 'grid-cols-5'
+                  : 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5',
+              )}
+            >
               {category.items.map((item) => (
                 <button
                   key={item.id}
