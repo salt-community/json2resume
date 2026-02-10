@@ -334,7 +334,7 @@ function GridNavigationGroup({
               type="button"
               onClick={() => toggleCategory(category.title)}
               className={cn(
-                'flex items-center justify-between w-full mb-1.5 hover:opacity-80 transition-opacity',
+                'flex items-center gap-1.5 mb-1.5 hover:opacity-80 transition-opacity',
                 catIndex === 0 ? 'mt-0' : 'mt-2',
               )}
             >
