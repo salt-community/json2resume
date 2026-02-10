@@ -42,8 +42,11 @@ export function parseGistUrl(url: string): GistInfo | null {
         let filename: string | undefined
         if (urlObj.hash && urlObj.hash.startsWith('#file-')) {
           filename = urlObj.hash.substring(6) // Remove '#file-' prefix
-          // Replace dashes with dots for actual filename
-          filename = filename.replace(/-/g, '.')
+          // Only replace dashes with dots if filename doesn't contain a dot (likely no extension)
+          // This handles both cases: files with extensions (keep dashes) and files without (replace dashes)
+          if (!filename.includes('.')) {
+            filename = filename.replace(/-/g, '.')
+          }
         }
 
         return { username, gistId, filename }
@@ -158,6 +161,37 @@ export async function fetchGistContent(
 
     // Fetch the raw content
     const response = await fetch(rawUrl)
+
+    // If fetch failed and we have a parsed filename (might be wrong), try fetching file list
+    if (!response.ok && targetFilename && gistInfo.filename) {
+      const files = await fetchGistFiles(gistInfo)
+      
+      if (files.length > 0) {
+        // Try to find a file that matches the base name (without extension)
+        const baseName = targetFilename.split('.')[0].replace(/\./g, '-')
+        const matchingFile = files.find(
+          (file) =>
+            file === targetFilename ||
+            file.startsWith(baseName) ||
+            file.replace(/\./g, '-').startsWith(baseName.replace(/\./g, '-'))
+        )
+        
+        if (matchingFile) {
+          // Retry with the correct filename
+          const correctedUrl = buildRawGistUrl(gistInfo, matchingFile)
+          const retryResponse = await fetch(correctedUrl)
+          
+          if (retryResponse.ok) {
+            const content = await retryResponse.text()
+            return {
+              success: true,
+              content,
+              url: correctedUrl,
+            }
+          }
+        }
+      }
+    }
 
     if (!response.ok) {
       return {
