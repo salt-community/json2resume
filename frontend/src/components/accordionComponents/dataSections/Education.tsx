@@ -1,4 +1,8 @@
-import type { Education as EducationType, ResumeData, DateConfig } from '@/types'
+import type {
+  DateConfig,
+  Education as EducationType,
+  ResumeData,
+} from '@/types'
 import { DateConfigSection } from '@/components/ui/DateConfigSection'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -28,10 +32,7 @@ function Education({ resumeData, setResumeData }: Props) {
     locale: 'en',
   }
 
-  const handleConfigChange = (
-    key: keyof DateConfig,
-    value: string,
-  ) => {
+  const handleConfigChange = (key: keyof DateConfig, value: string) => {
     updateMeta({
       educationDateConfig: {
         ...dateConfig,

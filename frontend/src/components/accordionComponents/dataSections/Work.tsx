@@ -1,4 +1,4 @@
-import type { ResumeData, Work as WorkType, DateConfig } from '@/types'
+import type { DateConfig, ResumeData, Work as WorkType } from '@/types'
 import { DateConfigSection } from '@/components/ui/DateConfigSection'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -28,10 +28,7 @@ function Work({ resumeData, setResumeData }: Props) {
     locale: 'en',
   }
 
-  const handleConfigChange = (
-    key: keyof DateConfig,
-    value: string,
-  ) => {
+  const handleConfigChange = (key: keyof DateConfig, value: string) => {
     updateMeta({
       workDateConfig: {
         ...dateConfig,
@@ -287,10 +284,6 @@ function Work({ resumeData, setResumeData }: Props) {
               </div>
             </div>
           ))}
-
-          <Button onClick={addWork} size="sm" className="flex-shrink-0">
-            Add Work Experience
-          </Button>
         </div>
       ) : (
         <div className="text-center py-8 text-muted-foreground">
@@ -298,6 +291,11 @@ function Work({ resumeData, setResumeData }: Props) {
           <p className="text-sm">Click "Add Work Experience" to get started.</p>
         </div>
       )}
+      <div className="flex flex-row-reverse">
+        <Button onClick={addWork} size="sm" className="flex-shrink-0">
+          Add Work Experience
+        </Button>
+      </div>
     </div>
   )
 }
