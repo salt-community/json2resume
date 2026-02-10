@@ -1,10 +1,11 @@
-import type { Publication, ResumeData } from '@/types'
+import type { Publication, ResumeData, DateConfig } from '@/types'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
 import { createResumeDataSetter } from '@/utils/resumeDataUtils'
 import { ItemActions } from '@/components/ui/item-actions'
+import { DateConfigSection } from '@/components/ui/DateConfigSection'
 
 type Props = {
   resumeData: ResumeData
@@ -12,10 +13,25 @@ type Props = {
 }
 
 function Publications({ resumeData, setResumeData }: Props) {
-  const { addItem, updateItem, removeItem, moveItem } = createResumeDataSetter(
-    () => resumeData,
-    setResumeData,
-  )
+  const { addItem, updateItem, removeItem, moveItem, updateMeta } =
+    createResumeDataSetter(() => resumeData, setResumeData)
+
+  const dateConfig = resumeData.meta?.publicationsDateConfig || {
+    format: 'YM',
+    locale: 'en',
+  }
+
+  const handleConfigChange = (
+    key: keyof DateConfig,
+    value: string,
+  ) => {
+    updateMeta({
+      publicationsDateConfig: {
+        ...dateConfig,
+        [key]: value,
+      },
+    })
+  }
 
   const addPublication = () => {
     const newPublication: Publication = {
@@ -53,6 +69,13 @@ function Publications({ resumeData, setResumeData }: Props) {
           Add Publication
         </Button>
       </div>
+
+      {/* Date Configuration Settings */}
+      <DateConfigSection
+        config={dateConfig}
+        onConfigChange={handleConfigChange}
+        sectionIdPrefix="publications"
+      />
 
       {resumeData.publications && resumeData.publications.length > 0 ? (
         <div className="space-y-6">

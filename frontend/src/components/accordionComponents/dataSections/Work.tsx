@@ -1,4 +1,5 @@
-import type { ResumeData, Work as WorkType } from '@/types'
+import type { ResumeData, Work as WorkType, DateConfig } from '@/types'
+import { DateConfigSection } from '@/components/ui/DateConfigSection'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
@@ -19,7 +20,25 @@ function Work({ resumeData, setResumeData }: Props) {
     addSubItem,
     updateSubItem,
     removeSubItem,
+    updateMeta,
   } = createResumeDataSetter(() => resumeData, setResumeData)
+
+  const dateConfig = resumeData.meta?.workDateConfig || {
+    format: 'YMD',
+    locale: 'en',
+  }
+
+  const handleConfigChange = (
+    key: keyof DateConfig,
+    value: string,
+  ) => {
+    updateMeta({
+      workDateConfig: {
+        ...dateConfig,
+        [key]: value,
+      },
+    })
+  }
 
   const addWork = () => {
     const newWork: WorkType = {
@@ -72,6 +91,13 @@ function Work({ resumeData, setResumeData }: Props) {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <h3 className="text-lg font-medium">Work Experience</h3>
       </div>
+
+      {/* Date Configuration Settings */}
+      <DateConfigSection
+        config={dateConfig}
+        onConfigChange={handleConfigChange}
+        sectionIdPrefix="work"
+      />
 
       {resumeData.work && resumeData.work.length > 0 ? (
         <div className="space-y-3">
