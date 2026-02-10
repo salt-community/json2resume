@@ -201,7 +201,10 @@ function App() {
                 Json
               </TabsTrigger>
             </TabsList>
-            <TabsContent value="form" className="flex flex-col h-full min-h-0 mt-0">
+            <TabsContent
+              value="form"
+              className="flex flex-col h-full min-h-0 mt-0"
+            >
               <GridNavigationGroup
                 resumeData={resumeData}
                 setResumeData={setResumeData}
@@ -386,6 +389,21 @@ function filterByEnabled(data: ResumeData): ResumeData {
     meta: {
       social:
         data.meta?.social?.enabled === false ? undefined : data.meta?.social,
+      sectionHeaders: {
+        work: data.meta?.sectionHeaders?.work ?? 'Work Experience',
+        volunteer:
+          data.meta?.sectionHeaders?.volunteer ?? 'Volunteer Experience',
+        education: data.meta?.sectionHeaders?.education ?? 'Education',
+        awards: data.meta?.sectionHeaders?.awards ?? 'Awards',
+        certificates: data.meta?.sectionHeaders?.certificates ?? 'Certificates',
+        publications: data.meta?.sectionHeaders?.publications ?? 'Publications',
+        skills: data.meta?.sectionHeaders?.skills ?? 'Skills',
+        languages: data.meta?.sectionHeaders?.languages ?? 'Languages',
+        interests: data.meta?.sectionHeaders?.interests ?? 'Interests',
+        references: data.meta?.sectionHeaders?.references ?? 'References',
+        projects: data.meta?.sectionHeaders?.projects ?? 'Projects',
+        social: data.meta?.sectionHeaders?.social ?? 'Social',
+      },
     },
   }
 }
