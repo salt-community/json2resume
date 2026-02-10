@@ -142,12 +142,9 @@ export interface Project {
   enabled: boolean
 }
 
-export interface Meta {
-  canonical?: string
-  version?: string
-  lastModified?: string
-  sectionHeaders?: SectionHeaders
-  social?: SocialMeta
+export interface DateConfig {
+  format: 'YMD' | 'YM' | 'Y' | 'YTextM'
+  locale: 'se' | 'en'
 }
 
 export interface SocialMeta {
@@ -156,6 +153,16 @@ export interface SocialMeta {
     network?: string
     username?: string
   }
+}
+
+export interface Meta {
+  canonical?: string
+  version?: string
+  lastModified?: string
+  sectionHeaders?: SectionHeaders
+  social?: SocialMeta
+  educationDateConfig?: DateConfig
+  workDateConfig?: DateConfig
 }
 
 export interface SectionHeaders {

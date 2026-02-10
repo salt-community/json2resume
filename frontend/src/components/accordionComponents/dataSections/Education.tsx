@@ -1,4 +1,5 @@
-import type { Education as EducationType, ResumeData } from '@/types'
+import type { Education as EducationType, ResumeData, DateConfig } from '@/types'
+import { DateConfigSection } from '@/components/ui/DateConfigSection'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
@@ -19,7 +20,25 @@ function Education({ resumeData, setResumeData }: Props) {
     addSubItem,
     updateSubItem,
     removeSubItem,
+    updateMeta,
   } = createResumeDataSetter(() => resumeData, setResumeData)
+
+  const dateConfig = resumeData.meta?.educationDateConfig || {
+    format: 'YM',
+    locale: 'en',
+  }
+
+  const handleConfigChange = (
+    key: keyof DateConfig,
+    value: string,
+  ) => {
+    updateMeta({
+      educationDateConfig: {
+        ...dateConfig,
+        [key]: value,
+      },
+    })
+  }
 
   const addEducation = () => {
     const newEducation: EducationType = {
@@ -76,6 +95,13 @@ function Education({ resumeData, setResumeData }: Props) {
           Add Education
         </Button>
       </div>
+
+      {/* Date Configuration Settings */}
+      <DateConfigSection
+        config={dateConfig}
+        onConfigChange={handleConfigChange}
+        sectionIdPrefix="education"
+      />
 
       {resumeData.education && resumeData.education.length > 0 ? (
         <div className="space-y-6">
@@ -157,7 +183,7 @@ function Education({ resumeData, setResumeData }: Props) {
                   <Label htmlFor={`education-start-${index}`}>Start Date</Label>
                   <Input
                     id={`education-start-${index}`}
-                    type="month"
+                    type="date"
                     value={education.startDate || ''}
                     onChange={(e) =>
                       updateEducation(index, 'startDate', e.target.value)
@@ -170,7 +196,7 @@ function Education({ resumeData, setResumeData }: Props) {
                   <Label htmlFor={`education-end-${index}`}>End Date</Label>
                   <Input
                     id={`education-end-${index}`}
-                    type="month"
+                    type="date"
                     placeholder="Leave empty if ongoing"
                     value={education.endDate || ''}
                     onChange={(e) =>

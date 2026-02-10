@@ -1,4 +1,5 @@
 import { Link, createFileRoute } from '@tanstack/react-router'
+import { formatResumeData } from '@/utils/dateFormatter'
 import { Suspense, lazy, useEffect, useState } from 'react'
 import type { ResumeData } from '@/types'
 import GridNavigationGroup from '@/components/GridNavigationGroup'
@@ -349,7 +350,7 @@ function App() {
                 }
               >
                 <GistTemplate
-                  resumeData={filterByEnabled(resumeData)}
+                  resumeData={formatResumeData(filterByEnabled(resumeData))}
                   gistUrl={
                     selectedTheme.kind === 'url' ? selectedTheme.url : undefined
                   }
@@ -384,6 +385,7 @@ function filterByEnabled(data: ResumeData): ResumeData {
     interests: (data.interests ?? []).filter((i) => i.enabled !== false),
     references: (data.references ?? []).filter((r) => r.enabled !== false),
     meta: {
+      ...data.meta,
       social:
         data.meta?.social?.enabled === false ? undefined : data.meta?.social,
     },
