@@ -12,6 +12,7 @@ type Props = {
 
 const defaultHeaders: SectionHeaders = {
   work: 'Work Experience',
+  social: 'Social',
   volunteer: 'Volunteer Experience',
   education: 'Education',
   awards: 'Awards',
