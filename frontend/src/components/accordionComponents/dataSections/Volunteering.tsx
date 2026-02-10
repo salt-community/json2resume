@@ -1,10 +1,11 @@
-import type { ResumeData, Volunteer } from '@/types'
+import type { ResumeData, Volunteer, DateConfig } from '@/types'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
 import { createResumeDataSetter } from '@/utils/resumeDataUtils'
 import { ItemActions } from '@/components/ui/item-actions'
+import { DateConfigSection } from '@/components/ui/DateConfigSection'
 
 type Props = {
   resumeData: ResumeData
@@ -20,7 +21,25 @@ function Volunteering({ resumeData, setResumeData }: Props) {
     addSubItem,
     updateSubItem,
     removeSubItem,
+    updateMeta
   } = createResumeDataSetter(() => resumeData, setResumeData)
+
+  const dateConfig = resumeData.meta?.volunteerDateConfig || {
+    format: 'YM',
+    locale: 'en',
+  }
+
+  const handleConfigChange = (
+    key: keyof DateConfig,
+    value: string,
+  ) => {
+    updateMeta({
+      volunteerDateConfig: {
+        ...dateConfig,
+        [key]: value,
+      },
+    })
+  }
 
   const addVolunteer = () => {
     const newVolunteer: Volunteer = {
@@ -76,6 +95,13 @@ function Volunteering({ resumeData, setResumeData }: Props) {
           Add Volunteer Experience
         </Button>
       </div>
+
+      {/* Date Configuration Settings */}
+      <DateConfigSection
+        config={dateConfig}
+        onConfigChange={handleConfigChange}
+        sectionIdPrefix="volunteer"
+      />
 
       {resumeData.volunteer && resumeData.volunteer.length > 0 ? (
         <div className="space-y-6">
@@ -144,7 +170,7 @@ function Volunteering({ resumeData, setResumeData }: Props) {
                   <Label htmlFor={`volunteer-start-${index}`}>Start Date</Label>
                   <Input
                     id={`volunteer-start-${index}`}
-                    type="month"
+                    type="date"
                     value={volunteer.startDate || ''}
                     onChange={(e) =>
                       updateVolunteer(index, 'startDate', e.target.value)
@@ -157,7 +183,7 @@ function Volunteering({ resumeData, setResumeData }: Props) {
                   <Label htmlFor={`volunteer-end-${index}`}>End Date</Label>
                   <Input
                     id={`volunteer-end-${index}`}
-                    type="month"
+                    type="date"
                     placeholder="Leave empty if ongoing"
                     value={volunteer.endDate || ''}
                     onChange={(e) =>

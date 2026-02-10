@@ -163,6 +163,11 @@ export interface Meta {
   social?: SocialMeta
   educationDateConfig?: DateConfig
   workDateConfig?: DateConfig
+  projectDateConfig?: DateConfig
+  volunteerDateConfig?: DateConfig
+  awardsDateConfig?: DateConfig
+  certificatesDateConfig?: DateConfig
+  publicationsDateConfig?: DateConfig
 }
 
 export interface SectionHeaders {

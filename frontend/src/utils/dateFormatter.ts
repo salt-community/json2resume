@@ -111,5 +111,66 @@ export const formatResumeData = (data: ResumeData): ResumeData => {
         }))
     }
 
+    // Format Projects
+    if (newData.projects) {
+        const projectConfig = newData.meta?.projectDateConfig || DEFAULT_CONFIG
+        newData.projects = newData.projects.map((project) => ({
+            ...project,
+            startDate: project.startDate
+                ? formatDate(project.startDate, projectConfig)
+                : project.startDate,
+            endDate: project.endDate
+                ? formatDate(project.endDate, projectConfig)
+                : project.endDate,
+        }))
+    }
+
+    // Format Volunteer
+    if (newData.volunteer) {
+        const volunteerConfig = newData.meta?.volunteerDateConfig || DEFAULT_CONFIG
+        newData.volunteer = newData.volunteer.map((vol) => ({
+            ...vol,
+            startDate: vol.startDate
+                ? formatDate(vol.startDate, volunteerConfig)
+                : vol.startDate,
+            endDate: vol.endDate
+                ? formatDate(vol.endDate, volunteerConfig)
+                : vol.endDate,
+        }))
+    }
+
+    // Format Awards
+    if (newData.awards) {
+        const awardsConfig = newData.meta?.awardsDateConfig || DEFAULT_CONFIG
+        newData.awards = newData.awards.map((award) => ({
+            ...award,
+            date: award.date ? formatDate(award.date, awardsConfig) : award.date,
+        }))
+    }
+
+    // Format Certificates
+    if (newData.certificates) {
+        const certificatesConfig =
+            newData.meta?.certificatesDateConfig || DEFAULT_CONFIG
+        newData.certificates = newData.certificates.map((cert) => ({
+            ...cert,
+            date: cert.date
+                ? formatDate(cert.date, certificatesConfig)
+                : cert.date,
+        }))
+    }
+
+    // Format Publications
+    if (newData.publications) {
+        const publicationsConfig =
+            newData.meta?.publicationsDateConfig || DEFAULT_CONFIG
+        newData.publications = newData.publications.map((pub) => ({
+            ...pub,
+            releaseDate: pub.releaseDate
+                ? formatDate(pub.releaseDate, publicationsConfig)
+                : pub.releaseDate,
+        }))
+    }
+
     return newData
 }
