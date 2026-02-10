@@ -12,7 +12,7 @@ type Props = {
 }
 
 function Skills({ resumeData, setResumeData }: Props) {
-  const [keywordInputs, setKeywordInputs] = useState<Record<number, string>>({})
+  const [keywordInputs, setKeywordInputs] = useState<Record<string, string>>({})
   const { addItem, updateItem, removeItem, moveItem } = createResumeDataSetter(
     () => resumeData,
     setResumeData,
@@ -20,6 +20,7 @@ function Skills({ resumeData, setResumeData }: Props) {
 
   const addSkill = () => {
     const newSkill: Skill = {
+      id: crypto.randomUUID(),
       name: '',
       level: '',
       keywords: [],
@@ -44,19 +45,25 @@ function Skills({ resumeData, setResumeData }: Props) {
     moveItem('skills', index, direction)
   }
 
-  const updateKeywordInput = (skillIndex: number, value: string) => {
+  const updateKeywordInput = (skillId: string, value: string) => {
     setKeywordInputs((prev) => ({
       ...prev,
-      [skillIndex]: value,
+      [skillId]: value,
     }))
   }
 
-  const processKeywords = (skillIndex: number, value: string) => {
+  const processKeywords = (skillId: string, value: string) => {
     const keywords = value
       .split(',')
       .map((k) => k.trim())
       .filter((k) => k.length > 0)
-    updateSkill(skillIndex, 'keywords', keywords)
+
+    const skillIndex = (resumeData.skills || []).findIndex(
+      (s) => s.id === skillId,
+    )
+    if (skillIndex !== -1) {
+      updateSkill(skillIndex, 'keywords', keywords)
+    }
   }
 
   const getKeywordsString = (keywords: Array<string> | undefined) => {
@@ -75,7 +82,7 @@ function Skills({ resumeData, setResumeData }: Props) {
       {resumeData.skills && resumeData.skills.length > 0 ? (
         <div className="space-y-3">
           {resumeData.skills.map((skill, index) => (
-            <div key={index} className="border rounded-md p-4 space-y-4">
+            <div key={skill.id} className="border rounded-md p-4 space-y-4">
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <h4 className="text-sm font-medium text-muted-foreground">
                   Skill {index + 1}
@@ -130,10 +137,12 @@ function Skills({ resumeData, setResumeData }: Props) {
                   id={`skill-keywords-${index}`}
                   placeholder="e.g. React, Node.js, Express, MongoDB"
                   value={
-                    keywordInputs[index] ?? getKeywordsString(skill.keywords)
+                    keywordInputs[skill.id!] ?? getKeywordsString(skill.keywords)
                   }
-                  onChange={(e) => updateKeywordInput(index, e.target.value)}
-                  onBlur={(e) => processKeywords(index, e.target.value)}
+                  onChange={(e) =>
+                    updateKeywordInput(skill.id!, e.target.value)
+                  }
+                  onBlur={(e) => processKeywords(skill.id!, e.target.value)}
                   className="h-8 text-sm"
                 />
                 <p className="text-xs text-muted-foreground">

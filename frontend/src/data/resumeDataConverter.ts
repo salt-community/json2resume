@@ -12,13 +12,13 @@ export function jsonObjFromResumeData(data: ResumeData) {
   const basics = (data.basics ?? {}) as NonNullable<ResumeData['basics']>
   const location = basics?.location
     ? {
-        address: basics.location.address,
-        postalCode: basics.location.postalCode,
-        city: basics.location.city,
-        countryCode: basics.location.countryCode,
-        region: basics.location.region,
-        enabled: basics.location.enabled ?? true,
-      }
+      address: basics.location.address,
+      postalCode: basics.location.postalCode,
+      city: basics.location.city,
+      countryCode: basics.location.countryCode,
+      region: basics.location.region,
+      enabled: basics.location.enabled ?? true,
+    }
     : undefined
 
   return {
@@ -67,13 +67,13 @@ export function resumeDataFromJsonObj(jsonData: any): ResumeData {
       summary: jsonData.basics?.summary,
       location: jsonData.basics?.location
         ? {
-            address: jsonData.basics.location.address,
-            postalCode: jsonData.basics.location.postalCode,
-            city: jsonData.basics.location.city,
-            countryCode: jsonData.basics.location.countryCode,
-            region: jsonData.basics.location.region,
-            enabled: jsonData.basics.location.enabled ?? true,
-          }
+          address: jsonData.basics.location.address,
+          postalCode: jsonData.basics.location.postalCode,
+          city: jsonData.basics.location.city,
+          countryCode: jsonData.basics.location.countryCode,
+          region: jsonData.basics.location.region,
+          enabled: jsonData.basics.location.enabled ?? true,
+        }
         : undefined,
       profiles: jsonData.basics?.profiles || [],
       enabled: jsonData.basics?.enabled ?? true,
@@ -83,7 +83,10 @@ export function resumeDataFromJsonObj(jsonData: any): ResumeData {
     education: jsonData.education || [],
     awards: jsonData.awards || [],
     publications: jsonData.publications || [],
-    skills: jsonData.skills || [],
+    skills: (jsonData.skills || []).map((s: any) => ({
+      ...s,
+      id: s.id || crypto.randomUUID(),
+    })),
     languages: jsonData.languages || [],
     interests: jsonData.interests || [],
     references: jsonData.references || [],
