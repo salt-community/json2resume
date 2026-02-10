@@ -24,6 +24,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog'
 import { useScreenWidth } from '@/hooks/useScreenWidth'
+import { fetchGistContent } from '@/components/GistTemplate/gistFetcher'
 
 // Lazy load heavy components
 const JsonCodeEditor = lazy(
@@ -117,22 +118,28 @@ function App() {
   }
 
   const handleReplaceWithExample = async () => {
-    const exampleFiles = [
-      '/cv-daniel-sandstrom.json',
-      '/cv-david-aslan.json',
-      '/cv-samuel-karlhager.json',
+    const exampleGists = [
+      'https://gist.github.com/samuel-kar/00349f5917c968c28c8e293a9cde454a#file-cv-samuel-karlhager',
+      'https://gist.github.com/samuel-kar/00349f5917c968c28c8e293a9cde454a#file-cv-samuel-karlhager',
+      'https://gist.github.com/samuel-kar/00349f5917c968c28c8e293a9cde454a#file-cv-samuel-karlhager',
     ]
-    const nextFile = exampleFiles[exampleIndex]
+    const nextGistUrl = exampleGists[exampleIndex]
 
     try {
-      const response = await fetch(nextFile)
-      const text = await response.text()
-      const jsonObj = JSON.parse(text)
+      const result = await fetchGistContent(nextGistUrl)
+
+      if (!result.success || !result.content) {
+        throw new Error(
+          result.error || 'Failed to fetch example data from Gist',
+        )
+      }
+
+      const jsonObj = JSON.parse(result.content)
       const rData = resumeDataFromJsonObj(jsonObj)
       setResumeData(rData)
-      setExampleIndex((prev) => (prev + 1) % exampleFiles.length)
+      setExampleIndex((prev) => (prev + 1) % exampleGists.length)
     } catch (e) {
-      console.error(`Failed to load example data from ${nextFile}`, e)
+      console.error(`Failed to load example data from ${nextGistUrl}`, e)
     }
   }
 
