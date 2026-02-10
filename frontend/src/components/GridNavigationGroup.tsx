@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { ChevronDownIcon, ChevronRightIcon } from 'lucide-react'
 import Basic from './accordionComponents/dataSections/Basic'
 import Volunteering from './accordionComponents/dataSections/Volunteering'
 import Awards from './accordionComponents/dataSections/Awards'
@@ -51,6 +52,20 @@ function GridNavigationGroup({
   const [selectedSectionId, setSelectedSectionId] = useState<string | null>(
     null,
   )
+
+  const [expandedCategories, setExpandedCategories] = useState<
+    Record<string, boolean>
+  >({
+    'Setup and actions': true,
+    'Data Sections': true,
+  })
+
+  const toggleCategory = (categoryTitle: string) => {
+    setExpandedCategories((prev) => ({
+      ...prev,
+      [categoryTitle]: !prev[categoryTitle],
+    }))
+  }
 
   const setResumeDataAndSave = (data: ResumeData) => {
     setResumeData(data)
@@ -315,23 +330,33 @@ function GridNavigationGroup({
       <div className="flex-shrink-0">
         {categories.map((category, catIndex) => (
           <div key={category.title}>
-            <h3
+            <button
+              type="button"
+              onClick={() => toggleCategory(category.title)}
               className={cn(
-                'text-xs text-muted-foreground font-medium mb-1.5',
+                'flex items-center justify-between w-full mb-1.5 hover:opacity-80 transition-opacity',
                 catIndex === 0 ? 'mt-0' : 'mt-2',
               )}
             >
-              {category.title}
-            </h3>
-            <div
-              className={cn(
-                'grid gap-2',
-                catIndex === 0
-                  ? 'grid-cols-5'
-                  : 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5',
+              <h3 className="text-xs text-muted-foreground font-medium">
+                {category.title}
+              </h3>
+              {expandedCategories[category.title] ? (
+                <ChevronDownIcon className="size-3 text-muted-foreground" />
+              ) : (
+                <ChevronRightIcon className="size-3 text-muted-foreground" />
               )}
-            >
-              {category.items.map((item) => (
+            </button>
+            {expandedCategories[category.title] && (
+              <div
+                className={cn(
+                  'grid gap-2',
+                  catIndex === 0
+                    ? 'grid-cols-5'
+                    : 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5',
+                )}
+              >
+                {category.items.map((item) => (
                 <button
                   key={item.id}
                   type="button"
@@ -373,7 +398,8 @@ function GridNavigationGroup({
                   )}
                 </button>
               ))}
-            </div>
+              </div>
+            )}
           </div>
         ))}
       </div>
