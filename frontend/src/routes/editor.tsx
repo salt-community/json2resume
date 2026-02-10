@@ -119,9 +119,9 @@ function App() {
 
   const handleReplaceWithExample = async () => {
     const exampleGists = [
-      'https://gist.github.com/samuel-kar/00349f5917c968c28c8e293a9cde454a#file-cv-samuel-karlhager',
-      'https://gist.github.com/samuel-kar/00349f5917c968c28c8e293a9cde454a#file-cv-samuel-karlhager',
-      'https://gist.github.com/samuel-kar/00349f5917c968c28c8e293a9cde454a#file-cv-samuel-karlhager',
+      'https://gist.github.com/samuel-kar/00349f5917c968c28c8e293a9cde454a#file-cv-samuel-karlhager-json',
+      'https://gist.github.com/david11267/702443182ba9414fd3bfd5788a7719d4#file-cv-david-aslan-json',
+      'https://gist.github.com/Dansan-Dev/0c8aa4780772ab6aae5d0ce77c547560#file-cv-daniel-sandstrom-json',
     ]
     const nextGistUrl = exampleGists[exampleIndex]
 
