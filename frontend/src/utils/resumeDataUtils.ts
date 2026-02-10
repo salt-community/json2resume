@@ -278,5 +278,16 @@ export const createResumeDataSetter = (
         ),
       )
     },
+
+    updateMeta: (updates: Partial<ResumeData['meta']>) => {
+      const current = getCurrentResumeData()
+      setResumeData({
+        ...current,
+        meta: {
+          ...current.meta,
+          ...updates,
+        },
+      })
+    },
   }
 }

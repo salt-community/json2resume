@@ -1,10 +1,11 @@
-import type { Project, ResumeData } from '@/types'
+import type { Project, ResumeData, DateConfig } from '@/types'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { createResumeDataSetter } from '@/utils/resumeDataUtils'
 import { ItemActions } from '@/components/ui/item-actions'
+import { DateConfigSection } from '@/components/ui/DateConfigSection'
 
 type Props = {
   resumeData: ResumeData
@@ -20,7 +21,25 @@ function Projects({ resumeData, setResumeData }: Props) {
     addSubItem,
     updateSubItem,
     removeSubItem,
+    updateMeta
   } = createResumeDataSetter(() => resumeData, setResumeData)
+
+  const dateConfig = resumeData.meta?.projectDateConfig || {
+    format: 'YM',
+    locale: 'en',
+  }
+
+  const handleConfigChange = (
+    key: keyof DateConfig,
+    value: string,
+  ) => {
+    updateMeta({
+      projectDateConfig: {
+        ...dateConfig,
+        [key]: value,
+      },
+    })
+  }
 
   const addProject = () => {
     const newProject: Project = {
@@ -75,6 +94,13 @@ function Projects({ resumeData, setResumeData }: Props) {
           Add Project
         </Button>
       </div>
+
+      {/* Date Configuration Settings */}
+      <DateConfigSection
+        config={dateConfig}
+        onConfigChange={handleConfigChange}
+        sectionIdPrefix="project"
+      />
 
       {resumeData.projects && resumeData.projects.length > 0 ? (
         <div className="space-y-3">

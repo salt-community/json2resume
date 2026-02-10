@@ -1,9 +1,10 @@
-import type { Certificate, ResumeData } from '@/types'
+import type { Certificate, ResumeData, DateConfig } from '@/types'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import { createResumeDataSetter } from '@/utils/resumeDataUtils'
 import { ItemActions } from '@/components/ui/item-actions'
+import { DateConfigSection } from '@/components/ui/DateConfigSection'
 
 type Props = {
   resumeData: ResumeData
@@ -11,10 +12,25 @@ type Props = {
 }
 
 export default function Certifications({ resumeData, setResumeData }: Props) {
-  const { addItem, updateItem, removeItem, moveItem } = createResumeDataSetter(
-    () => resumeData,
-    setResumeData,
-  )
+  const { addItem, updateItem, removeItem, moveItem, updateMeta } =
+    createResumeDataSetter(() => resumeData, setResumeData)
+
+  const dateConfig = resumeData.meta?.certificatesDateConfig || {
+    format: 'YM',
+    locale: 'en',
+  }
+
+  const handleConfigChange = (
+    key: keyof DateConfig,
+    value: string,
+  ) => {
+    updateMeta({
+      certificatesDateConfig: {
+        ...dateConfig,
+        [key]: value,
+      },
+    })
+  }
 
   const addCertificate = () => {
     const newCertificate: Certificate = {
@@ -22,6 +38,7 @@ export default function Certifications({ resumeData, setResumeData }: Props) {
       date: '',
       issuer: '',
       url: '',
+      enabled: true,
     }
     addItem('certificates', newCertificate)
   }
@@ -50,6 +67,13 @@ export default function Certifications({ resumeData, setResumeData }: Props) {
           Add Certificate
         </Button>
       </div>
+
+      {/* Date Configuration Settings */}
+      <DateConfigSection
+        config={dateConfig}
+        onConfigChange={handleConfigChange}
+        sectionIdPrefix="certificates"
+      />
 
       {resumeData.certificates && resumeData.certificates.length > 0 ? (
         <div className="space-y-6">
