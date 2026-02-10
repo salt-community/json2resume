@@ -84,11 +84,21 @@ interface Props {
   onThemeChangeV2?: (theme: ThemeSource) => void
   // Accept either a legacy URL or a ThemeSource object
   currentTheme?: string | ThemeSource
+  // Lifted state for custom theme inputs
+  customUrl: string
+  setCustomUrl: (url: string) => void
+  customInlineHtml: string
+  setCustomInlineHtml: (html: string) => void
 }
 
-function Themes({ onThemeChangeV2, currentTheme }: Props) {
-  const [customUrl, setCustomUrl] = useState('')
-  const [customInlineHtml, setCustomInlineHtml] = useState('')
+function Themes({
+  onThemeChangeV2,
+  currentTheme,
+  customUrl,
+  setCustomUrl,
+  customInlineHtml,
+  setCustomInlineHtml,
+}: Props) {
 
   const [selectedTheme, setSelectedTheme] = useState<string | null>(() => {
     // Match by URL for legacy string or by inline content for object
