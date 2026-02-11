@@ -85,7 +85,7 @@ function Skills({ resumeData, setResumeData }: Props) {
             <div key={skill.id} className="border rounded-md p-4 space-y-4">
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <h4 className="text-sm font-medium text-muted-foreground">
-                  Skill {index + 1}
+                  Skill group {index + 1}
                 </h4>
                 <ItemActions
                   index={index}
