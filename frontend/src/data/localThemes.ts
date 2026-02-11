@@ -361,7 +361,7 @@ export const inlineThemes = {
     [[#each publications]]
       [[#if enabled]]
         <div class="item">
-          <div class="item-header">>>[name]<< — >>[publisher]<<</div>
+          <div class="item-header">>>[name]<< — <a href=>>[url]<< >>>[publisher]<< <a></div>
           <div class="item-date">>>[releaseDate]<<</div>
           [[#if summary]]<div class="item-description">>>[summary]<<</div>[[/if]]
         </div>

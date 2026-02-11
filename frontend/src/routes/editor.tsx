@@ -1,7 +1,7 @@
 import { Link, createFileRoute } from '@tanstack/react-router'
-import { formatResumeData } from '@/utils/dateFormatter'
 import { Suspense, lazy, useEffect, useState } from 'react'
 import type { ResumeData } from '@/types'
+import { formatResumeData } from '@/utils/dateFormatter'
 import GridNavigationGroup from '@/components/GridNavigationGroup'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { defaultResumeData } from '@/data/defaultResumeData.ts'
