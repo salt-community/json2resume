@@ -140,6 +140,7 @@ export interface Project {
   name?: string
   startDate?: string
   endDate?: string
+  isOngoing?: boolean
   description?: string
   highlights?: Array<string>
   url?: string

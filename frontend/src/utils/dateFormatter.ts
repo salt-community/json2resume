@@ -127,9 +127,13 @@ export const formatResumeData = (data: ResumeData): ResumeData => {
             startDate: project.startDate
                 ? formatDate(project.startDate, projectConfig)
                 : project.startDate,
-            endDate: project.endDate
-                ? formatDate(project.endDate, projectConfig)
-                : project.endDate,
+            endDate: project.isOngoing
+                ? projectConfig.locale === 'se'
+                    ? 'nu'
+                    : 'present'
+                : project.endDate
+                    ? formatDate(project.endDate, projectConfig)
+                    : project.endDate,
         }))
     }
 
@@ -141,9 +145,13 @@ export const formatResumeData = (data: ResumeData): ResumeData => {
             startDate: vol.startDate
                 ? formatDate(vol.startDate, volunteerConfig)
                 : vol.startDate,
-            endDate: vol.endDate
-                ? formatDate(vol.endDate, volunteerConfig)
-                : vol.endDate,
+            endDate: vol.isOngoing
+                ? volunteerConfig.locale === 'se'
+                    ? 'nu'
+                    : 'present'
+                : vol.endDate
+                    ? formatDate(vol.endDate, volunteerConfig)
+                    : vol.endDate,
         }))
     }
 

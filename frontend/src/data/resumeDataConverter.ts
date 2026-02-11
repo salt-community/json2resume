@@ -105,7 +105,11 @@ export function resumeDataFromJsonObj(jsonData: any): ResumeData {
       id: i.id || crypto.randomUUID(),
     })),
     references: jsonData.references || [],
-    projects: jsonData.projects || [],
+    projects: (jsonData.projects || []).map((p: any) => ({
+      ...p,
+      isOngoing: p.isOngoing ?? (p.endDate === 'Ongoing'),
+      endDate: p.endDate === 'Ongoing' ? '' : p.endDate,
+    })),
     meta: jsonData.meta,
   }
 }
