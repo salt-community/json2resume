@@ -88,7 +88,10 @@ export function resumeDataFromJsonObj(jsonData: any): ResumeData {
       id: s.id || crypto.randomUUID(),
     })),
     languages: jsonData.languages || [],
-    interests: jsonData.interests || [],
+    interests: (jsonData.interests || []).map((i: any) => ({
+      ...i,
+      id: i.id || crypto.randomUUID(),
+    })),
     references: jsonData.references || [],
     projects: jsonData.projects || [],
     meta: jsonData.meta,

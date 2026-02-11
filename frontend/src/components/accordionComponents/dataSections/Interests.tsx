@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import type { Interest, ResumeData } from '@/types'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -11,6 +12,7 @@ type Props = {
 }
 
 export default function Interests({ resumeData, setResumeData }: Props) {
+  const [keywordInputs, setKeywordInputs] = useState<Record<string, string>>({})
   const { addItem, updateItem, removeItem, moveItem } = createResumeDataSetter(
     () => resumeData,
     setResumeData,
@@ -18,6 +20,7 @@ export default function Interests({ resumeData, setResumeData }: Props) {
 
   const addInterest = () => {
     const newInterest: Interest = {
+      id: crypto.randomUUID(),
       name: '',
       keywords: [],
       enabled: false,
@@ -41,12 +44,25 @@ export default function Interests({ resumeData, setResumeData }: Props) {
     moveItem('interests', index, direction)
   }
 
-  const updateKeywords = (index: number, keywordsString: string) => {
-    const keywords = keywordsString
+  const updateKeywordInput = (interestId: string, value: string) => {
+    setKeywordInputs((prev) => ({
+      ...prev,
+      [interestId]: value,
+    }))
+  }
+
+  const processKeywords = (interestId: string, value: string) => {
+    const keywords = value
       .split(',')
       .map((keyword) => keyword.trim())
       .filter((keyword) => keyword.length > 0)
-    updateInterest(index, 'keywords', keywords)
+
+    const interestIndex = (resumeData.interests || []).findIndex(
+      (i) => i.id === interestId,
+    )
+    if (interestIndex !== -1) {
+      updateInterest(interestIndex, 'keywords', keywords)
+    }
   }
 
   const getKeywordsString = (keywords: Array<string> | undefined): string => {
@@ -62,7 +78,7 @@ export default function Interests({ resumeData, setResumeData }: Props) {
       {resumeData.interests && resumeData.interests.length > 0 ? (
         <div className="space-y-3">
           {resumeData.interests.map((interest, index) => (
-            <div key={index} className="border rounded-md p-4 space-y-4">
+            <div key={interest.id || index} className="border rounded-md p-4 space-y-4">
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <h4 className="text-sm font-medium text-muted-foreground">
                   Interest {index + 1}
@@ -104,8 +120,14 @@ export default function Interests({ resumeData, setResumeData }: Props) {
                   <Input
                     id={`interest-keywords-${index}`}
                     placeholder="e.g. Digital, Landscape, Portrait"
-                    value={getKeywordsString(interest.keywords)}
-                    onChange={(e) => updateKeywords(index, e.target.value)}
+                    value={
+                      keywordInputs[interest.id!] ??
+                      getKeywordsString(interest.keywords)
+                    }
+                    onChange={(e) =>
+                      updateKeywordInput(interest.id!, e.target.value)
+                    }
+                    onBlur={(e) => processKeywords(interest.id!, e.target.value)}
                     className="h-8"
                   />
                   <p className="text-xs text-muted-foreground">

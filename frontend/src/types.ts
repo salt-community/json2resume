@@ -121,6 +121,7 @@ export interface Language {
 }
 
 export interface Interest {
+  id?: string
   name?: string
   keywords?: Array<string>
   enabled: boolean
