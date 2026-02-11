@@ -17,20 +17,23 @@ export default function Basic({ resumeData, setResumeData }: Props) {
     return resumeData.basics?.uploadedImage ? 'upload' : 'url'
   })
 
-  const updateBasics = (field: keyof NonNullable<typeof resumeData.basics>, value: any) => {
+  const updateBasics = (
+    field: keyof NonNullable<typeof resumeData.basics>,
+    value: any,
+  ) => {
     setResumeData({
       ...resumeData,
       basics: {
         ...resumeData.basics,
         enabled: resumeData.basics?.enabled ?? true,
-        [field]: value
+        [field]: value,
       },
     })
   }
 
   const handleImageModeChange = (mode: 'url' | 'upload') => {
     setImageMode(mode)
-    
+
     // Clear the opposite field when switching modes to avoid confusion
     if (mode === 'url') {
       updateBasics('uploadedImage', undefined)

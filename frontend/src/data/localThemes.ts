@@ -5,7 +5,7 @@
 // - Each: [[#each work]] ... [[/each]]
 // - Join: [[#join keywords|, ]]
 export const inlineThemes = {
-  minimal: {
+  aslan: {
     html: `
 <!DOCTYPE html>
 <html lang="en">
@@ -23,6 +23,10 @@ export const inlineThemes = {
       --sidebar-fg: #ffffff;
       --divider: #e5e5e5;
     }
+
+    a:empty {
+  display: none;
+}
 
     * { box-sizing: border-box; }
 
@@ -241,8 +245,8 @@ export const inlineThemes = {
       [[#if enabled]]
       <div class="item">
         <div class="item-header">
-          <span>>>[position]<<</span> — <a href=>>[url]<< >>>[name]<< <a>
-        </div>
+<span>>>[position]<<</span> —
+<a href=">>[url]<<">>>[name]<<</a>        </div>
         <div class="item-date">>>[startDate]<< – >>[endDate]<<</div>
         [[#if summary]]<div class="item-description">>>[summary]<<</div>[[/if]]
         [[#if highlights]]
@@ -262,9 +266,11 @@ export const inlineThemes = {
       [[#each education]]
         [[#if enabled]]
         <div class="item">
+          [[#if url]]
           <div class="item-header">
-            <span>>>[studyType]<<</span> — <a href=>>[url]<< >>>[institution]<< <a>
+            <span>>>[studyType]<<</span> — <a href=">>[url]<<">>>[institution]<<</a>
           </div>
+          [[/if]]
           <div class="item-date">>>[startDate]<< – >>[endDate]<<</div>
           [[#if area]]<div class="item-description">>>[area]<<</div>[[/if]]
           [[#if score]]<div class="item-description">Score: >>[score]<<</div>[[/if]]
@@ -361,8 +367,9 @@ export const inlineThemes = {
     [[#each publications]]
       [[#if enabled]]
         <div class="item">
-          <div class="item-header">>>[name]<< — <a href=>>[url]<< >>>[publisher]<< <a></div>
-          <div class="item-date">>>[releaseDate]<<</div>
+<div class="item-header">
+  >>[name]<< — <a href=">>[url]<<">>>[publisher]<<</a>
+</div>          <div class="item-date">>>[releaseDate]<<</div>
           [[#if summary]]<div class="item-description">>>[summary]<<</div>[[/if]]
         </div>
       [[/if]]

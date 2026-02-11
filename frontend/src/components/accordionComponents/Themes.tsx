@@ -70,11 +70,11 @@ const presetThemes: Array<ThemePreset> = [
   },
   // Local inline themes
   {
-    id: 'Minimal Local',
+    id: 'Aslan',
     description: 'Clean, typography-first resume rendered from inline HTML/CSS',
     source: {
       kind: 'inline',
-      html: inlineThemes.minimal.html,
+      html: inlineThemes.aslan.html,
     },
   },
 ]
@@ -99,7 +99,6 @@ function Themes({
   customInlineHtml,
   setCustomInlineHtml,
 }: Props) {
-
   const [selectedTheme, setSelectedTheme] = useState<string | null>(() => {
     // Match by URL for legacy string or by inline content for object
     if (typeof currentTheme === 'string') {
