@@ -1,4 +1,4 @@
-import type { Award, ResumeData, DateConfig } from '@/types'
+import type { Award, DateConfig, ResumeData } from '@/types'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
@@ -21,10 +21,7 @@ export default function Awards({ resumeData, setResumeData }: Props) {
     locale: 'en',
   }
 
-  const handleConfigChange = (
-    key: keyof DateConfig,
-    value: string,
-  ) => {
+  const handleConfigChange = (key: keyof DateConfig, value: string) => {
     updateMeta({
       awardsDateConfig: {
         ...dateConfig,
@@ -60,9 +57,6 @@ export default function Awards({ resumeData, setResumeData }: Props) {
     <div className="p-4 space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <h3 className="text-lg font-medium">Awards & Recognition</h3>
-        <Button onClick={addAward} size="sm" className="flex-shrink-0">
-          Add Award
-        </Button>
       </div>
 
       {/* Date Configuration Settings */}
@@ -148,6 +142,11 @@ export default function Awards({ resumeData, setResumeData }: Props) {
           <p className="text-sm">Click "Add Award" to get started.</p>
         </div>
       )}
+      <div className="flex flex-row-reverse">
+        <Button onClick={addAward} size="sm" className="flex-shrink-0">
+          Add Award
+        </Button>
+      </div>
     </div>
   )
 }

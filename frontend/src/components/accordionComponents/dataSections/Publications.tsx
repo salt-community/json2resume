@@ -1,4 +1,4 @@
-import type { Publication, ResumeData, DateConfig } from '@/types'
+import type { DateConfig, Publication, ResumeData } from '@/types'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
@@ -21,10 +21,7 @@ function Publications({ resumeData, setResumeData }: Props) {
     locale: 'en',
   }
 
-  const handleConfigChange = (
-    key: keyof DateConfig,
-    value: string,
-  ) => {
+  const handleConfigChange = (key: keyof DateConfig, value: string) => {
     updateMeta({
       publicationsDateConfig: {
         ...dateConfig,
@@ -65,9 +62,6 @@ function Publications({ resumeData, setResumeData }: Props) {
     <div className="p-4 space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <h3 className="text-lg font-medium">Publications</h3>
-        <Button onClick={addPublication} size="sm" className="flex-shrink-0">
-          Add Publication
-        </Button>
       </div>
 
       {/* Date Configuration Settings */}
@@ -175,6 +169,11 @@ function Publications({ resumeData, setResumeData }: Props) {
           <p className="text-sm">Click "Add Publication" to get started.</p>
         </div>
       )}
+      <div className="flex flex-row-reverse">
+        <Button onClick={addPublication} size="sm" className="flex-shrink-0">
+          Add Publication
+        </Button>
+      </div>
     </div>
   )
 }

@@ -1,4 +1,4 @@
-import type { ResumeData, Volunteer, DateConfig } from '@/types'
+import type { DateConfig, ResumeData, Volunteer } from '@/types'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
@@ -21,7 +21,7 @@ function Volunteering({ resumeData, setResumeData }: Props) {
     addSubItem,
     updateSubItem,
     removeSubItem,
-    updateMeta
+    updateMeta,
   } = createResumeDataSetter(() => resumeData, setResumeData)
 
   const dateConfig = resumeData.meta?.volunteerDateConfig || {
@@ -29,10 +29,7 @@ function Volunteering({ resumeData, setResumeData }: Props) {
     locale: 'en',
   }
 
-  const handleConfigChange = (
-    key: keyof DateConfig,
-    value: string,
-  ) => {
+  const handleConfigChange = (key: keyof DateConfig, value: string) => {
     updateMeta({
       volunteerDateConfig: {
         ...dateConfig,
@@ -80,7 +77,13 @@ function Volunteering({ resumeData, setResumeData }: Props) {
     highlightIndex: number,
     value: string,
   ) => {
-    updateSubItem('volunteer', volunteerIndex, 'highlights', highlightIndex, value)
+    updateSubItem(
+      'volunteer',
+      volunteerIndex,
+      'highlights',
+      highlightIndex,
+      value,
+    )
   }
 
   const removeHighlight = (volunteerIndex: number, highlightIndex: number) => {
@@ -91,9 +94,6 @@ function Volunteering({ resumeData, setResumeData }: Props) {
     <div className="p-4 space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <h3 className="text-lg font-medium">Volunteer Experience</h3>
-        <Button onClick={addVolunteer} size="sm" className="flex-shrink-0">
-          Add Volunteer Experience
-        </Button>
       </div>
 
       {/* Date Configuration Settings */}
@@ -266,6 +266,11 @@ function Volunteering({ resumeData, setResumeData }: Props) {
           </p>
         </div>
       )}
+      <div className="flex flex-row-reverse">
+        <Button onClick={addVolunteer} size="sm" className="flex-shrink-0">
+          Add Volunteer Experience
+        </Button>
+      </div>
     </div>
   )
 }

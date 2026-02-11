@@ -21,6 +21,7 @@ export default function References({ resumeData, setResumeData }: Props) {
     const newReference: Reference = {
       name: '',
       reference: '',
+      enabled: true,
     }
     addItem('references', newReference)
   }
@@ -45,9 +46,6 @@ export default function References({ resumeData, setResumeData }: Props) {
     <div className="p-4 space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <h3 className="text-lg font-medium">References</h3>
-        <Button onClick={addReference} size="sm" className="flex-shrink-0">
-          Add Reference
-        </Button>
       </div>
 
       {resumeData.references && resumeData.references.length > 0 ? (
@@ -115,6 +113,11 @@ export default function References({ resumeData, setResumeData }: Props) {
           <p className="text-sm">Click "Add Reference" to get started.</p>
         </div>
       )}
+      <div className="flex flex-row-reverse">
+        <Button onClick={addReference} size="sm" className="flex-shrink-0">
+          Add Reference
+        </Button>
+      </div>
     </div>
   )
 }

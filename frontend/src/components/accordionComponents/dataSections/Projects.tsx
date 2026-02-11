@@ -21,7 +21,7 @@ function Projects({ resumeData, setResumeData }: Props) {
     addSubItem,
     updateSubItem,
     removeSubItem,
-    updateMeta
+    updateMeta,
   } = createResumeDataSetter(() => resumeData, setResumeData)
 
   const dateConfig = resumeData.meta?.projectDateConfig || {
@@ -29,10 +29,7 @@ function Projects({ resumeData, setResumeData }: Props) {
     locale: 'en',
   }
 
-  const handleConfigChange = (
-    key: keyof DateConfig,
-    value: string,
-  ) => {
+  const handleConfigChange = (key: keyof DateConfig, value: string) => {
     updateMeta({
       projectDateConfig: {
         ...dateConfig,
@@ -90,9 +87,6 @@ function Projects({ resumeData, setResumeData }: Props) {
     <div className="p-4 space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <h3 className="text-lg font-medium">Projects</h3>
-        <Button onClick={addProject} size="sm" className="flex-shrink-0">
-          Add Project
-        </Button>
       </div>
 
       {/* Date Configuration Settings */}
@@ -267,6 +261,11 @@ function Projects({ resumeData, setResumeData }: Props) {
           <p className="text-sm">Click "Add Project" to get started.</p>
         </div>
       )}
+      <div className="flex flex-row-reverse">
+        <Button onClick={addProject} size="sm" className="flex-shrink-0">
+          Add Project
+        </Button>
+      </div>
     </div>
   )
 }

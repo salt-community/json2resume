@@ -1,4 +1,4 @@
-import type { Certificate, ResumeData, DateConfig } from '@/types'
+import type { Certificate, DateConfig, ResumeData } from '@/types'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
@@ -20,10 +20,7 @@ export default function Certifications({ resumeData, setResumeData }: Props) {
     locale: 'en',
   }
 
-  const handleConfigChange = (
-    key: keyof DateConfig,
-    value: string,
-  ) => {
+  const handleConfigChange = (key: keyof DateConfig, value: string) => {
     updateMeta({
       certificatesDateConfig: {
         ...dateConfig,
@@ -63,9 +60,6 @@ export default function Certifications({ resumeData, setResumeData }: Props) {
     <div className="p-4 space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <h3 className="text-lg font-medium">Certificates</h3>
-        <Button onClick={addCertificate} size="sm" className="flex-shrink-0">
-          Add Certificate
-        </Button>
       </div>
 
       {/* Date Configuration Settings */}
@@ -155,6 +149,11 @@ export default function Certifications({ resumeData, setResumeData }: Props) {
           <p className="text-sm">Click "Add Certificate" to get started.</p>
         </div>
       )}
+      <div className="flex flex-row-reverse">
+        <Button onClick={addCertificate} size="sm" className="flex-shrink-0">
+          Add Certificate
+        </Button>
+      </div>
     </div>
   )
 }

@@ -20,6 +20,7 @@ export default function Interests({ resumeData, setResumeData }: Props) {
     const newInterest: Interest = {
       name: '',
       keywords: [],
+      enabled: false,
     }
     addItem('interests', newInterest)
   }
@@ -56,9 +57,6 @@ export default function Interests({ resumeData, setResumeData }: Props) {
     <div className="p-4 space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <h3 className="text-lg font-medium">Interests</h3>
-        <Button onClick={addInterest} size="sm" className="flex-shrink-0">
-          Add Interest
-        </Button>
       </div>
 
       {resumeData.interests && resumeData.interests.length > 0 ? (
@@ -124,6 +122,11 @@ export default function Interests({ resumeData, setResumeData }: Props) {
           <p className="text-sm">Click "Add Interest" to get started.</p>
         </div>
       )}
+      <div className="flex flex-row-reverse">
+        <Button onClick={addInterest} size="sm" className="flex-shrink-0">
+          Add Interest
+        </Button>
+      </div>
     </div>
   )
 }

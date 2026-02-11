@@ -74,9 +74,6 @@ function Skills({ resumeData, setResumeData }: Props) {
     <div className="p-4 space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <h3 className="text-lg font-medium">Skills</h3>
-        <Button onClick={addSkill} size="sm" className="flex-shrink-0">
-          Add Skill
-        </Button>
       </div>
 
       {resumeData.skills && resumeData.skills.length > 0 ? (
@@ -159,6 +156,11 @@ function Skills({ resumeData, setResumeData }: Props) {
           <p className="text-sm">Click "Add Skill" to get started.</p>
         </div>
       )}
+      <div className="flex flex-row-reverse">
+        <Button onClick={addSkill} size="sm" className="flex-shrink-0">
+          Add Skill
+        </Button>
+      </div>
     </div>
   )
 }

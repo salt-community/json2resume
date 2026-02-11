@@ -20,6 +20,7 @@ export default function Languages({ resumeData, setResumeData }: Props) {
     const newLanguage: Language = {
       language: '',
       fluency: '',
+      enabled: true,
     }
     addItem('languages', newLanguage)
   }
@@ -44,9 +45,6 @@ export default function Languages({ resumeData, setResumeData }: Props) {
     <div className="p-4 space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <h3 className="text-lg font-medium">Languages</h3>
-        <Button onClick={addLanguage} size="sm" className="flex-shrink-0">
-          Add Language
-        </Button>
       </div>
 
       {resumeData.languages && resumeData.languages.length > 0 ? (
@@ -111,6 +109,11 @@ export default function Languages({ resumeData, setResumeData }: Props) {
           <p className="text-sm">Click "Add Language" to get started.</p>
         </div>
       )}
+      <div className="flex flex-row-reverse">
+        <Button onClick={addLanguage} size="sm" className="flex-shrink-0">
+          Add Language
+        </Button>
+      </div>
     </div>
   )
 }
