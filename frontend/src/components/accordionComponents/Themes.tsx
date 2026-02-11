@@ -36,11 +36,11 @@ const presetThemes: Array<ThemePreset> = [
     },
   },
   {
-    id: 'AIK Resume',
-    description: 'Modern two-column layout with dark sidebar',
+    id: 'Dark blue',
+    description: 'Modern two-column with a dark blue sidebar and timelines',
     source: {
       kind: 'url',
-      url: 'https://gist.github.com/samuel-kar/11b0969ab91989b64650ac9361c8103b',
+      url: 'https://gist.github.com/samuel-kar/2e6da54975737a013a2d5c745b3bb10e',
     },
   },
 
@@ -66,6 +66,14 @@ const presetThemes: Array<ThemePreset> = [
     source: {
       kind: 'url',
       url: 'https://gist.github.com/david11267/deceafa6ab9de41a77833607cabd4dc0',
+    },
+  },
+  {
+    id: 'AIK Resume',
+    description: 'Two-column black and yellow theme',
+    source: {
+      kind: 'url',
+      url: 'https://gist.github.com/samuel-kar/11b0969ab91989b64650ac9361c8103b',
     },
   },
   // Local inline themes
