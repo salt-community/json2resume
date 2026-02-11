@@ -4,6 +4,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
+import { Checkbox } from '@/components/ui/checkbox'
 import { createResumeDataSetter } from '@/utils/resumeDataUtils'
 
 type Props = {
@@ -54,7 +55,7 @@ function Work({ resumeData, setResumeData }: Props) {
   const updateWork = (
     index: number,
     field: keyof WorkType,
-    value: string | Array<string>,
+    value: string | Array<string> | boolean,
   ) => {
     updateItem('work', index, { [field]: value })
   }
@@ -199,13 +200,31 @@ function Work({ resumeData, setResumeData }: Props) {
                     />
                   </div>
                   <div className="space-y-1">
-                    <Label htmlFor={`work-end-${index}`} className="text-sm">
-                      End Date
-                    </Label>
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor={`work-end-${index}`} className="text-sm">
+                        End Date
+                      </Label>
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          id={`work-ongoing-${index}`}
+                          checked={work.isOngoing || false}
+                          onCheckedChange={(checked: boolean) => {
+                            updateWork(index, 'isOngoing', checked)
+                          }}
+                        />
+                        <Label
+                          htmlFor={`work-ongoing-${index}`}
+                          className="text-sm font-normal cursor-pointer text-muted-foreground"
+                        >
+                          Ongoing
+                        </Label>
+                      </div>
+                    </div>
                     <Input
                       id={`work-end-${index}`}
                       type="date"
                       value={work.endDate || ''}
+                      disabled={work.isOngoing}
                       onChange={(e) =>
                         updateWork(index, 'endDate', e.target.value)
                       }

@@ -92,9 +92,13 @@ export const formatResumeData = (data: ResumeData): ResumeData => {
             startDate: edu.startDate
                 ? formatDate(edu.startDate, educationConfig)
                 : edu.startDate,
-            endDate: edu.endDate
-                ? formatDate(edu.endDate, educationConfig)
-                : edu.endDate,
+            endDate: edu.isOngoing
+                ? educationConfig.locale === 'se'
+                    ? 'nu'
+                    : 'present'
+                : edu.endDate
+                    ? formatDate(edu.endDate, educationConfig)
+                    : edu.endDate,
         }))
     }
 
@@ -105,9 +109,13 @@ export const formatResumeData = (data: ResumeData): ResumeData => {
             startDate: work.startDate
                 ? formatDate(work.startDate, workConfig)
                 : work.startDate,
-            endDate: work.endDate
-                ? formatDate(work.endDate, workConfig)
-                : work.endDate,
+            endDate: work.isOngoing
+                ? workConfig.locale === 'se'
+                    ? 'nu'
+                    : 'present'
+                : work.endDate
+                    ? formatDate(work.endDate, workConfig)
+                    : work.endDate,
         }))
     }
 

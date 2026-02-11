@@ -78,9 +78,21 @@ export function resumeDataFromJsonObj(jsonData: any): ResumeData {
       profiles: jsonData.basics?.profiles || [],
       enabled: jsonData.basics?.enabled ?? true,
     },
-    work: jsonData.work || [],
-    volunteer: jsonData.volunteer || [],
-    education: jsonData.education || [],
+    work: (jsonData.work || []).map((w: any) => ({
+      ...w,
+      isOngoing: w.isOngoing ?? (w.endDate === 'Ongoing'),
+      endDate: w.endDate === 'Ongoing' ? '' : w.endDate,
+    })),
+    volunteer: (jsonData.volunteer || []).map((v: any) => ({
+      ...v,
+      isOngoing: v.isOngoing ?? (v.endDate === 'Ongoing'),
+      endDate: v.endDate === 'Ongoing' ? '' : v.endDate,
+    })),
+    education: (jsonData.education || []).map((e: any) => ({
+      ...e,
+      isOngoing: e.isOngoing ?? (e.endDate === 'Ongoing'),
+      endDate: e.endDate === 'Ongoing' ? '' : e.endDate,
+    })),
     awards: jsonData.awards || [],
     publications: jsonData.publications || [],
     skills: (jsonData.skills || []).map((s: any) => ({
