@@ -147,11 +147,20 @@ export interface Project {
   enabled: boolean
 }
 
-export interface DateConfig {
-  format: 'YMD' | 'YM' | 'Y' | 'YTextM'
+export interface GlobalDateConfig {
   locale: 'se' | 'en'
   presentString?: string
 }
+
+export interface SectionDateConfig {
+  format: 'YMD' | 'YM' | 'Y' | 'YTextM'
+}
+
+// Keeping DateConfig as a type alias for SectionDateConfig + GlobalDateConfig for backward compatibility if needed, 
+// or mostly to avoid breaking imports immediately, but likely better to just switch usages.
+// Actually, let's redefine DateConfig to be the SectionDateConfig to minimize rename churn in files that only care about format locally?
+// No, better to be explicit.
+export type DateConfig = SectionDateConfig // Deprecated alias if we want, but let's just use SectionDateConfig in components
 
 export interface SocialMeta {
   enabled: boolean
@@ -167,13 +176,14 @@ export interface Meta {
   lastModified?: string
   sectionHeaders?: SectionHeaders
   social?: SocialMeta
-  educationDateConfig?: DateConfig
-  workDateConfig?: DateConfig
-  projectDateConfig?: DateConfig
-  volunteerDateConfig?: DateConfig
-  awardsDateConfig?: DateConfig
-  certificatesDateConfig?: DateConfig
-  publicationsDateConfig?: DateConfig
+  globalDateConfig?: GlobalDateConfig
+  educationDateConfig?: SectionDateConfig
+  workDateConfig?: SectionDateConfig
+  projectDateConfig?: SectionDateConfig
+  volunteerDateConfig?: SectionDateConfig
+  awardsDateConfig?: SectionDateConfig
+  certificatesDateConfig?: SectionDateConfig
+  publicationsDateConfig?: SectionDateConfig
 }
 
 export interface SectionHeaders {

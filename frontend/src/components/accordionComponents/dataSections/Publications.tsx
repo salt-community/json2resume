@@ -1,4 +1,4 @@
-import type { DateConfig, Publication, ResumeData } from '@/types'
+import type { GlobalDateConfig, SectionDateConfig, Publication, ResumeData } from '@/types'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
@@ -16,16 +16,28 @@ function Publications({ resumeData, setResumeData }: Props) {
   const { addItem, updateItem, removeItem, moveItem, updateMeta } =
     createResumeDataSetter(() => resumeData, setResumeData)
 
-  const dateConfig = resumeData.meta?.publicationsDateConfig || {
-    format: 'YM',
+  const globalDateConfig = resumeData.meta?.globalDateConfig || {
     locale: 'en',
   }
 
-  const handleConfigChange = (key: keyof DateConfig, value: string) => {
+  const publicationsDateConfig = resumeData.meta?.publicationsDateConfig || {
+    format: 'YM',
+  }
+
+  const handleGlobalConfigChange = (key: keyof GlobalDateConfig, value: string) => {
+    updateMeta({
+      globalDateConfig: {
+        ...globalDateConfig,
+        [key]: value,
+      },
+    })
+  }
+
+  const handleSectionConfigChange = (key: keyof SectionDateConfig, value: string) => {
     updateMeta({
       publicationsDateConfig: {
-        ...dateConfig,
-        [key]: value,
+        ...publicationsDateConfig,
+        [key]: value as SectionDateConfig['format'],
       },
     })
   }
@@ -66,8 +78,10 @@ function Publications({ resumeData, setResumeData }: Props) {
 
       {/* Date Configuration Settings */}
       <DateConfigSection
-        config={dateConfig}
-        onConfigChange={handleConfigChange}
+        globalConfig={globalDateConfig}
+        sectionConfig={publicationsDateConfig}
+        onGlobalChange={handleGlobalConfigChange}
+        onSectionChange={handleSectionConfigChange}
         sectionIdPrefix="publications"
       />
 

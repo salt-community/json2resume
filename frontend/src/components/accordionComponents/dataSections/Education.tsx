@@ -1,5 +1,6 @@
 import type {
-  DateConfig,
+  GlobalDateConfig,
+  SectionDateConfig,
   Education as EducationType,
   ResumeData,
 } from '@/types'
@@ -28,16 +29,28 @@ function Education({ resumeData, setResumeData }: Props) {
     updateMeta,
   } = createResumeDataSetter(() => resumeData, setResumeData)
 
-  const dateConfig = resumeData.meta?.educationDateConfig || {
-    format: 'YM',
+  const globalDateConfig = resumeData.meta?.globalDateConfig || {
     locale: 'en',
   }
 
-  const handleConfigChange = (key: keyof DateConfig, value: string) => {
+  const educationDateConfig = resumeData.meta?.educationDateConfig || {
+    format: 'YM',
+  }
+
+  const handleGlobalConfigChange = (key: keyof GlobalDateConfig, value: string) => {
+    updateMeta({
+      globalDateConfig: {
+        ...globalDateConfig,
+        [key]: value,
+      },
+    })
+  }
+
+  const handleSectionConfigChange = (key: keyof SectionDateConfig, value: string) => {
     updateMeta({
       educationDateConfig: {
-        ...dateConfig,
-        [key]: value,
+        ...educationDateConfig,
+        [key]: value as SectionDateConfig['format'],
       },
     })
   }
@@ -97,10 +110,13 @@ function Education({ resumeData, setResumeData }: Props) {
 
       {/* Date Configuration Settings */}
       <DateConfigSection
-        config={dateConfig}
-        onConfigChange={handleConfigChange}
+        globalConfig={globalDateConfig}
+        sectionConfig={educationDateConfig}
+        onGlobalChange={handleGlobalConfigChange}
+        onSectionChange={handleSectionConfigChange}
         sectionIdPrefix="education"
       />
+
 
       {resumeData.education && resumeData.education.length > 0 ? (
         <div className="space-y-6">

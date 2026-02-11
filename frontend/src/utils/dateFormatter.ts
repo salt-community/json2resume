@@ -1,16 +1,22 @@
-import type { ResumeData, DateConfig } from '@/types'
+import type { ResumeData, GlobalDateConfig, SectionDateConfig } from '@/types'
 
 /**
  * Formats a date string based on the provided configuration.
  *
  * @param dateString - The input date string (YYYY-MM-DD or YYYY-MM or YYYY)
- * @param config - The date configuration (format and locale)
+ * @param sectionConfig - The section date configuration (format)
+ * @param globalConfig - The global date configuration (locale)
  * @returns The formatted date string
  */
-export const formatDate = (dateString: string, config: DateConfig): string => {
+export const formatDate = (
+    dateString: string,
+    sectionConfig: SectionDateConfig,
+    globalConfig: GlobalDateConfig
+): string => {
     if (!dateString) return ''
 
-    const { format, locale } = config
+    const { format } = sectionConfig
+    const { locale } = globalConfig
     const dateParts = dateString.split('-')
     const year = dateParts[0]
     const month = dateParts[1]
@@ -28,34 +34,25 @@ export const formatDate = (dateString: string, config: DateConfig): string => {
             const date = new Date(parseInt(year), parseInt(month) - 1)
             const monthName = date.toLocaleString(
                 locale === 'se' ? 'sv-SE' : 'en-US',
-                { month: 'long' },
+                { month: 'long' }
             )
-            // Capitalize first letter
+            // Capitalize first letter of month for consistency
             const capitalizedMonth =
                 monthName.charAt(0).toUpperCase() + monthName.slice(1)
-
-            if (locale === 'se') {
-                // Swedish format: "Januari 2023" (Month Year) is common for resume
-                return `${capitalizedMonth} ${year}`
-            }
             return `${capitalizedMonth} ${year}`
         }
 
-        // YM Format
+        // YM format (MM/YYYY or YYYY-MM)
         if (locale === 'se') {
             return `${year}-${month}`
         } else {
-            return `${month}/${year}` // US style for EN
+            return `${month}/${year}`
         }
     }
 
     // Handle YYYY-MM-DD format (YMD)
     if (format === 'YMD') {
-        if (!month) return year
-        if (!day) {
-            // If day is missing but requested, fallback to YM logic
-            return formatDate(dateString, { ...config, format: 'YM' })
-        }
+        if (!month || !day) return year // Fallback
 
         if (locale === 'se') {
             return `${year}-${month}-${day}`
@@ -75,113 +72,90 @@ export const formatDate = (dateString: string, config: DateConfig): string => {
  * @returns Formatted ResumeData
  */
 // Default config to match UI defaults
-const DEFAULT_CONFIG: DateConfig = {
+const DEFAULT_SECTION_CONFIG: SectionDateConfig = {
     format: 'YM',
+}
+
+const DEFAULT_GLOBAL_CONFIG: GlobalDateConfig = {
     locale: 'en',
 }
 
 export const formatResumeData = (data: ResumeData): ResumeData => {
     const newData = { ...data }
-    const educationConfig = newData.meta?.educationDateConfig || DEFAULT_CONFIG
-    const workConfig = newData.meta?.workDateConfig || DEFAULT_CONFIG
+    const educationConfig = newData.meta?.educationDateConfig || DEFAULT_SECTION_CONFIG
+    const workConfig = newData.meta?.workDateConfig || DEFAULT_SECTION_CONFIG
+    const projectConfig = newData.meta?.projectDateConfig || DEFAULT_SECTION_CONFIG
+    const volunteerConfig = newData.meta?.volunteerDateConfig || DEFAULT_SECTION_CONFIG
+    const awardsConfig = newData.meta?.awardsDateConfig || DEFAULT_SECTION_CONFIG
+    const certificatesConfig = newData.meta?.certificatesDateConfig || DEFAULT_SECTION_CONFIG
+    const publicationsConfig = newData.meta?.publicationsDateConfig || DEFAULT_SECTION_CONFIG
 
-    // Format Education
+    // Fallback if global config hasn't been initialized yet (though converter should handle it)
+    const globalConfig = newData.meta?.globalDateConfig || DEFAULT_GLOBAL_CONFIG
+
+    const formatDatesForSection = (
+        items: any[] | undefined,
+        config: SectionDateConfig
+    ) => {
+        if (!items) return items
+        return items.map((item) => ({
+            ...item,
+            startDate: item.startDate
+                ? formatDate(item.startDate, config, globalConfig)
+                : item.startDate,
+            endDate: item.isOngoing
+                ? globalConfig.presentString ||
+                (globalConfig.locale === 'se' ? 'nu' : 'present')
+                : item.endDate
+                    ? formatDate(item.endDate, config, globalConfig)
+                    : item.endDate,
+            date: item.date
+                ? formatDate(item.date, config, globalConfig)
+                : item.date,
+            releaseDate: item.releaseDate
+                ? formatDate(item.releaseDate, config, globalConfig)
+                : item.releaseDate,
+        }))
+    }
+
     if (newData.education) {
-        newData.education = newData.education.map((edu) => ({
-            ...edu,
-            startDate: edu.startDate
-                ? formatDate(edu.startDate, educationConfig)
-                : edu.startDate,
-            endDate: edu.isOngoing
-                ? educationConfig.presentString ||
-                (educationConfig.locale === 'se' ? 'nu' : 'present')
-                : edu.endDate
-                    ? formatDate(edu.endDate, educationConfig)
-                    : edu.endDate,
-        }))
+        newData.education = formatDatesForSection(
+            newData.education,
+            educationConfig
+        )
     }
 
-    // Format Work
     if (newData.work) {
-        newData.work = newData.work.map((work) => ({
-            ...work,
-            startDate: work.startDate
-                ? formatDate(work.startDate, workConfig)
-                : work.startDate,
-            endDate: work.isOngoing
-                ? workConfig.presentString ||
-                (workConfig.locale === 'se' ? 'nu' : 'present')
-                : work.endDate
-                    ? formatDate(work.endDate, workConfig)
-                    : work.endDate,
-        }))
+        newData.work = formatDatesForSection(newData.work, workConfig)
     }
 
-    // Format Projects
     if (newData.projects) {
-        const projectConfig = newData.meta?.projectDateConfig || DEFAULT_CONFIG
-        newData.projects = newData.projects.map((project) => ({
-            ...project,
-            startDate: project.startDate
-                ? formatDate(project.startDate, projectConfig)
-                : project.startDate,
-            endDate: project.isOngoing
-                ? projectConfig.presentString ||
-                (projectConfig.locale === 'se' ? 'nu' : 'present')
-                : project.endDate
-                    ? formatDate(project.endDate, projectConfig)
-                    : project.endDate,
-        }))
+        newData.projects = formatDatesForSection(newData.projects, projectConfig)
     }
 
-    // Format Volunteer
     if (newData.volunteer) {
-        const volunteerConfig = newData.meta?.volunteerDateConfig || DEFAULT_CONFIG
-        newData.volunteer = newData.volunteer.map((vol) => ({
-            ...vol,
-            startDate: vol.startDate
-                ? formatDate(vol.startDate, volunteerConfig)
-                : vol.startDate,
-            endDate: vol.isOngoing
-                ? volunteerConfig.presentString ||
-                (volunteerConfig.locale === 'se' ? 'nu' : 'present')
-                : vol.endDate
-                    ? formatDate(vol.endDate, volunteerConfig)
-                    : vol.endDate,
-        }))
+        newData.volunteer = formatDatesForSection(
+            newData.volunteer,
+            volunteerConfig
+        )
     }
 
-    // Format Awards
     if (newData.awards) {
-        const awardsConfig = newData.meta?.awardsDateConfig || DEFAULT_CONFIG
-        newData.awards = newData.awards.map((award) => ({
-            ...award,
-            date: award.date ? formatDate(award.date, awardsConfig) : award.date,
-        }))
+        newData.awards = formatDatesForSection(newData.awards, awardsConfig)
     }
 
-    // Format Certificates
     if (newData.certificates) {
-        const certificatesConfig =
-            newData.meta?.certificatesDateConfig || DEFAULT_CONFIG
-        newData.certificates = newData.certificates.map((cert) => ({
-            ...cert,
-            date: cert.date
-                ? formatDate(cert.date, certificatesConfig)
-                : cert.date,
-        }))
+        newData.certificates = formatDatesForSection(
+            newData.certificates,
+            certificatesConfig
+        )
     }
 
-    // Format Publications
     if (newData.publications) {
-        const publicationsConfig =
-            newData.meta?.publicationsDateConfig || DEFAULT_CONFIG
-        newData.publications = newData.publications.map((pub) => ({
-            ...pub,
-            releaseDate: pub.releaseDate
-                ? formatDate(pub.releaseDate, publicationsConfig)
-                : pub.releaseDate,
-        }))
+        newData.publications = formatDatesForSection(
+            newData.publications,
+            publicationsConfig
+        )
     }
 
     return newData
