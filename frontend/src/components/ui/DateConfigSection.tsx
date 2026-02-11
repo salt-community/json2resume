@@ -7,6 +7,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select'
+import { Input } from '@/components/ui/input'
 
 type DateConfigSectionProps = {
     config: DateConfig
@@ -65,6 +66,19 @@ export function DateConfigSection({
                             <SelectItem value="Y">YYYY</SelectItem>
                         </SelectContent>
                     </Select>
+                </div>
+
+                <div className="space-y-2">
+                    <Label className="text-xs text-muted-foreground">
+                        Custom "Present" Text
+                    </Label>
+                    <Input
+                        id={`present-${sectionIdPrefix}`}
+                        placeholder={isSwedish ? 'nu' : 'present'}
+                        value={config.presentString || ''}
+                        onChange={(e) => onConfigChange('presentString', e.target.value)}
+                        className="bg-surface"
+                    />
                 </div>
             </div>
         </div>

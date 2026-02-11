@@ -92,9 +92,12 @@ export const formatResumeData = (data: ResumeData): ResumeData => {
             startDate: edu.startDate
                 ? formatDate(edu.startDate, educationConfig)
                 : edu.startDate,
-            endDate: edu.endDate
-                ? formatDate(edu.endDate, educationConfig)
-                : edu.endDate,
+            endDate: edu.isOngoing
+                ? educationConfig.presentString ||
+                (educationConfig.locale === 'se' ? 'nu' : 'present')
+                : edu.endDate
+                    ? formatDate(edu.endDate, educationConfig)
+                    : edu.endDate,
         }))
     }
 
@@ -105,9 +108,12 @@ export const formatResumeData = (data: ResumeData): ResumeData => {
             startDate: work.startDate
                 ? formatDate(work.startDate, workConfig)
                 : work.startDate,
-            endDate: work.endDate
-                ? formatDate(work.endDate, workConfig)
-                : work.endDate,
+            endDate: work.isOngoing
+                ? workConfig.presentString ||
+                (workConfig.locale === 'se' ? 'nu' : 'present')
+                : work.endDate
+                    ? formatDate(work.endDate, workConfig)
+                    : work.endDate,
         }))
     }
 
@@ -119,9 +125,12 @@ export const formatResumeData = (data: ResumeData): ResumeData => {
             startDate: project.startDate
                 ? formatDate(project.startDate, projectConfig)
                 : project.startDate,
-            endDate: project.endDate
-                ? formatDate(project.endDate, projectConfig)
-                : project.endDate,
+            endDate: project.isOngoing
+                ? projectConfig.presentString ||
+                (projectConfig.locale === 'se' ? 'nu' : 'present')
+                : project.endDate
+                    ? formatDate(project.endDate, projectConfig)
+                    : project.endDate,
         }))
     }
 
@@ -133,9 +142,12 @@ export const formatResumeData = (data: ResumeData): ResumeData => {
             startDate: vol.startDate
                 ? formatDate(vol.startDate, volunteerConfig)
                 : vol.startDate,
-            endDate: vol.endDate
-                ? formatDate(vol.endDate, volunteerConfig)
-                : vol.endDate,
+            endDate: vol.isOngoing
+                ? volunteerConfig.presentString ||
+                (volunteerConfig.locale === 'se' ? 'nu' : 'present')
+                : vol.endDate
+                    ? formatDate(vol.endDate, volunteerConfig)
+                    : vol.endDate,
         }))
     }
 

@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import { createResumeDataSetter } from '@/utils/resumeDataUtils'
 import { ItemActions } from '@/components/ui/item-actions'
+import { Checkbox } from '@/components/ui/checkbox'
 
 type Props = {
   resumeData: ResumeData
@@ -59,7 +60,7 @@ function Education({ resumeData, setResumeData }: Props) {
   const updateEducation = (
     index: number,
     field: keyof EducationType,
-    value: string | Array<string>,
+    value: string | Array<string> | boolean,
   ) => {
     updateItem('education', index, { [field]: value })
   }
@@ -190,13 +191,31 @@ function Education({ resumeData, setResumeData }: Props) {
                 </div>
 
                 {/* End Date */}
-                <div className="space-y-2">
-                  <Label htmlFor={`education-end-${index}`}>End Date</Label>
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor={`education-end-${index}`}>End Date</Label>
+                    <div className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`education-ongoing-${index}`}
+                        checked={education.isOngoing || false}
+                        onCheckedChange={(checked: boolean) => {
+                          updateEducation(index, 'isOngoing', checked)
+                        }}
+                      />
+                      <Label
+                        htmlFor={`education-ongoing-${index}`}
+                        className="text-sm font-normal cursor-pointer text-muted-foreground"
+                      >
+                        Ongoing
+                      </Label>
+                    </div>
+                  </div>
                   <Input
                     id={`education-end-${index}`}
                     type="date"
                     placeholder="Leave empty if ongoing"
                     value={education.endDate || ''}
+                    disabled={education.isOngoing}
                     onChange={(e) =>
                       updateEducation(index, 'endDate', e.target.value)
                     }

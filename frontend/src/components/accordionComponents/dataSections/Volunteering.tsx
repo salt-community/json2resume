@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { createResumeDataSetter } from '@/utils/resumeDataUtils'
 import { ItemActions } from '@/components/ui/item-actions'
 import { DateConfigSection } from '@/components/ui/DateConfigSection'
+import { Checkbox } from '@/components/ui/checkbox'
 
 type Props = {
   resumeData: ResumeData
@@ -55,7 +56,7 @@ function Volunteering({ resumeData, setResumeData }: Props) {
   const updateVolunteer = (
     index: number,
     field: keyof Volunteer,
-    value: string | Array<string>,
+    value: string | Array<string> | boolean,
   ) => {
     updateItem('volunteer', index, { [field]: value })
   }
@@ -179,13 +180,31 @@ function Volunteering({ resumeData, setResumeData }: Props) {
                 </div>
 
                 {/* End Date */}
-                <div className="space-y-2">
-                  <Label htmlFor={`volunteer-end-${index}`}>End Date</Label>
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor={`volunteer-end-${index}`}>End Date</Label>
+                    <div className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`volunteer-ongoing-${index}`}
+                        checked={volunteer.isOngoing || false}
+                        onCheckedChange={(checked: boolean) => {
+                          updateVolunteer(index, 'isOngoing', checked)
+                        }}
+                      />
+                      <Label
+                        htmlFor={`volunteer-ongoing-${index}`}
+                        className="text-sm font-normal cursor-pointer text-muted-foreground"
+                      >
+                        Ongoing
+                      </Label>
+                    </div>
+                  </div>
                   <Input
                     id={`volunteer-end-${index}`}
                     type="date"
                     placeholder="Leave empty if ongoing"
                     value={volunteer.endDate || ''}
+                    disabled={volunteer.isOngoing}
                     onChange={(e) =>
                       updateVolunteer(index, 'endDate', e.target.value)
                     }

@@ -6,6 +6,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { createResumeDataSetter } from '@/utils/resumeDataUtils'
 import { ItemActions } from '@/components/ui/item-actions'
 import { DateConfigSection } from '@/components/ui/DateConfigSection'
+import { Checkbox } from '@/components/ui/checkbox'
 
 type Props = {
   resumeData: ResumeData
@@ -54,7 +55,7 @@ function Projects({ resumeData, setResumeData }: Props) {
   const updateProject = (
     index: number,
     field: keyof Project,
-    value: string | Array<string>,
+    value: string | Array<string> | boolean,
   ) => {
     updateItem('projects', index, { [field]: value })
   }
@@ -150,13 +151,31 @@ function Projects({ resumeData, setResumeData }: Props) {
                     />
                   </div>
                   <div className="space-y-1">
-                    <Label htmlFor={`project-end-${index}`} className="text-sm">
-                      End Date
-                    </Label>
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor={`project-end-${index}`} className="text-sm">
+                        End Date
+                      </Label>
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          id={`project-ongoing-${index}`}
+                          checked={project.isOngoing || false}
+                          onCheckedChange={(checked: boolean) => {
+                            updateProject(index, 'isOngoing', checked)
+                          }}
+                        />
+                        <Label
+                          htmlFor={`project-ongoing-${index}`}
+                          className="text-sm font-normal cursor-pointer text-muted-foreground"
+                        >
+                          Ongoing
+                        </Label>
+                      </div>
+                    </div>
                     <Input
                       id={`project-end-${index}`}
                       type="date"
                       value={project.endDate || ''}
+                      disabled={project.isOngoing}
                       onChange={(e) =>
                         updateProject(index, 'endDate', e.target.value)
                       }

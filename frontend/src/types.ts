@@ -53,6 +53,7 @@ export interface Work {
   url?: string
   startDate?: string
   endDate?: string
+  isOngoing?: boolean
   summary?: string
   highlights?: Array<string>
   enabled: boolean
@@ -64,6 +65,7 @@ export interface Volunteer {
   url?: string
   startDate?: string
   endDate?: string
+  isOngoing?: boolean
   summary?: string
   highlights?: Array<string>
   enabled: boolean
@@ -76,6 +78,7 @@ export interface Education {
   studyType?: string
   startDate?: string
   endDate?: string
+  isOngoing?: boolean
   score?: string
   courses?: Array<string>
   enabled: boolean
@@ -137,6 +140,7 @@ export interface Project {
   name?: string
   startDate?: string
   endDate?: string
+  isOngoing?: boolean
   description?: string
   highlights?: Array<string>
   url?: string
@@ -146,6 +150,7 @@ export interface Project {
 export interface DateConfig {
   format: 'YMD' | 'YM' | 'Y' | 'YTextM'
   locale: 'se' | 'en'
+  presentString?: string
 }
 
 export interface SocialMeta {
