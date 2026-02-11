@@ -99,7 +99,6 @@ function Themes({
   customInlineHtml,
   setCustomInlineHtml,
 }: Props) {
-
   const [selectedTheme, setSelectedTheme] = useState<string | null>(() => {
     // Match by URL for legacy string or by inline content for object
     if (typeof currentTheme === 'string') {
@@ -385,6 +384,19 @@ function Themes({
               custom html interpreter language
             </Link>
           </p>
+          <div className="flex items-center justify-between">
+            <p className="text-xs text-muted-foreground">
+              Click “Apply Inline Theme” to use the HTML below. Selecting
+              another preset will override it.
+            </p>
+            <Button
+              onClick={handleApplyInline}
+              disabled={!customInlineHtml.trim()}
+              className="px-4"
+            >
+              Apply Inline Theme
+            </Button>
+          </div>
           <div className="space-y-2">
             <ReactCodeMirror
               placeholder="Paste your theme HTML here (supports >>[path]<<, [[#if]], [[#each]], [[#join]])"
