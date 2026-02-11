@@ -150,6 +150,7 @@ export interface Project {
 export interface DateConfig {
   format: 'YMD' | 'YM' | 'Y' | 'YTextM'
   locale: 'se' | 'en'
+  presentString?: string
 }
 
 export interface SocialMeta {

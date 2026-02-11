@@ -93,9 +93,8 @@ export const formatResumeData = (data: ResumeData): ResumeData => {
                 ? formatDate(edu.startDate, educationConfig)
                 : edu.startDate,
             endDate: edu.isOngoing
-                ? educationConfig.locale === 'se'
-                    ? 'nu'
-                    : 'present'
+                ? educationConfig.presentString ||
+                (educationConfig.locale === 'se' ? 'nu' : 'present')
                 : edu.endDate
                     ? formatDate(edu.endDate, educationConfig)
                     : edu.endDate,
@@ -110,9 +109,8 @@ export const formatResumeData = (data: ResumeData): ResumeData => {
                 ? formatDate(work.startDate, workConfig)
                 : work.startDate,
             endDate: work.isOngoing
-                ? workConfig.locale === 'se'
-                    ? 'nu'
-                    : 'present'
+                ? workConfig.presentString ||
+                (workConfig.locale === 'se' ? 'nu' : 'present')
                 : work.endDate
                     ? formatDate(work.endDate, workConfig)
                     : work.endDate,
@@ -128,9 +126,8 @@ export const formatResumeData = (data: ResumeData): ResumeData => {
                 ? formatDate(project.startDate, projectConfig)
                 : project.startDate,
             endDate: project.isOngoing
-                ? projectConfig.locale === 'se'
-                    ? 'nu'
-                    : 'present'
+                ? projectConfig.presentString ||
+                (projectConfig.locale === 'se' ? 'nu' : 'present')
                 : project.endDate
                     ? formatDate(project.endDate, projectConfig)
                     : project.endDate,
@@ -146,9 +143,8 @@ export const formatResumeData = (data: ResumeData): ResumeData => {
                 ? formatDate(vol.startDate, volunteerConfig)
                 : vol.startDate,
             endDate: vol.isOngoing
-                ? volunteerConfig.locale === 'se'
-                    ? 'nu'
-                    : 'present'
+                ? volunteerConfig.presentString ||
+                (volunteerConfig.locale === 'se' ? 'nu' : 'present')
                 : vol.endDate
                     ? formatDate(vol.endDate, volunteerConfig)
                     : vol.endDate,
