@@ -60,6 +60,25 @@ function GridNavigationGroup({
     'Data Sections': true,
   })
 
+  // Lifted state for custom theme inputs
+  const [customThemeUrl, setCustomThemeUrl] = useState(() => {
+    if (typeof currentTheme === 'string') return currentTheme
+    if (currentTheme?.kind === 'url') return currentTheme.url
+    return ''
+  })
+
+  const [customThemeHtml, setCustomThemeHtml] = useState(() => {
+    if (
+      currentTheme &&
+      typeof currentTheme === 'object' &&
+      'kind' in currentTheme &&
+      currentTheme.kind === 'inline'
+    ) {
+      return currentTheme.html
+    }
+    return ''
+  })
+
   const toggleCategory = (categoryTitle: string) => {
     setExpandedCategories((prev) => ({
       ...prev,
@@ -282,6 +301,10 @@ function GridNavigationGroup({
         <Themes
           onThemeChangeV2={onThemeChangeV2}
           currentTheme={currentTheme}
+          customUrl={customThemeUrl}
+          setCustomUrl={setCustomThemeUrl}
+          customInlineHtml={customThemeHtml}
+          setCustomInlineHtml={setCustomThemeHtml}
         />
       ),
       checkbox: false,
