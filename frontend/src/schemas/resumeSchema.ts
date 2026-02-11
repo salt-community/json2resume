@@ -1,4 +1,4 @@
-import type { ResumeData } from '@/types'
+
 
 // Generate JSON schema from ResumeData type
 export const resumeSchema = {

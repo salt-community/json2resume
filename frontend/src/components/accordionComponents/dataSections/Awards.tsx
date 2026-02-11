@@ -1,4 +1,4 @@
-import type { Award, DateConfig, ResumeData } from '@/types'
+import type { Award, GlobalDateConfig, ResumeData, SectionDateConfig } from '@/types'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
@@ -16,16 +16,28 @@ export default function Awards({ resumeData, setResumeData }: Props) {
   const { addItem, updateItem, removeItem, moveItem, updateMeta } =
     createResumeDataSetter(() => resumeData, setResumeData)
 
-  const dateConfig = resumeData.meta?.awardsDateConfig || {
-    format: 'YM',
+  const globalDateConfig = resumeData.meta?.globalDateConfig || {
     locale: 'en',
   }
 
-  const handleConfigChange = (key: keyof DateConfig, value: string) => {
+  const awardsDateConfig = resumeData.meta?.awardsDateConfig || {
+    format: 'YM',
+  }
+
+  const handleGlobalConfigChange = (key: keyof GlobalDateConfig, value: string) => {
+    updateMeta({
+      globalDateConfig: {
+        ...globalDateConfig,
+        [key]: value,
+      },
+    })
+  }
+
+  const handleSectionConfigChange = (key: keyof SectionDateConfig, value: string) => {
     updateMeta({
       awardsDateConfig: {
-        ...dateConfig,
-        [key]: value,
+        ...awardsDateConfig,
+        [key]: value as SectionDateConfig['format'],
       },
     })
   }
@@ -61,8 +73,10 @@ export default function Awards({ resumeData, setResumeData }: Props) {
 
       {/* Date Configuration Settings */}
       <DateConfigSection
-        config={dateConfig}
-        onConfigChange={handleConfigChange}
+        globalConfig={globalDateConfig}
+        sectionConfig={awardsDateConfig}
+        onGlobalChange={handleGlobalConfigChange}
+        onSectionChange={handleSectionConfigChange}
         sectionIdPrefix="awards"
       />
 

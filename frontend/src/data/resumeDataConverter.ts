@@ -110,6 +110,18 @@ export function resumeDataFromJsonObj(jsonData: any): ResumeData {
       isOngoing: p.isOngoing ?? (p.endDate === 'Ongoing'),
       endDate: p.endDate === 'Ongoing' ? '' : p.endDate,
     })),
-    meta: jsonData.meta,
+    meta: {
+      ...jsonData.meta,
+      globalDateConfig: jsonData.meta?.globalDateConfig || {
+        locale:
+          jsonData.meta?.workDateConfig?.locale ||
+          jsonData.meta?.educationDateConfig?.locale ||
+          'en',
+        presentString:
+          jsonData.meta?.workDateConfig?.presentString ||
+          jsonData.meta?.educationDateConfig?.presentString ||
+          undefined,
+      },
+    },
   }
 }

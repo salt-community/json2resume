@@ -1,4 +1,4 @@
-import type { Certificate, DateConfig, ResumeData } from '@/types'
+import type { Certificate, GlobalDateConfig, SectionDateConfig, ResumeData } from '@/types'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
@@ -15,16 +15,28 @@ export default function Certifications({ resumeData, setResumeData }: Props) {
   const { addItem, updateItem, removeItem, moveItem, updateMeta } =
     createResumeDataSetter(() => resumeData, setResumeData)
 
-  const dateConfig = resumeData.meta?.certificatesDateConfig || {
-    format: 'YM',
+  const globalDateConfig = resumeData.meta?.globalDateConfig || {
     locale: 'en',
   }
 
-  const handleConfigChange = (key: keyof DateConfig, value: string) => {
+  const certificatesDateConfig = resumeData.meta?.certificatesDateConfig || {
+    format: 'YM',
+  }
+
+  const handleGlobalConfigChange = (key: keyof GlobalDateConfig, value: string) => {
+    updateMeta({
+      globalDateConfig: {
+        ...globalDateConfig,
+        [key]: value,
+      },
+    })
+  }
+
+  const handleSectionConfigChange = (key: keyof SectionDateConfig, value: string) => {
     updateMeta({
       certificatesDateConfig: {
-        ...dateConfig,
-        [key]: value,
+        ...certificatesDateConfig,
+        [key]: value as SectionDateConfig['format'],
       },
     })
   }
@@ -64,8 +76,10 @@ export default function Certifications({ resumeData, setResumeData }: Props) {
 
       {/* Date Configuration Settings */}
       <DateConfigSection
-        config={dateConfig}
-        onConfigChange={handleConfigChange}
+        globalConfig={globalDateConfig}
+        sectionConfig={certificatesDateConfig}
+        onGlobalChange={handleGlobalConfigChange}
+        onSectionChange={handleSectionConfigChange}
         sectionIdPrefix="certificates"
       />
 

@@ -1,4 +1,4 @@
-import type { DateConfig, ResumeData, Volunteer } from '@/types'
+import type { GlobalDateConfig, SectionDateConfig, ResumeData, Volunteer } from '@/types'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
@@ -25,16 +25,28 @@ function Volunteering({ resumeData, setResumeData }: Props) {
     updateMeta,
   } = createResumeDataSetter(() => resumeData, setResumeData)
 
-  const dateConfig = resumeData.meta?.volunteerDateConfig || {
-    format: 'YM',
+  const globalDateConfig = resumeData.meta?.globalDateConfig || {
     locale: 'en',
   }
 
-  const handleConfigChange = (key: keyof DateConfig, value: string) => {
+  const volunteerDateConfig = resumeData.meta?.volunteerDateConfig || {
+    format: 'YM',
+  }
+
+  const handleGlobalConfigChange = (key: keyof GlobalDateConfig, value: string) => {
+    updateMeta({
+      globalDateConfig: {
+        ...globalDateConfig,
+        [key]: value,
+      },
+    })
+  }
+
+  const handleSectionConfigChange = (key: keyof SectionDateConfig, value: string) => {
     updateMeta({
       volunteerDateConfig: {
-        ...dateConfig,
-        [key]: value,
+        ...volunteerDateConfig,
+        [key]: value as SectionDateConfig['format'],
       },
     })
   }
@@ -99,8 +111,10 @@ function Volunteering({ resumeData, setResumeData }: Props) {
 
       {/* Date Configuration Settings */}
       <DateConfigSection
-        config={dateConfig}
-        onConfigChange={handleConfigChange}
+        globalConfig={globalDateConfig}
+        sectionConfig={volunteerDateConfig}
+        onGlobalChange={handleGlobalConfigChange}
+        onSectionChange={handleSectionConfigChange}
         sectionIdPrefix="volunteer"
       />
 

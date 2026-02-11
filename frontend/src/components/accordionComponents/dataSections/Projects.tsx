@@ -1,4 +1,4 @@
-import type { Project, ResumeData, DateConfig } from '@/types'
+import type { GlobalDateConfig, SectionDateConfig, Project, ResumeData } from '@/types'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
@@ -25,16 +25,28 @@ function Projects({ resumeData, setResumeData }: Props) {
     updateMeta,
   } = createResumeDataSetter(() => resumeData, setResumeData)
 
-  const dateConfig = resumeData.meta?.projectDateConfig || {
-    format: 'YM',
+  const globalDateConfig = resumeData.meta?.globalDateConfig || {
     locale: 'en',
   }
 
-  const handleConfigChange = (key: keyof DateConfig, value: string) => {
+  const projectDateConfig = resumeData.meta?.projectDateConfig || {
+    format: 'YM',
+  }
+
+  const handleGlobalConfigChange = (key: keyof GlobalDateConfig, value: string) => {
+    updateMeta({
+      globalDateConfig: {
+        ...globalDateConfig,
+        [key]: value,
+      },
+    })
+  }
+
+  const handleSectionConfigChange = (key: keyof SectionDateConfig, value: string) => {
     updateMeta({
       projectDateConfig: {
-        ...dateConfig,
-        [key]: value,
+        ...projectDateConfig,
+        [key]: value as SectionDateConfig['format'],
       },
     })
   }
@@ -92,8 +104,10 @@ function Projects({ resumeData, setResumeData }: Props) {
 
       {/* Date Configuration Settings */}
       <DateConfigSection
-        config={dateConfig}
-        onConfigChange={handleConfigChange}
+        globalConfig={globalDateConfig}
+        sectionConfig={projectDateConfig}
+        onGlobalChange={handleGlobalConfigChange}
+        onSectionChange={handleSectionConfigChange}
         sectionIdPrefix="project"
       />
 

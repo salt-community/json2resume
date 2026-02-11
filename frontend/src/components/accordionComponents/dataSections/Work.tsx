@@ -1,4 +1,4 @@
-import type { DateConfig, ResumeData, Work as WorkType } from '@/types'
+import type { GlobalDateConfig, ResumeData, SectionDateConfig, Work as WorkType } from '@/types'
 import { DateConfigSection } from '@/components/ui/DateConfigSection'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -24,16 +24,28 @@ function Work({ resumeData, setResumeData }: Props) {
     updateMeta,
   } = createResumeDataSetter(() => resumeData, setResumeData)
 
-  const dateConfig = resumeData.meta?.workDateConfig || {
-    format: 'YMD',
+  const globalDateConfig = resumeData.meta?.globalDateConfig || {
     locale: 'en',
   }
 
-  const handleConfigChange = (key: keyof DateConfig, value: string) => {
+  const workDateConfig: SectionDateConfig = resumeData.meta?.workDateConfig || {
+    format: 'YMD',
+  }
+
+  const handleGlobalConfigChange = (key: keyof GlobalDateConfig, value: string) => {
+    updateMeta({
+      globalDateConfig: {
+        ...globalDateConfig,
+        [key]: value,
+      },
+    })
+  }
+
+  const handleSectionConfigChange = (key: keyof SectionDateConfig, value: string) => {
     updateMeta({
       workDateConfig: {
-        ...dateConfig,
-        [key]: value,
+        ...workDateConfig,
+        [key]: value as SectionDateConfig['format'],
       },
     })
   }
@@ -92,8 +104,10 @@ function Work({ resumeData, setResumeData }: Props) {
 
       {/* Date Configuration Settings */}
       <DateConfigSection
-        config={dateConfig}
-        onConfigChange={handleConfigChange}
+        globalConfig={globalDateConfig}
+        sectionConfig={workDateConfig}
+        onGlobalChange={handleGlobalConfigChange}
+        onSectionChange={handleSectionConfigChange}
         sectionIdPrefix="work"
       />
 
