@@ -176,7 +176,6 @@ export const inlineThemes = {
 <body>
 <div class="page">
 
-<!-- SIDEBAR -->
  <!-- SIDEBAR -->
   <aside class="sidebar">
 
@@ -242,7 +241,7 @@ export const inlineThemes = {
       [[#if enabled]]
       <div class="item">
         <div class="item-header">
-          <span>>>[position]<<</span> — <span>>>[name]<<</span>
+          <span>>>[position]<<</span> — <a href=>>[url]<< >>>[name]<< <a>
         </div>
         <div class="item-date">>>[startDate]<< – >>[endDate]<<</div>
         [[#if summary]]<div class="item-description">>>[summary]<<</div>[[/if]]
