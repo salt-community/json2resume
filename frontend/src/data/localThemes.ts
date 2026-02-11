@@ -263,7 +263,7 @@ export const inlineThemes = {
         [[#if enabled]]
         <div class="item">
           <div class="item-header">
-            <span>>>[studyType]<<</span> — <span>>>[institution]<<</span>
+            <span>>>[studyType]<<</span> — <a href=>>[url]<< >>>[institution]<< <a>
           </div>
           <div class="item-date">>>[startDate]<< – >>[endDate]<<</div>
           [[#if area]]<div class="item-description">>>[area]<<</div>[[/if]]
