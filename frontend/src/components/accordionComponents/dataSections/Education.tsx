@@ -211,7 +211,7 @@ function Education({ resumeData, setResumeData }: Props) {
                   <Label htmlFor={`education-score-${index}`}>Score/GPA</Label>
                   <Input
                     id={`education-score-${index}`}
-                    placeholder="e.g. 3.8/4.0, Magna Cum Laude"
+                    placeholder="e.g. 3.8/4.0"
                     value={education.score || ''}
                     onChange={(e) =>
                       updateEducation(index, 'score', e.target.value)
