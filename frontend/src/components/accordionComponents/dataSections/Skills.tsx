@@ -100,7 +100,7 @@ function Skills({ resumeData, setResumeData }: Props) {
                 {/* Skill Name */}
                 <div className="space-y-1">
                   <Label htmlFor={`skill-name-${index}`} className="text-sm">
-                    Skill Name *
+                    Category Name
                   </Label>
                   <Input
                     id={`skill-name-${index}`}
@@ -114,7 +114,7 @@ function Skills({ resumeData, setResumeData }: Props) {
                 {/* Skill Level */}
                 <div className="space-y-1">
                   <Label htmlFor={`skill-level-${index}`} className="text-sm">
-                    Level
+                    Category Level
                   </Label>
                   <Input
                     id={`skill-level-${index}`}
@@ -137,7 +137,8 @@ function Skills({ resumeData, setResumeData }: Props) {
                   id={`skill-keywords-${index}`}
                   placeholder="e.g. React, Node.js, Express, MongoDB"
                   value={
-                    keywordInputs[skill.id!] ?? getKeywordsString(skill.keywords)
+                    keywordInputs[skill.id!] ??
+                    getKeywordsString(skill.keywords)
                   }
                   onChange={(e) =>
                     updateKeywordInput(skill.id!, e.target.value)
