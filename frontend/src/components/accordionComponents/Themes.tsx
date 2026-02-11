@@ -85,6 +85,14 @@ const presetThemes: Array<ThemePreset> = [
       html: inlineThemes.aslan.html,
     },
   },
+  {
+    id: 'Minimal',
+    description: 'Clean, typography-first resume rendered from inline HTML/CSS',
+    source: {
+      kind: 'inline',
+      html: inlineThemes.minimal.html,
+    },
+  },
 ]
 
 interface Props {

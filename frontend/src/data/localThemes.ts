@@ -413,4 +413,254 @@ export const inlineThemes = {
 </html>
 `.trim(),
   },
+  minimal: {
+    html: `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Resume — >>[basics.name]<<</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    /* BASIC COLORS AND TYPOGRAPHY */
+   :root {
+  --bg: #ffffff;      /* page background = white */
+  --fg: #000000;      /* main text = black */
+  --muted: #444444;   /* secondary text = dark gray */
+  --divider: #e5e5e5; /* section dividers */
+  --accent: #000000;  /* for chips */
+}
+
+ body {
+  margin: 0;
+  font-family: "Segoe UI", Roboto, system-ui, sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  color: black;
+  background-color: white;
+}
+a {
+  color: var(--fg);
+  text-decoration: none;
+  word-break: break-word;
+}
+    a:empty {
+      display: none;
+    }
+
+    /* CONTAINER */
+    .container {
+      width: 100%;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 32px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    /* HEADER HIERARCHY */
+    h1 {
+      font-size: 32px;
+      font-weight: 800;
+      margin: 0;
+    }
+
+    h2 {
+      font-size: 24px;
+      font-weight: 700;
+      margin: 32px 0 12px 0;
+      border-bottom: 1px solid var(--divider);
+      padding-bottom: 4px;
+    }
+
+    h3 {
+      font-size: 18px;
+      font-weight: 600;
+      margin: 16px 0 8px 0;
+    }
+
+    h4 {
+      font-size: 14px;
+      font-weight: 600;
+      margin: 8px 0 4px 0;
+    }
+
+    h1, h2, h3, h4, a {
+  color: var(--fg);
+}
+
+    /* BASIC TEXT */
+    p, li {
+      font-size: 14px;
+      color: var(--muted);
+      margin: 4px 0;
+    }
+
+    ul {
+      padding-left: 16px;
+      margin: 4px 0;
+    }
+
+    /* AVATAR */
+    .avatar {
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin: 0 auto 16px auto;
+      display: block;
+    }
+
+    /* SECTIONS */
+    .section {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* SKILLS INLINE WRAP */
+.item {
+  margin-bottom: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+.item strong {
+  margin-right: 6px;
+}
+
+.chip {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--chip-bg);  /* dark chip */
+  color: var(--chip-fg);       /* white text on chip */
+  font-size: 12px;
+}
+
+    /* GRID FOR EDUCATION OR SKILLS IF NEEDED */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+    }
+  </style>
+  
+</head>
+
+<body>
+  <div class="container">
+
+    <!-- HEADER -->
+    [[#if basics.enabled]]
+      [[#if basics.image]]
+        <img class="avatar" src=">>[basics.image]<<" alt=">>[basics.name]<<">
+      [[/if]]
+      <h1>>>[basics.name]<<</h1>
+      [[#if basics.label]]<h4>>>[basics.label]<<</h4>[[/if]]
+      [[#if basics.summary]]<p>>>[basics.summary]<<</p>[[/if]]
+    [[/if]]
+
+    <!-- WORK EXPERIENCE -->
+    [[#if work]]
+      <section class="section">
+        <h2>[[#if meta.sectionHeaders.work]]>>[meta.sectionHeaders.work]<<[[/if]][[#if !meta.sectionHeaders.work]]Work Experience[[/if]]</h2>
+        [[#each work]]
+          [[#if enabled]]
+            <div class="item">
+              <div class="item-header">
+                <span>>>[position]<<</span>
+                [[#if url]]— <a href=">>[url]<<">>>[name]<<</a>[[/if]]
+              </div>
+              <div class="item-date">>>[startDate]<< – >>[endDate]<<</div>
+              [[#if summary]]<div class="item-description">>>[summary]<<</div>[[/if]]
+              [[#if highlights]]
+                <ul>[[#each highlights]]<li>>>[.]<<</li>[[/each]]</ul>
+              [[/if]]
+            </div>
+          [[/if]]
+        [[/each]]
+      </section>
+    [[/if]]
+
+    <!-- EDUCATION -->
+    [[#if education]]
+      <section class="section">
+        <h2>[[#if meta.sectionHeaders.education]]>>[meta.sectionHeaders.education]<<[[/if]][[#if !meta.sectionHeaders.education]]Education[[/if]]</h2>
+        <div class="grid">
+          [[#each education]]
+            [[#if enabled]]
+              <div class="item">
+                <div class="item-header">
+                  <span>>>[studyType]<<</span> [[#if url]]— <a href=">>[url]<<">>>[institution]<<</a>[[/if]]
+                </div>
+                <div class="item-date">>>[startDate]<< – >>[endDate]<<</div>
+                [[#if area]]<div class="item-description">>>[area]<<</div>[[/if]]
+                [[#if score]]<div class="item-description">Score: >>[score]<<</div>[[/if]]
+              </div>
+            [[/if]]
+          [[/each]]
+        </div>
+      </section>
+    [[/if]]
+
+    <!-- SKILLS -->
+[[#if skills]]
+  <section class="section">
+    <h2>Technical Skills</h2>
+    [[#each skills]]
+      <div class="item">
+        <strong>>>[name]<<:</strong>
+        [[#each keywords]]<span class="chip">>>[.]<<</span>[[/each]]
+      </div>
+    [[/each]]
+  </section>
+[[/if]]
+
+
+    <!-- VOLUNTEER -->
+    [[#if volunteer]]
+      <section class="section">
+        <h2>[[#if meta.sectionHeaders.volunteer]]>>[meta.sectionHeaders.volunteer]<<[[/if]][[#if !meta.sectionHeaders.volunteer]]Volunteer[[/if]]</h2>
+        [[#each volunteer]]
+          [[#if enabled]]
+            <div class="item">
+              <div class="item-header">
+                <span>>>[position]<<</span> — <span>>>[organization]<<</span>
+              </div>
+              <div class="item-date">>>[startDate]<< – >>[endDate]<<</div>
+              [[#if summary]]<div class="item-description">>>[summary]<<</div>[[/if]]
+            </div>
+          [[/if]]
+        [[/each]]
+      </section>
+    [[/if]]
+
+    <!-- PROJECTS -->
+    [[#if projects]]
+      <section class="section">
+        <h2>[[#if meta.sectionHeaders.projects]]>>[meta.sectionHeaders.projects]<<[[/if]][[#if !meta.sectionHeaders.projects]]Projects[[/if]]</h2>
+        [[#each projects]]
+          [[#if enabled]]
+            <div class="item">
+              <div class="item-header">
+                <span>>>[name]<<</span>
+                [[#if url]]— <a href=">>[url]<<">>>[url]<<</a>[[/if]]
+              </div>
+              [[#if description]]<div class="item-description">>>[description]<<</div>[[/if]]
+            </div>
+          [[/if]]
+        [[/each]]
+      </section>
+    [[/if]]
+
+  </div>
+</body>
+</html>
+`.trim(),
+  },
 } as const
