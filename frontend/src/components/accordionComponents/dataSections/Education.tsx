@@ -92,9 +92,6 @@ function Education({ resumeData, setResumeData }: Props) {
     <div className="p-4 space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <h3 className="text-lg font-medium">Education</h3>
-        <Button onClick={addEducation} size="sm" className="flex-shrink-0">
-          Add Education
-        </Button>
       </div>
 
       {/* Date Configuration Settings */}
@@ -272,6 +269,11 @@ function Education({ resumeData, setResumeData }: Props) {
           <p className="text-sm">Click "Add Education" to get started.</p>
         </div>
       )}
+      <div className="flex flex-row-reverse">
+        <Button onClick={addEducation} size="sm" className="flex-shrink-0">
+          Add Education
+        </Button>
+      </div>
     </div>
   )
 }
