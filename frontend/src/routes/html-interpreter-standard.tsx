@@ -74,6 +74,15 @@ function RouteComponent() {
 
 [[#if !basics.website]]
   <p class="text-text-muted text-sm">No website provided.</p>
+[[/if]]
+
+<!-- Comparison -->
+[[#if meta.globalDateConfig.locale == "se"]]
+  <p>Hej världen!</p>
+[[/if]]
+
+[[#if meta.globalDateConfig.locale != "se"]]
+  <p>Hello world!</p>
 [[/if]]`
 
   const listExample = `<ul>
@@ -153,8 +162,9 @@ function RouteComponent() {
                 List: <span className="text-text-strong font-mono">[[#list path]] ... [[/list]]</span>
               </li>
               <li>
-                If: <span className="text-text-strong font-mono">[[#if path]] ... [[/if]]</span> and{' '}
-                <span className="text-text-strong font-mono">[[#if !path]] ... [[/if]]</span>
+                If: <span className="text-text-strong font-mono">[[#if path]] ... [[/if]]</span>,{' '}
+                <span className="text-text-strong font-mono">[[#if !path]] ... [[/if]]</span>, <br />
+                <span className="text-text-strong font-mono">[[#if path == "val"]] ... [[/if]]</span>
               </li>
               <li>
                 Each: <span className="text-text-strong font-mono">[[#each path]] ... [[/each]]</span>
@@ -176,7 +186,7 @@ function RouteComponent() {
 
           <GuideSection
             title="If"
-            description="Conditionally render the inner markup. Supports negation via [[#if !path]]. Must be closed with [[/if]]."
+            description="Conditionally render the inner markup. Supports truthy checks, negation (ex: [[#if !path]]), and equality comparisons (ex: [[#if path == &quot;val&quot;]]). Must be closed with [[/if]]."
             code={ifExample}
           />
 
