@@ -98,6 +98,10 @@ function RouteComponent() {
   [[/list]]
 </ul>`
 
+  const joinExample = `<p>
+  Keywords: [[#join keywords|, ]]
+</p>`
+
   const fullExample = `<!-- A compact resume header -->
 <header class="pb-4 border-b border-border">
   <h1 class="text-3xl font-bold">>>>[basics.name]<<<</h1>
@@ -169,6 +173,9 @@ function RouteComponent() {
               <li>
                 Each: <span className="text-text-strong font-mono">[[#each path]] ... [[/each]]</span>
               </li>
+              <li>
+                Join: <span className="text-text-strong font-mono">[[#join path|separator]]</span>
+              </li>
             </ul>
           </section>
 
@@ -194,6 +201,12 @@ function RouteComponent() {
             title="Each"
             description="Repeat inner markup for every item in an array. Must be closed with [[/each]]."
             code={eachExample}
+          />
+
+          <GuideSection
+            title="Join"
+            description="Join an array of strings with a separator. Default separator is ', ' if not specified."
+            code={joinExample}
           />
 
           <section className="space-y-3">
