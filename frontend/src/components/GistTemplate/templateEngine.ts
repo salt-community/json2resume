@@ -53,6 +53,8 @@ interface IfNode {
   type: 'if'
   path: string
   negate: boolean
+  operator?: '==' | '!='
+  operand?: string
   children: Array<Node>
 }
 
@@ -74,7 +76,7 @@ const BLK_OPEN = '[[#'
 const BLK_CLOSE_OPEN = '[[/'
 const TAG_CLOSE = ']]'
 
-class TemplateParseError extends Error {}
+class TemplateParseError extends Error { }
 
 function parse(template: string): Array<Node> {
   let i = 0
@@ -143,9 +145,43 @@ function parse(template: string): Array<Node> {
       const rest = restParts.join(' ').trim()
 
       if (keyword === 'if') {
-        const negate = rest.startsWith('!')
-        const path = negate ? rest.slice(1).trim() : rest
-        const node: IfNode = { type: 'if', path, negate, children: [] }
+        // e.g. "basics.label == Software Engineer" or "!basics.label"
+        // Regex to parse: negation? path ( operator operand )?
+        // Note: We need to handle spaces carefully.
+        // Simplest approach: check for " == " or " != " separator
+        let path = rest
+        let operator: '==' | '!=' | undefined
+        let operand: string | undefined
+
+        const eqIdx = rest.indexOf(' == ')
+        const neqIdx = rest.indexOf(' != ')
+
+        if (eqIdx !== -1) {
+          path = rest.slice(0, eqIdx).trim()
+          operator = '=='
+          operand = rest.slice(eqIdx + 4).trim()
+        } else if (neqIdx !== -1) {
+          path = rest.slice(0, neqIdx).trim()
+          operator = '!='
+          operand = rest.slice(neqIdx + 4).trim()
+        }
+
+        // Strip quotes from operand if present
+        if (operand && ((operand.startsWith('"') && operand.endsWith('"')) || (operand.startsWith("'") && operand.endsWith("'")))) {
+          operand = operand.slice(1, -1)
+        }
+
+        const negate = path.startsWith('!')
+        if (negate) path = path.slice(1).trim()
+
+        const node: IfNode = {
+          type: 'if',
+          path,
+          negate,
+          operator,
+          operand,
+          children: [],
+        }
         stack.push({ type: 'if', node, children: node.children })
         continue
       }
@@ -307,7 +343,26 @@ function renderNodes(
 
       case 'if': {
         const val = resolvePath(n.path, ctxStack, root)
-        const should = n.negate ? !isTruthy(val) : isTruthy(val)
+
+        let truthy: boolean
+        if (n.operator && n.operand !== undefined) {
+          // Value comparison
+          // Use lenient equality for numbers vs string inputs, but generally these are strings
+          // If val is a number, we might want to cast operand to number if possible?
+          // However, existing usage is text based. Let's stick to string comparison for simplicity first.
+          // Or abstract equality `==` if we don't strict cast.
+          // Since operand is always string from template, `val == n.operand` allows `123 == "123"`
+          if (n.operator === '==') {
+            truthy = val == n.operand
+          } else {
+            truthy = val != n.operand
+          }
+        } else {
+          // Standard truthiness check
+          truthy = isTruthy(val)
+        }
+
+        const should = n.negate ? !truthy : truthy
         if (should) out += renderNodes(n.children, ctxStack, root, opt)
         break
       }
