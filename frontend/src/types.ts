@@ -153,7 +153,7 @@ export interface GlobalDateConfig {
 }
 
 export interface SectionDateConfig {
-  format: 'YMD' | 'YM' | 'Y' | 'YTextM'
+  format: 'YMD' | 'YM' | 'Y' | 'YTextM' | 'YTextShortM'
 }
 
 // Keeping DateConfig as a type alias for SectionDateConfig + GlobalDateConfig for backward compatibility if needed, 

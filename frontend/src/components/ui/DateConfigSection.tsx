@@ -92,6 +92,9 @@ export function DateConfigSection({
                                     {isSwedish ? 'YYYY-MM' : 'MM/YYYY'}
                                 </SelectItem>
                                 <SelectItem value="YTextM">Month YYYY</SelectItem>
+                                <SelectItem value="YTextShortM">
+                                    MMM YYYY
+                                </SelectItem>
                                 <SelectItem value="Y">YYYY</SelectItem>
                             </SelectContent>
                         </Select>

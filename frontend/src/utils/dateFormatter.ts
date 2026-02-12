@@ -26,20 +26,29 @@ export const formatDate = (
         return year
     }
 
-    // Handle YYYY-MM formats (YM and YTextM)
-    if (format === 'YM' || format === 'YTextM') {
+    // Handle YYYY-MM formats (YM, YTextM, YTextShortM)
+    if (format === 'YM' || format === 'YTextM' || format === 'YTextShortM') {
         if (!month) return year // Fallback if no month provided
 
-        if (format === 'YTextM') {
+        if (format === 'YTextM' || format === 'YTextShortM') {
             const date = new Date(parseInt(year), parseInt(month) - 1)
             const monthName = date.toLocaleString(
                 locale === 'se' ? 'sv-SE' : 'en-US',
-                { month: 'long' }
+                format === 'YTextShortM' ? { month: 'short' } : { month: 'long' }
             )
             // Capitalize first letter of month for consistency
             const capitalizedMonth =
                 monthName.charAt(0).toUpperCase() + monthName.slice(1)
-            return `${capitalizedMonth} ${year}`
+            // Remove any trailing dot if present (common in some locales for abbreviations)
+            let finalMonth = capitalizedMonth.replace('.', '')
+
+            // If strict 3-letter format is requested (YTextShortM), truncate to 3 chars
+            // This handles cases like Swedish 'juni'/'juli'/'mars' becoming 'Jun'/'Jul'/'Mar'
+            if (format === 'YTextShortM') {
+                finalMonth = finalMonth.substring(0, 3)
+            }
+
+            return `${finalMonth} ${year}`
         }
 
         // YM format (MM/YYYY or YYYY-MM)
