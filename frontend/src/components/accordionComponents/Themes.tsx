@@ -86,6 +86,24 @@ const presetThemes: Array<ThemePreset> = [
     },
   },
   {
+    id: 'Sandström',
+    description:
+      'Bold, modern two-column with a dark sidebar and punchy orange section headers',
+    source: {
+      kind: 'url',
+      url: 'https://gist.github.com/Dansan-Dev/77d6f77eb46245aa189e26c80210bea1',
+    },
+  },
+  {
+    id: 'Persson',
+    description:
+      'Cinematic, high-contrast black with warm dark-cocoa sidebar and clean white typography',
+    source: {
+      kind: 'url',
+      url: 'https://gist.github.com/Dansan-Dev/450ada744e51f338b96a3fd063db2899',
+    },
+  },
+  {
     id: 'Minimal',
     description: 'Clean, typography-first resume rendered from inline HTML/CSS',
     source: {
