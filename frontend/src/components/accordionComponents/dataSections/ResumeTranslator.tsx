@@ -42,7 +42,16 @@ function ResumeTranslator({
       },
       {
         onSuccess: (translatedData) => {
-          onTranslationComplete(translatedData)
+          // Preserve the profile image which might be lost in translation
+          const result = {
+            ...translatedData,
+            basics: {
+              ...translatedData.basics,
+              image: resumeData.basics?.image,
+              uploadedImage: resumeData.basics?.uploadedImage,
+            } as any,
+          }
+          onTranslationComplete(result)
           setIsTranslated(true)
           const selectedLang = languageOptions.find(
             (lang) => lang.value === targetLanguage,
