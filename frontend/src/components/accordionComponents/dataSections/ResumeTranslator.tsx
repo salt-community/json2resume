@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { CheckCircle, Languages, RotateCcw, Search, X } from 'lucide-react'
+import { CheckCircle, Languages, Loader2, RotateCcw, Search, X } from 'lucide-react'
 import type { ResumeData } from '@/types'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
@@ -208,7 +208,11 @@ function ResumeTranslator({
               disabled={translateMutation.isPending}
               className="flex items-center gap-2 flex-1"
             >
-              <Languages className="w-4 h-4" />
+              {translateMutation.isPending ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <Languages className="w-4 h-4" />
+              )}
               {translateMutation.isPending
                 ? 'Translating...'
                 : 'Translate Resume'}
@@ -225,6 +229,16 @@ function ResumeTranslator({
               </Button>
             )}
           </div>
+
+          {translateMutation.isPending && (
+            <div className="p-3 bg-blue-50 border border-blue-200 rounded-md animate-pulse">
+              <p className="text-blue-700 text-sm flex items-center gap-2">
+                <Loader2 className="w-4 h-4 animate-spin" />
+                Processing translation... This may take a few seconds as the
+                server starts up.
+              </p>
+            </div>
+          )}
 
           {translateMutation.isError && (
             <div className="p-3 bg-red-50 border border-red-200 rounded-md">
