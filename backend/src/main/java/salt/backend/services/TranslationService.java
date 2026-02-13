@@ -102,6 +102,9 @@ public class TranslationService {
                 // Parse the translated JSON back to ResumeDto
                 ResumeDto translatedResume = objectMapper.readValue(translatedJson, ResumeDto.class);
                 
+                // Enforce immutability of specific fields
+                translatedResume = preserveImmutableFields(request.getResumeData(), translatedResume);
+                
                 log.info("✅ Successfully translated resume to {} (using key index: {})", 
                     request.getTargetLanguage(), currentIndex);
                 return translatedResume;
@@ -148,11 +151,33 @@ public class TranslationService {
             6. Ensure the output is valid JSON that can be parsed
             7. If a field is null or empty, keep it as null or empty
             8. Do translate SectionHeaders
+            9. The field basics.image MUST be returned EXACTLY as in the input (unchanged). Never modify, translate, download, rehost, or replace it.
             Resume JSON to translate:
             %s
             
             Return the translated resume in the same JSON format:
             """, languageCode, resumeJson);
+    }
+
+    protected ResumeDto preserveImmutableFields(ResumeDto original, ResumeDto translated) {
+        if (original == null) {
+            return translated;
+        }
+        try {
+            ResumeDto.Basics originalBasics = original.getBasics();
+            if (originalBasics != null) {
+                String originalImage = originalBasics.getImage();
+                if (originalImage != null) {
+                    if (translated.getBasics() == null) {
+                        translated.setBasics(ResumeDto.Basics.builder().build());
+                    }
+                    translated.getBasics().setImage(originalImage);
+                }
+            }
+        } catch (Exception e) {
+            log.warn("Failed to apply immutability preservation, continuing with translated content", e);
+        }
+        return translated;
     }
 
     private String cleanJsonResponse(String response) {
